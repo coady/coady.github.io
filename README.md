@@ -8,3 +8,6 @@ noun</br>
 ## Source notebooks
 ### Puzzles
 * [Cheryl's Birthday](posts/cheryls-birthday.ipynb)
+
+### Interviews
+* [FizzBuzz](posts/fizz-buzz.ipynb)
