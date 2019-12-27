@@ -1,0 +1,4 @@
+.doit.db
+__pycache__/
+cache/
+output/
