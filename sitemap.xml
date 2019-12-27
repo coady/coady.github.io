@@ -7,15 +7,23 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>https://coady.github.io/</loc>
-  <lastmod>2019-12-27T17:40:00Z</lastmod>
+  <lastmod>2019-12-27T18:03:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://coady.github.io/2018/</loc>
+  <lastmod>2019-12-27T18:03:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/archive.html</loc>
-  <lastmod>2019-12-27T17:40:00Z</lastmod>
+  <lastmod>2019-12-27T18:03:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/categories/</loc>
-  <lastmod>2019-12-27T17:40:00Z</lastmod>
+  <lastmod>2019-12-27T18:03:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://coady.github.io/categories/cat_puzzles/</loc>
+  <lastmod>2019-12-27T18:03:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/galleries/</loc>
@@ -24,5 +32,9 @@
  <url>
   <loc>https://coady.github.io/listings/</loc>
   <lastmod>2019-12-27T17:40:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://coady.github.io/posts/cheryls-birthday/</loc>
+  <lastmod>2019-12-27T18:03:00Z</lastmod>
  </url>
 </urlset>
