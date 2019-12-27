@@ -13,4 +13,5 @@ noun</br>
 * [FizzBuzz](posts/fizz-buzz.ipynb)
 
 ### Style
-* [MapFilter](content/MapFilter.ipynb)
+* [MapFilter](posts/map-and-filter.ipynb)
+* [Accumulator](posts/accumulator.ipynb)
