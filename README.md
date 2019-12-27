@@ -6,3 +6,5 @@ noun</br>
 &nbsp;&nbsp;the quality of being [Pythonic](https://en.wikipedia.org/wiki/Python_(programming_language)#Features_and_philosophy)
 
 ## Source notebooks
+### Puzzles
+* [Cheryl's Birthday](posts/cheryls-birthday.ipynb)
