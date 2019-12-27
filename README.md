@@ -11,3 +11,6 @@ noun</br>
 
 ### Interviews
 * [FizzBuzz](posts/fizz-buzz.ipynb)
+
+### Style
+* [MapFilter](content/MapFilter.ipynb)

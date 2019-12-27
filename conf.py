@@ -142,7 +142,7 @@ NAVIGATION_LINKS = {
         ("/archive.html", "Archive"),
         ("/categories/", "Tags"),
         ("/rss.xml", "RSS feed"),
-        ("https://github.com/coady/coady.github.io/tree/src", "Source"),
+        ("https://github.com/coady/coady.github.io", "Source"),
     ),
 }
 
