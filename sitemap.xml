@@ -7,34 +7,42 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>https://coady.github.io/</loc>
-  <lastmod>2019-12-27T18:03:00Z</lastmod>
+  <lastmod>2019-12-27T21:07:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/2018/</loc>
-  <lastmod>2019-12-27T18:03:00Z</lastmod>
+  <lastmod>2019-12-27T21:07:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/archive.html</loc>
-  <lastmod>2019-12-27T18:50:00Z</lastmod>
+  <lastmod>2019-12-27T21:07:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/categories/</loc>
-  <lastmod>2019-12-27T18:50:00Z</lastmod>
+  <lastmod>2019-12-27T21:07:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/categories/cat_interviews/</loc>
-  <lastmod>2019-12-27T18:50:00Z</lastmod>
+  <lastmod>2019-12-27T21:07:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/categories/cat_puzzles/</loc>
-  <lastmod>2019-12-27T18:03:00Z</lastmod>
+  <lastmod>2019-12-27T21:07:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://coady.github.io/categories/cat_style/</loc>
+  <lastmod>2019-12-27T21:07:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/posts/cheryls-birthday/</loc>
-  <lastmod>2019-12-27T18:03:00Z</lastmod>
+  <lastmod>2019-12-27T21:07:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/posts/fizz-buzz/</loc>
-  <lastmod>2019-12-27T18:50:00Z</lastmod>
+  <lastmod>2019-12-27T21:07:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://coady.github.io/posts/map-and-filter/</loc>
+  <lastmod>2019-12-27T21:07:00Z</lastmod>
  </url>
 </urlset>
