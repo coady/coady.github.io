@@ -10,8 +10,9 @@ noun</br>
 * [Cheryl's Birthday](posts/cheryls-birthday.ipynb)
 
 ### Interviews
-* [FizzBuzz](posts/fizz-buzz.ipynb)
+* [Fizz Buzz](posts/fizz-buzz.ipynb)
+* [Split an Iterable](posts/split-an-iterable.ipynb)
 
 ### Style
-* [MapFilter](posts/map-and-filter.ipynb)
+* [Map and Filter](posts/map-and-filter.ipynb)
 * [Accumulator](posts/accumulator.ipynb)

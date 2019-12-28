@@ -252,7 +252,7 @@ TIMEZONE = "America/Los_Angeles"
 # Date format used to display post dates. (translatable)
 # Used by babel.dates, CLDR style: http://cldr.unicode.org/translation/date-time
 # You can also use 'full', 'long', 'medium', or 'short'
-# DATE_FORMAT = 'YYYY-MM-dd HH:mm'
+DATE_FORMAT = 'YYYY-MM-dd'
 
 # Date format used to display post dates, if local dates are used. (translatable)
 # Used by moment.js: https://momentjs.com/docs/#/displaying/format/
@@ -457,12 +457,13 @@ CATEGORY_OUTPUT_FLAT_HIERARCHY = False
 # }
 
 # Set special titles for category pages. The default is "Posts about CATEGORY".
-# CATEGORY_TITLES = {
-#    DEFAULT_LANG: {
-#        "blogging": "Meta-posts about blogging",
-#        "open source": "Posts about open source software"
-#    },
-# }
+CATEGORY_TITLES = {
+   DEFAULT_LANG: {
+       "puzzles": "Posts about solving puzzles programmatically",
+       "interviews": "Posts about common interview questions",
+       "style": "Posts about style and conventions",
+   },
+}
 
 # If you do not want to display a category publicly, you can mark it as hidden.
 # The category will not be displayed on the category list page.
