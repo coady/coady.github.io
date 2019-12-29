@@ -13,7 +13,7 @@
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
 <link rel="canonical" href="https://coady.github.io/">
-<!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><link rel="prefetch" href="posts/accumulator/" type="text/html">
+<!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><link rel="prefetch" href="posts/split-an-iterable/" type="text/html">
 </head>
 <body>
 <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
@@ -73,14 +73,349 @@
     
         
     <div class="postindex">
-            <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/accumulator/" class="u-url">Accumulator</a></h1>
+            <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/split-an-iterable/" class="u-url">Split an Iterable</a></h1>
+                <div class="metadata">
+                    <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                        A. Coady
+                    </span></p>
+            <p class="dateline">
+            <a href="posts/split-an-iterable/" rel="bookmark">
+            <time class="published dt-published" datetime="2019-12-28T00:00:00-08:00" itemprop="datePublished" title="2019-12-28">2019-12-28</time></a>
+            </p>
+                </div>
+            </header><div class="e-content entry-content">
+                    <div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Split-an-iterable-into-equal-sized-chunks.">Split an iterable into equal sized chunks.<a class="anchor-link" href="posts/split-an-iterable/#Split-an-iterable-into-equal-sized-chunks.">¶</a>
+</h2>
+<p>A common task and interview question, with many variants.  It's frequently <a href="http://stackoverflow.com/questions/312443/">asked and answered</a> in a way that's suboptimal and only handles <a href="http://stackoverflow.com/questions/6822725/">one specific case</a>.  The goal here is to present definitive, general, and efficient solutions.</p>
+<p>The first variant is whether or not the chunks will overlap.  Although this could be generalized into a <code>step</code> parameter, it's nearly always the case that <code>step in (1, size)</code>.</p>
+<p>The second variant is whether the tail of the data should be returned, if it's not of equal size.  Clearly when <code>step == 1</code> that's unlikely to be desirable.  However, when <code>step == size</code>, that would seem to be the natural choice.  And again when <code>1 &lt; step &lt; size</code>, the desired behavior isn't clear at all.</p>
+<p>The third variant is whether to slice sequences, or support any iterable.  Obviously working for any iterable would be ideal, but it's also likely a user would expect slices given a sequence, particularly in the case of strings.</p>
+<p>So this author feels it's best to split the problem in 2 distinct cases:  a sliding <code>window</code> for overlapping sequences, and <code>chunks</code> for discrete sequences.  In each case, supporting iterables and using advanced iterator algebra for a minimal and efficient solution.</p>
+<h3 id="Window">Window<a class="anchor-link" href="posts/split-an-iterable/#Window">¶</a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="k">def</span> <span class="nf">window</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">"""Generate a sliding window of values."""</span>
+    <span class="n">its</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">tee</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">it</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">its</span><span class="p">)))</span>
+
+<span class="nb">list</span><span class="p">(</span><span class="n">window</span><span class="p">(</span><span class="s1">'abcde'</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[1]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[('a', 'b'), ('b', 'c'), ('c', 'd'), ('d', 'e')]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>That's simple, and close to optimal.  There is slight overhead in iterating an <code>islice</code> object, so a minor variant would be to force the step-wise iteration in advance.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">collections</span>
+
+<span class="k">def</span> <span class="nf">window</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">"""Generate a sliding window of values."""</span>
+    <span class="n">its</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">tee</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">it</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">its</span><span class="p">):</span>
+        <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">index</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># exhaust iterator</span>
+    <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">its</span><span class="p">)</span>
+
+<span class="nb">list</span><span class="p">(</span><span class="n">window</span><span class="p">(</span><span class="s1">'abcde'</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[2]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[('a', 'b'), ('b', 'c'), ('c', 'd'), ('d', 'e')]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Chunks">Chunks<a class="anchor-link" href="posts/split-an-iterable/#Chunks">¶</a>
+</h3>
+<p>A lesser-known and under-utilized feature of <code>iter</code> is that in can take a callable (of no arguments) and a sentinel to create an iterator.  A perfect use case of the "loop and a half" idiom.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">chunks</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="sd">"""Generate adjacent chunks of data"""</span>
+    <span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">size</span><span class="p">)),</span> <span class="p">())</span>
+
+<span class="nb">list</span><span class="p">(</span><span class="n">chunks</span><span class="p">(</span><span class="s1">'abcde'</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[3]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[('a', 'b', 'c'), ('d', 'e')]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This should also be optimal, for reasonable sizes.</p>
+<h3 id="Sequences-with-dispatch">Sequences with dispatch<a class="anchor-link" href="posts/split-an-iterable/#Sequences-with-dispatch">¶</a>
+</h3>
+<p>Rather than explicitly check <code>isinstance</code>, this is a perfect use case for <code>functools.singledispatch</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Sequence</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">singledispatch</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+
+<span class="nd">@window</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="n">seq</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="o">-</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">seq</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span> <span class="o">+</span> <span class="n">size</span><span class="p">]</span>
+
+<span class="nb">list</span><span class="p">(</span><span class="n">window</span><span class="p">(</span><span class="s1">'abcde'</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[4]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>['ab', 'bc', 'cd', 'de']</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">list</span><span class="p">(</span><span class="n">window</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="s1">'abcde'</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[('a', 'b'), ('b', 'c'), ('c', 'd'), ('d', 'e')]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">chunks</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">singledispatch</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span>
+
+<span class="nd">@chunks</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="n">seq</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">),</span> <span class="n">size</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">seq</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span> <span class="o">+</span> <span class="n">size</span><span class="p">]</span>
+
+<span class="nb">list</span><span class="p">(</span><span class="n">chunks</span><span class="p">(</span><span class="s1">'abcde'</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[6]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>['abc', 'de']</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">list</span><span class="p">(</span><span class="n">chunks</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="s1">'abcde'</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[7]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[('a', 'b', 'c'), ('d', 'e')]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+                </div>
+            </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/accumulator/" class="u-url">Accumulator</a></h1>
                 <div class="metadata">
                     <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
                         A. Coady
                     </span></p>
             <p class="dateline">
             <a href="posts/accumulator/" rel="bookmark">
-            <time class="published dt-published" datetime="2018-05-28T00:00:00-07:00" itemprop="datePublished" title="2018-05-28 00:00">2018-05-28 00:00</time></a>
+            <time class="published dt-published" datetime="2018-05-28T00:00:00-07:00" itemprop="datePublished" title="2018-05-28">2018-05-28</time></a>
             </p>
                 </div>
             </header><div class="e-content entry-content">
@@ -424,7 +759,7 @@
                     </span></p>
             <p class="dateline">
             <a href="posts/map-and-filter/" rel="bookmark">
-            <time class="published dt-published" datetime="2018-03-31T00:00:00-07:00" itemprop="datePublished" title="2018-03-31 00:00">2018-03-31 00:00</time></a>
+            <time class="published dt-published" datetime="2018-03-31T00:00:00-07:00" itemprop="datePublished" title="2018-03-31">2018-03-31</time></a>
             </p>
                 </div>
             </header><div class="e-content entry-content">
@@ -781,7 +1116,7 @@
                     </span></p>
             <p class="dateline">
             <a href="posts/fizz-buzz/" rel="bookmark">
-            <time class="published dt-published" datetime="2018-03-25T00:00:00-07:00" itemprop="datePublished" title="2018-03-25 00:00">2018-03-25 00:00</time></a>
+            <time class="published dt-published" datetime="2018-03-25T00:00:00-07:00" itemprop="datePublished" title="2018-03-25">2018-03-25</time></a>
             </p>
                 </div>
             </header><div class="e-content entry-content">
@@ -1077,7 +1412,7 @@ FizzBuzz
                     </span></p>
             <p class="dateline">
             <a href="posts/cheryls-birthday/" rel="bookmark">
-            <time class="published dt-published" datetime="2018-03-20T00:00:00-07:00" itemprop="datePublished" title="2018-03-20 00:00">2018-03-20 00:00</time></a>
+            <time class="published dt-published" datetime="2018-03-20T00:00:00-07:00" itemprop="datePublished" title="2018-03-20">2018-03-20</time></a>
             </p>
                 </div>
             </header><div class="e-content entry-content">
