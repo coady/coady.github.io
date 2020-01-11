@@ -7,22 +7,26 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <sitemap>
   <loc>https://coady.github.io/categories/cat_interviews.xml</loc>
-  <lastmod>2019-12-29T00:01:00Z</lastmod>
+  <lastmod>2020-01-11T17:41:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://coady.github.io/categories/cat_puzzles.xml</loc>
-  <lastmod>2019-12-29T00:01:00Z</lastmod>
+  <lastmod>2020-01-11T18:45:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://coady.github.io/categories/cat_style.xml</loc>
-  <lastmod>2019-12-29T00:01:00Z</lastmod>
+  <lastmod>2020-01-11T17:41:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://coady.github.io/categories/mathjax.xml</loc>
+  <lastmod>2020-01-11T18:24:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://coady.github.io/rss.xml</loc>
-  <lastmod>2019-12-29T00:01:00Z</lastmod>
+  <lastmod>2020-01-11T18:45:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://coady.github.io/sitemap.xml</loc>
-  <lastmod>2019-12-29T00:01:00Z</lastmod>
+  <lastmod>2020-01-11T18:56:00Z</lastmod>
  </sitemap>
 </sitemapindex>
