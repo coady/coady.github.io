@@ -23,7 +23,7 @@
  </url>
  <url>
   <loc>https://coady.github.io/archive.html</loc>
-  <lastmod>2020-06-07T22:14:00Z</lastmod>
+  <lastmod>2020-06-14T23:54:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/categories/</loc>
@@ -68,5 +68,9 @@
  <url>
   <loc>https://coady.github.io/posts/split-an-iterable/</loc>
   <lastmod>2020-01-11T17:41:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://coady.github.io/posts/water-pouring/</loc>
+  <lastmod>2020-06-14T23:54:00Z</lastmod>
  </url>
 </urlset>
