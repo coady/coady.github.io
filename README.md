@@ -10,6 +10,7 @@ noun</br>
 * [Cheryl's Birthday](posts/cheryls-birthday.ipynb)
 * [Hat puzzle](posts/hat-puzzle.ipynb)
 * [Coin balance](posts/coin-balance.ipynb)
+* [Water pouring](posts/water-pouring.ipynb)
 
 ### Interviews
 * [Fizz Buzz](posts/fizz-buzz.ipynb)
