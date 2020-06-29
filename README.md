@@ -19,3 +19,4 @@ noun</br>
 ### Style
 * [Map and Filter](posts/map-and-filter.ipynb)
 * [Accumulator](posts/accumulator.ipynb)
+* [Mutable defaults](posts/mutable-defaults.ipynb)
