@@ -20,3 +20,4 @@ noun</br>
 * [Map and Filter](posts/map-and-filter.ipynb)
 * [Accumulator](posts/accumulator.ipynb)
 * [Mutable defaults](posts/mutable-defaults.ipynb)
+* [Closing files](posts/closing-files.ipynb)
