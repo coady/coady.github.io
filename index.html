@@ -25,7 +25,7 @@ MathJax.Hub.Config({
         styles: {'.MathJax_Display': {"margin": 0}}
     }
 });
-</script><!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><link rel="prefetch" href="posts/mutable-defaults/" type="text/html">
+</script><!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><link rel="prefetch" href="posts/closing-files/" type="text/html">
 </head>
 <body>
 <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
@@ -85,7 +85,225 @@ MathJax.Hub.Config({
     
         
     <div class="postindex">
-            <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/mutable-defaults/" class="u-url">Mutable defaults</a></h1>
+            <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/closing-files/" class="u-url">Closing files</a></h1>
+                <div class="metadata">
+                    <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                        A. Coady
+                    </span></p>
+            <p class="dateline">
+            <a href="posts/closing-files/" rel="bookmark">
+            <time class="published dt-published" datetime="2020-07-05T00:00:00-07:00" itemprop="datePublished" title="2020-07-05">2020-07-05</time></a>
+            </p>
+                </div>
+            </header><div class="e-content entry-content">
+                    <div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Contrarian-view-on-closing-files.">Contrarian view on closing files.<a class="anchor-link" href="posts/closing-files/#Contrarian-view-on-closing-files.">¶</a>
+</h2>
+<p>It has become conventional wisdom to always explicitly close file-like objects, via context managers.
+The <a href="https://google.github.io/styleguide/pyguide.html#311-files-and-sockets">google style guide</a>
+is representative:</p>
+<blockquote>
+<p>Explicitly close files and sockets when done with them.
+Leaving files, sockets or other file-like objects open unnecessarily has many downsides, including:</p>
+<p>They may consume limited system resources, such as file descriptors.</p>
+<ul>
+<li>Code that deals with many such objects may exhaust those resources unnecessarily if they're not returned to the system promptly after use.</li>
+<li>Holding files open may prevent other actions being performed on them, such as moves or deletion.</li>
+<li>Files and sockets that are shared throughout a program may inadvertantly be read from or written to after logically being closed. If they are actually closed, attempts to read or write from them will throw exceptions, making the problem known sooner.</li>
+</ul>
+<p>Furthermore, while files and sockets are automatically closed when the file object is destructed, tying the life-time of the file object to the state of the file is poor practice, for several reasons:</p>
+<ul>
+<li>There are no guarantees as to when the runtime will actually run the file's destructor. Different Python implementations use different memory management techniques, such as delayed Garbage Collection, which may increase the object's lifetime arbitrarily and indefinitely.</li>
+<li>Unexpected references to the file may keep it around longer than intended (e.g. in tracebacks of exceptions, inside globals, etc).</li>
+</ul>
+<p>The preferred way to manage files is using the "with" statement:</p>
+
+<pre><code>with open("hello.txt") as hello_file:
+    for line in hello_file:
+        print line</code></pre>
+</blockquote>
+<h3 id="In-theory">In theory<a class="anchor-link" href="posts/closing-files/#In-theory">¶</a>
+</h3>
+<p>Good points, and why limit this advice to file descriptors?  Any resource may be limited or require exclusivity;  that's why they're called resources.  Similarly one should always explicitly call <code>dict.clear</code> when finished with a <code>dict</code>.  After all, "there are no guarantees as to when the runtime will actually run the &lt;object's&gt; destructor.  And "code that deals with many such objects may exhaust those resources unnecessarily", such as memory, or whatever else is in the <code>dict</code>.</p>
+<p>But in all seriousness, this advice is applying a notably higher standard of premature optimization to file descriptors than to any other kind of resource.  There are plenty of Python projects that are guaranteed to run on CPython for a variety of reasons, where destructors are immediately called.  And there are plenty of Python projects where file descriptor usage is just a non-issue.  It's now depressingly commonplace to see this in <code>setup.py</code> files:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"README.md"</span><span class="p">)</span> <span class="k">as</span> <span class="n">readme</span><span class="p">:</span>
+    <span class="n">long_description</span> <span class="o">=</span> <span class="n">readme</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's consider a practical example: a <code>load</code> function which is supposed to read and parse data given a file path.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+    <span class="sd">"""the supposedly bad way"""</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+    <span class="sd">"""the supposedly good way"""</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+    <span class="sd">"""with a different file format"""</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Which versions work correctly?  Are you sure?  If it's not immediately obvious why one of these is broken, that's the point.  In fact, it's worth trying out before reading on.</p>
+<p>...</p>
+<p>The <code>csv</code> version returns an iterator over a closed file.  It's a violation of procedural abstraction to know whether the result of <code>load</code> is lazily evaluated or not; it's just supposed to implement an interface.  Moreover, according to this best practice, it's <em>impossible</em> to write the <code>csv</code> version correctly.  As absurd as it sounds, it's just an abstraction that can't exist.</p>
+<p>Defiantly clever readers are probably already trying to fix it.  Maybe like this:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="k">yield from</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>No, it will not be fixed.  This version only appears to work by <em>not</em> closing the file until the generator is exhausted or collected.</p>
+<p>This trivial example has deeper implications.  If one accepts this practice, then one must also accept that storing a file handle anywhere, such as on an instance, is also disallowed.  Unless of course that object then virally implements it owns context manager, ad infinitum.</p>
+<p>Furthermore it demonstrates that often the context is not being managed locally.  If a file object is passed another function, then it's being used outside of the context.  Let's revisit the <code>json</code> version, which works because the file is fully read.  Doesn't a json parser have some expensive parsing to do after it's read the file?  It might even throw an error.  And isn't it be desirable, trivial, <a href="https://github.com/python/cpython/blob/master/Lib/json/__init__.py#L274">and likely</a> that the implementation releases interest in the file as soon as possible?</p>
+<p>So in reality there are scenarios where the supposedly good way could keep the file open <em>longer</em> than the supposedly bad way.  The original inline version does exactly what it's supposed to do: close the file when all interested parties are done with it.  Python uses garbage collection to manage shared resources.  Any attempt to pretend otherwise will result in code that is broken, inefficient, or reinventing reference counting.</p>
+<p>A true believer now has to accept that <code>json.load</code> is a useless and dangerous wrapper, and that the only correct implementation is:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This line of reasoning reduces to the absurd: a file should never be passed or stored anywhere.  Next an example where the practice has caused real-world damage.</p>
+<h3 id="In-practice">In practice<a class="anchor-link" href="posts/closing-files/#In-practice">¶</a>
+</h3>
+<p><a href="https://requests.readthedocs.io/en/master/">Requests</a> is one of the most popular python packages, and <a href="https://docs.python.org/3/library/http.client.html#module-http.client">officially recommended</a>.  It includes a <a href="http://requests.readthedocs.org/en/latest/user/advanced/#session-objects">Session</a> object which supports closing via a context manager.  The vast majority of real-world code uses the the top-level functions or single-use sessions.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Sessions manage the connection pool, so this pattern of usage is establishing a new connection every time.  There are popular standard API clients which seriously do this, for every single request to the same endpoint.</p>
+<p>Requests' documentation prominently states that "Keep-alive and HTTP connection pooling are 100% automatic".  So part of the blame may lay with that phrasing, since it's only "automatic" if sessions are reused.  But surely a large part of the blame is the dogma of closing sockets, and therefore sessions, explicitly.
+The whole point of a connection pool is that it may leave connections open, so users who genuinely need this granularity are working at the wrong abstraction layer.  <code>http.client</code> is already builtin for that level of control.</p>
+<p>Tellingly, requests' own top-level functions didn't always close sessions.  There's a long history to that code, including a <a href="https://github.com/kennethreitz/requests/commit/3155bc99362a8c6ab136b6a3bb999732617cd2e5">version that only closed sessions on success</a>.  An older version was <a href="https://github.com/kennethreitz/requests/issues/1882">causing warnings</a>, when run to check for such warnings, and was being blamed for the <em>appearance</em> of <a href="https://github.com/kennethreitz/requests/issues/1685">leaking memory</a>.  Those threads are essentially debating whether a resource pool is "leaking" resources.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Truce">Truce<a class="anchor-link" href="posts/closing-files/#Truce">¶</a>
+</h3>
+<p>Prior to <code>with</code> being introduced in Python 2.5, it was <em>not</em> recommended that inlined reading of a file required a <code>try... finally</code> block.  Far from it, in the past idioms like <code>open(...).read()</code> and <code>for line in open(...)</code> were lauded for being succinct and expressive.  But if all this orphaned file descriptor paranoia was well-founded, it would have been a problem back then too.</p>
+<p>Finally, let's address readability.  It could be argued (though it rarely is) that showing the reader when the file is closed has inherent value.  Conveniently, that tends to align with having opened the file for writing anyway, thereby needing a reference to it.  In which case, the readability is approximately equal, and potential pitfalls are more realistic.  But readability is genuinely lost when the file would have been opened in a inline expression.</p>
+<p>The best practice is unjustifiably special-casing file descriptors, and not seeing its own reasoning through to its logical conclusion.  This author proposes advocating for <em>anonymous read-only</em> <code>open</code> expressions.  Your setup script is not going to run out of file descriptors because you wrote <code>open("README.md").read()</code>.</p>
+
+</div>
+</div>
+</div>
+</div>
+                </div>
+            </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/mutable-defaults/" class="u-url">Mutable defaults</a></h1>
                 <div class="metadata">
                     <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
                         A. Coady

@@ -1,5 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pythonicity (Posts about style and conventions)</title><link>https://coady.github.io/</link><description></description><atom:link href="https://coady.github.io/categories/cat_style.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2020 &lt;a href="mailto:aric.coady@gmail.com"&gt;A. Coady&lt;/a&gt; </copyright><lastBuildDate>Mon, 29 Jun 2020 00:35:03 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Mutable defaults</title><link>https://coady.github.io/posts/mutable-defaults/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pythonicity (Posts about style and conventions)</title><link>https://coady.github.io/</link><description></description><atom:link href="https://coady.github.io/categories/cat_style.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2020 &lt;a href="mailto:aric.coady@gmail.com"&gt;A. Coady&lt;/a&gt; </copyright><lastBuildDate>Sun, 05 Jul 2020 21:45:09 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Closing files</title><link>https://coady.github.io/posts/closing-files/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h2 id="Contrarian-view-on-closing-files."&gt;Contrarian view on closing files.&lt;a class="anchor-link" href="https://coady.github.io/posts/closing-files/#Contrarian-view-on-closing-files."&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;It has become conventional wisdom to always explicitly close file-like objects, via context managers.
+The &lt;a href="https://google.github.io/styleguide/pyguide.html#311-files-and-sockets"&gt;google style guide&lt;/a&gt;
+is representative:&lt;/p&gt;
+&lt;blockquote&gt;&lt;p&gt;Explicitly close files and sockets when done with them.
+Leaving files, sockets or other file-like objects open unnecessarily has many downsides, including:&lt;/p&gt;
+&lt;p&gt;They may consume limited system resources, such as file descriptors.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Code that deals with many such objects may exhaust those resources unnecessarily if they're not returned to the system promptly after use.&lt;/li&gt;
+&lt;li&gt;Holding files open may prevent other actions being performed on them, such as moves or deletion.&lt;/li&gt;
+&lt;li&gt;Files and sockets that are shared throughout a program may inadvertantly be read from or written to after logically being closed. If they are actually closed, attempts to read or write from them will throw exceptions, making the problem known sooner.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Furthermore, while files and sockets are automatically closed when the file object is destructed, tying the life-time of the file object to the state of the file is poor practice, for several reasons:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;There are no guarantees as to when the runtime will actually run the file's destructor. Different Python implementations use different memory management techniques, such as delayed Garbage Collection, which may increase the object's lifetime arbitrarily and indefinitely.&lt;/li&gt;
+&lt;li&gt;Unexpected references to the file may keep it around longer than intended (e.g. in tracebacks of exceptions, inside globals, etc).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The preferred way to manage files is using the "with" statement:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;with open("hello.txt") as hello_file:
+    for line in hello_file:
+        print line&lt;/code&gt;&lt;/pre&gt;
+&lt;/blockquote&gt;
+&lt;h3 id="In-theory"&gt;In theory&lt;a class="anchor-link" href="https://coady.github.io/posts/closing-files/#In-theory"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;Good points, and why limit this advice to file descriptors?  Any resource may be limited or require exclusivity;  that's why they're called resources.  Similarly one should always explicitly call &lt;code&gt;dict.clear&lt;/code&gt; when finished with a &lt;code&gt;dict&lt;/code&gt;.  After all, "there are no guarantees as to when the runtime will actually run the &amp;lt;object's&amp;gt; destructor.  And "code that deals with many such objects may exhaust those resources unnecessarily", such as memory, or whatever else is in the &lt;code&gt;dict&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;But in all seriousness, this advice is applying a notably higher standard of premature optimization to file descriptors than to any other kind of resource.  There are plenty of Python projects that are guaranteed to run on CPython for a variety of reasons, where destructors are immediately called.  And there are plenty of Python projects where file descriptor usage is just a non-issue.  It's now depressingly commonplace to see this in &lt;code&gt;setup.py&lt;/code&gt; files:&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [ ]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+    &lt;div class="input_area"&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"README.md"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;readme&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;long_description&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;readme&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;Let's consider a practical example: a &lt;code&gt;load&lt;/code&gt; function which is supposed to read and parse data given a file path.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [ ]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+    &lt;div class="input_area"&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;csv&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;json&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;load&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filepath&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="sd"&gt;"""the supposedly bad way"""&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;json&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;load&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filepath&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;load&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filepath&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="sd"&gt;"""the supposedly good way"""&lt;/span&gt;
+    &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filepath&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;file&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;json&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;load&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;file&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;load&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filepath&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="sd"&gt;"""with a different file format"""&lt;/span&gt;
+    &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filepath&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;file&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;csv&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reader&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;file&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;Which versions work correctly?  Are you sure?  If it's not immediately obvious why one of these is broken, that's the point.  In fact, it's worth trying out before reading on.&lt;/p&gt;
+&lt;p&gt;...&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;csv&lt;/code&gt; version returns an iterator over a closed file.  It's a violation of procedural abstraction to know whether the result of &lt;code&gt;load&lt;/code&gt; is lazily evaluated or not; it's just supposed to implement an interface.  Moreover, according to this best practice, it's &lt;em&gt;impossible&lt;/em&gt; to write the &lt;code&gt;csv&lt;/code&gt; version correctly.  As absurd as it sounds, it's just an abstraction that can't exist.&lt;/p&gt;
+&lt;p&gt;Defiantly clever readers are probably already trying to fix it.  Maybe like this:&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [ ]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+    &lt;div class="input_area"&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;load&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filepath&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filepath&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;file&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;yield from&lt;/span&gt; &lt;span class="n"&gt;csv&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reader&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;file&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;No, it will not be fixed.  This version only appears to work by &lt;em&gt;not&lt;/em&gt; closing the file until the generator is exhausted or collected.&lt;/p&gt;
+&lt;p&gt;This trivial example has deeper implications.  If one accepts this practice, then one must also accept that storing a file handle anywhere, such as on an instance, is also disallowed.  Unless of course that object then virally implements it owns context manager, ad infinitum.&lt;/p&gt;
+&lt;p&gt;Furthermore it demonstrates that often the context is not being managed locally.  If a file object is passed another function, then it's being used outside of the context.  Let's revisit the &lt;code&gt;json&lt;/code&gt; version, which works because the file is fully read.  Doesn't a json parser have some expensive parsing to do after it's read the file?  It might even throw an error.  And isn't it be desirable, trivial, &lt;a href="https://github.com/python/cpython/blob/master/Lib/json/__init__.py#L274"&gt;and likely&lt;/a&gt; that the implementation releases interest in the file as soon as possible?&lt;/p&gt;
+&lt;p&gt;So in reality there are scenarios where the supposedly good way could keep the file open &lt;em&gt;longer&lt;/em&gt; than the supposedly bad way.  The original inline version does exactly what it's supposed to do: close the file when all interested parties are done with it.  Python uses garbage collection to manage shared resources.  Any attempt to pretend otherwise will result in code that is broken, inefficient, or reinventing reference counting.&lt;/p&gt;
+&lt;p&gt;A true believer now has to accept that &lt;code&gt;json.load&lt;/code&gt; is a useless and dangerous wrapper, and that the only correct implementation is:&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [ ]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+    &lt;div class="input_area"&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;load&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filepath&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filepath&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;file&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;contents&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;file&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;json&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;loads&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;contents&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;This line of reasoning reduces to the absurd: a file should never be passed or stored anywhere.  Next an example where the practice has caused real-world damage.&lt;/p&gt;
+&lt;h3 id="In-practice"&gt;In practice&lt;a class="anchor-link" href="https://coady.github.io/posts/closing-files/#In-practice"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;&lt;a href="https://requests.readthedocs.io/en/master/"&gt;Requests&lt;/a&gt; is one of the most popular python packages, and &lt;a href="https://docs.python.org/3/library/http.client.html#module-http.client"&gt;officially recommended&lt;/a&gt;.  It includes a &lt;a href="http://requests.readthedocs.org/en/latest/user/advanced/#session-objects"&gt;Session&lt;/a&gt; object which supports closing via a context manager.  The vast majority of real-world code uses the the top-level functions or single-use sessions.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [ ]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+    &lt;div class="input_area"&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;requests&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="n"&gt;requests&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Session&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;session&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;session&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;Sessions manage the connection pool, so this pattern of usage is establishing a new connection every time.  There are popular standard API clients which seriously do this, for every single request to the same endpoint.&lt;/p&gt;
+&lt;p&gt;Requests' documentation prominently states that "Keep-alive and HTTP connection pooling are 100% automatic".  So part of the blame may lay with that phrasing, since it's only "automatic" if sessions are reused.  But surely a large part of the blame is the dogma of closing sockets, and therefore sessions, explicitly.
+The whole point of a connection pool is that it may leave connections open, so users who genuinely need this granularity are working at the wrong abstraction layer.  &lt;code&gt;http.client&lt;/code&gt; is already builtin for that level of control.&lt;/p&gt;
+&lt;p&gt;Tellingly, requests' own top-level functions didn't always close sessions.  There's a long history to that code, including a &lt;a href="https://github.com/kennethreitz/requests/commit/3155bc99362a8c6ab136b6a3bb999732617cd2e5"&gt;version that only closed sessions on success&lt;/a&gt;.  An older version was &lt;a href="https://github.com/kennethreitz/requests/issues/1882"&gt;causing warnings&lt;/a&gt;, when run to check for such warnings, and was being blamed for the &lt;em&gt;appearance&lt;/em&gt; of &lt;a href="https://github.com/kennethreitz/requests/issues/1685"&gt;leaking memory&lt;/a&gt;.  Those threads are essentially debating whether a resource pool is "leaking" resources.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h3 id="Truce"&gt;Truce&lt;a class="anchor-link" href="https://coady.github.io/posts/closing-files/#Truce"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;Prior to &lt;code&gt;with&lt;/code&gt; being introduced in Python 2.5, it was &lt;em&gt;not&lt;/em&gt; recommended that inlined reading of a file required a &lt;code&gt;try... finally&lt;/code&gt; block.  Far from it, in the past idioms like &lt;code&gt;open(...).read()&lt;/code&gt; and &lt;code&gt;for line in open(...)&lt;/code&gt; were lauded for being succinct and expressive.  But if all this orphaned file descriptor paranoia was well-founded, it would have been a problem back then too.&lt;/p&gt;
+&lt;p&gt;Finally, let's address readability.  It could be argued (though it rarely is) that showing the reader when the file is closed has inherent value.  Conveniently, that tends to align with having opened the file for writing anyway, thereby needing a reference to it.  In which case, the readability is approximately equal, and potential pitfalls are more realistic.  But readability is genuinely lost when the file would have been opened in a inline expression.&lt;/p&gt;
+&lt;p&gt;The best practice is unjustifiably special-casing file descriptors, and not seeing its own reasoning through to its logical conclusion.  This author proposes advocating for &lt;em&gt;anonymous read-only&lt;/em&gt; &lt;code&gt;open&lt;/code&gt; expressions.  Your setup script is not going to run out of file descriptors because you wrote &lt;code&gt;open("README.md").read()&lt;/code&gt;.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/div&gt;</description><guid>https://coady.github.io/posts/closing-files/</guid><pubDate>Sun, 05 Jul 2020 07:00:00 GMT</pubDate></item><item><title>Mutable defaults</title><link>https://coady.github.io/posts/mutable-defaults/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;h2 id="Contrarian-view-on-mutable-default-arguments."&gt;Contrarian view on mutable default arguments.&lt;a class="anchor-link" href="https://coady.github.io/posts/mutable-defaults/#Contrarian-view-on-mutable-default-arguments."&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The use of &lt;a href="https://docs.python-guide.org/writing/gotchas/#mutable-default-arguments"&gt;mutable defaults&lt;/a&gt; is probably the most infamous Python gotcha.  Default values are evaluated at definition time, which means mutating them will be persistent across multiple calls.  Many articles on this topic even use the same &lt;code&gt;append&lt;/code&gt; example.&lt;/p&gt;
