@@ -1,5 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pythonicity</title><link>https://coady.github.io/</link><description>the quality of being Pythonic</description><atom:link href="https://coady.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2020 &lt;a href="mailto:aric.coady@gmail.com"&gt;A. Coady&lt;/a&gt; </copyright><lastBuildDate>Sun, 05 Jul 2020 21:45:09 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Closing files</title><link>https://coady.github.io/posts/closing-files/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pythonicity</title><link>https://coady.github.io/</link><description>the quality of being Pythonic</description><atom:link href="https://coady.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2020 &lt;a href="mailto:aric.coady@gmail.com"&gt;A. Coady&lt;/a&gt; </copyright><lastBuildDate>Mon, 06 Jul 2020 17:47:13 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>GraphQL - ORM</title><link>https://coady.github.io/posts/graphql-orm/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h2 id="GraphQL-is-the-new-ORM."&gt;GraphQL is the new ORM.&lt;a class="anchor-link" href="https://coady.github.io/posts/graphql-orm/#GraphQL-is-the-new-ORM."&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;a href="https://en.wikipedia.org/wiki/Representational_state_transfer"&gt;REST&lt;/a&gt; and &lt;a href="https://en.wikipedia.org/wiki/Object-relational_mapping"&gt;ORMs&lt;/a&gt; are both infamous for:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;over-fetching: fetching more data than is needed per request&lt;/li&gt;
+&lt;li&gt;under-fetching: fetching less data than is needed, requiring multiple requests&lt;/li&gt;
+&lt;li&gt;select N+1 problem: under-fetching applied to multiple associated objects&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;a href="https://en.wikipedia.org/wiki/GraphQL"&gt;GraphQL&lt;/a&gt; aims to overcome REST's shortcomings through a flexible query language, and succeeds in doing so on the client side.  But on the server side, GraphQL resolvers have effectively recreated the same over- and under- fetching problems that have long plagued ORMs.  The fact that ORMs remain popular despite of their inefficiency is a testament to the benefits of having in-memory objects behave consistently.  There is no such trade-off for server-side GraphQL, where the only point of the objects is to be immediately serialized.&lt;/p&gt;
+&lt;p&gt;The so-called &lt;a href="https://engineering.shopify.com/blogs/engineering/solving-the-n-1-problem-for-graphql-through-batching"&gt;N+1 problem&lt;/a&gt; is generally acknowledged in the GraphQL community, but this article will argue only the symptoms are being addressed with workarounds like &lt;a href="https://github.com/graphql/dataloader"&gt;dataloader&lt;/a&gt;.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h3 id="Example"&gt;Example&lt;a class="anchor-link" href="https://coady.github.io/posts/graphql-orm/#Example"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;The problems can be seen immediately in GraphQL's own introductory &lt;a href="https://graphql.org/learn/execution/#root-fields-resolvers"&gt;resolver example&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nx"&gt;Query&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="nx"&gt;human&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;context&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;info&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;context&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;db&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;loadHumanByID&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;args&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;id&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;then&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+      &lt;span class="nx"&gt;userData&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Human&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;userData&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="nx"&gt;Human&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="nx"&gt;name&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;context&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;info&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;name&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;What makes the &lt;code&gt;name&lt;/code&gt; resolver trivial?  It's pre-fetched by &lt;code&gt;loadHumanByID&lt;/code&gt;, whose only parameter is &lt;code&gt;id&lt;/code&gt;, so it's clearly unaware of whether &lt;code&gt;name&lt;/code&gt; has been requested.  What if the requested field was a nested object, or a json field, or just a large text blob?  Then one would clearly be directed towards using a non-trivial resolver which fetches the field on demand.  Of course, but then whatever work is common in the human &lt;code&gt;id&lt;/code&gt; lookup is duplicated.&lt;/p&gt;
+&lt;p&gt;This is by no means specific to SQL or relational databases, but SQL is a convenient lingua franca of databases to demonstrate the inefficiency.  The choices are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;SELECT * FROM human WHERE id = ?&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;SELECT field FROM human WHERE id = ?&lt;/code&gt; repeated for each "expensive" field&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Even in the simplest possible example, over-fetching has already occurred, and the only proposed workaround is under-fetching.  The single query we want is:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;SELECT f1, f2, ... FROM human WHERE id = ?&lt;/code&gt; for requested fields&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In other words, exactly what happens with ORMs, except even ORMs typically offer an option of requesting a subset of fields.  Naturally the problem gets worse with list fields.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nx"&gt;Human&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="nx"&gt;appearsIn&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;appearsIn&lt;/span&gt; &lt;span class="c1"&gt;// returns [ 4, 5, 6 ]&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="nx"&gt;Human&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="nx"&gt;starships&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;context&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;info&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;starshipIDs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+      &lt;span class="nx"&gt;id&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;context&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;db&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;loadStarshipByID&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;id&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;then&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+        &lt;span class="nx"&gt;shipData&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Starship&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;shipData&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now there are two sets of associate keys (&lt;code&gt;.appearsIn&lt;/code&gt; and &lt;code&gt;.starshipIDs&lt;/code&gt;) that have been over-fetched.  Nonetheless &lt;code&gt;starships&lt;/code&gt; is  under-fetched as well.  The &lt;code&gt;starships&lt;/code&gt; resolver is neither the most efficient nor the simplest way of resolving this field:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;fetch all the data by human &lt;code&gt;id&lt;/code&gt; in the &lt;code&gt;starships&lt;/code&gt; resolver&lt;/li&gt;
+&lt;li&gt;fetch all the data in bulk by &lt;code&gt;starshipIDs&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;push the resolution down to the &lt;code&gt;Starship&lt;/code&gt; layer if forced to fetch one at a time&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The example implementation seems to be going out of its way to showcase JavaScript promises.  And the assumptions being made about the underlying data store are unusual:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The data is relational in nature.&lt;/li&gt;
+&lt;li&gt;Associative keys have neglible cost to pre-fetch.&lt;/li&gt;
+&lt;li&gt;But joins are not available.&lt;/li&gt;
+&lt;li&gt;And neither are &lt;code&gt;primary key in&lt;/code&gt; queries.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h3 id="Workaround"&gt;Workaround&lt;a class="anchor-link" href="https://coady.github.io/posts/graphql-orm/#Workaround"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;From GraphQL's &lt;a href="https://graphql.org/learn/best-practices/#server-side-batching-caching"&gt;best practices&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;&lt;p&gt;GraphQL is designed in a way that allows you to write clean code on the server, where every field on every type has a focused single-purpose function for resolving that value. However without additional consideration, a naive GraphQL service could be very "chatty" or repeatedly load data from your databases.&lt;/p&gt;
+&lt;p&gt;This is commonly solved by a batching technique, where multiple requests for data from a backend are collected over a short period of time and then dispatched in a single request to an underlying database or microservice by using a tool like Facebook's DataLoader.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;That's an understatement.  It's not clear how "naive" differs from best practice.&lt;/p&gt;
+&lt;p&gt;Clearly there is value in transforming multiple &lt;code&gt;primary key =&lt;/code&gt; queries into a single &lt;code&gt;primary key in&lt;/code&gt; query.  As in the &lt;code&gt;starships&lt;/code&gt; example however, that can be done more simply in the parent resolver.  There is more value in not needing a &lt;code&gt;primary key in&lt;/code&gt; query at all.  Furthermore adding caching to a dataloader avoids the central issue.&lt;/p&gt;
+&lt;p&gt;Again reminiscent of ORMS, any data layer can add caching.  The point is efficiently resolving a query requires context, which strict adherence to single-purpose resolvers explictly disregards.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h3 id="Aggregation"&gt;Aggregation&lt;a class="anchor-link" href="https://coady.github.io/posts/graphql-orm/#Aggregation"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;The inefficencies becomes even more glaring when moving beyond associative keys.  Nearly any aggregation requires knowing what summaries are requested.  Such as if the &lt;code&gt;appearsIn&lt;/code&gt; field optionally included counts or times.  Using SQL as an example again, the query would resemble one of:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;SELECT distinct field FROM ...&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;SELECT field, count(*) FROM ... GROUP BY field&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The conditional logic &lt;code&gt;if "count" in requested_fields&lt;/code&gt; must exist in some form in the code, because the alternatives are over-fetching or under-fetching.  Both of which are far more inefficient in this scenario than in the "select N+1" problem.  A dataloader-esque approach is not going to be applicable to "group by" operations.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h3 id="Computation"&gt;Computation&lt;a class="anchor-link" href="https://coady.github.io/posts/graphql-orm/#Computation"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;One last generalized example: computed fields.  What are typically query flags in REST (and &lt;a href="https://en.wikipedia.org/wiki/Remote_procedure_call"&gt;RPC&lt;/a&gt;) APIs, become field selections in GraphQL.&lt;/p&gt;
+&lt;p&gt;For example, computing scores in a search engine interface.  Instead of a &lt;code&gt;scores: Boolean! = false&lt;/code&gt; input option, the more obvious approach would be to skip score calculation when the &lt;code&gt;score&lt;/code&gt; field isn't requested.&lt;/p&gt;
+&lt;p&gt;As with aggregation, the same pattern recurs.  It's unacceptable to over-fetch, i.e., compute the scores when not needed.  It's worse still to under-fetch, i.e., run some sort of lean search that will find matches and then go back and compute scores later.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h3 id="Solution"&gt;Solution&lt;a class="anchor-link" href="https://coady.github.io/posts/graphql-orm/#Solution"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;The inescapable conclusion is that in some cases parent resolvers need to know which of their children are being requested.  There's no need to throw away GraphQL's server-side resolver hierarchy.  No one is advocating a thousand line root resolver named &lt;code&gt;RunIt&lt;/code&gt; that processes the entire query.&lt;/p&gt;
+&lt;p&gt;All that's needed is a conceptual shift which encourages introspecting the &lt;code&gt;GraphQLResolveInfo&lt;/code&gt; object.  The requested fields are right there waiting to be useful, but good luck finding documentation and examples to that effect.  In every non-trivial GraphQL project, this author has used a utility like:&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [ ]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+    &lt;div class="input_area"&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;selections&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;node&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="sd"&gt;"""Return tree of field name selections."""&lt;/span&gt;
+    &lt;span class="n"&gt;nodes&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;getattr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;node&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;selection_set&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'selections'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[])&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;node&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;selections&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;node&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;nodes&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;Those fields would be checked or passed to a data layer as needed.  For example, in &lt;a href="https://www.djangoproject.com"&gt;Django's&lt;/a&gt; ORM, it could be as simple as appending a query set with &lt;code&gt;.values(*selections(*info.nodes))&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Well, almost.  The next issue is that typical GraphQL model validators raise an error if required fields are missing.  Thanks validator; the field is missing because the client didn't request it.&lt;/p&gt;
+&lt;p&gt;This is actually a different age-old problem: equivocating "optional" and "nullable".  GraphQL requires populating all requested fields, and specifiying whether they may be null.  Server-side implementations understandably, but still incorrectly, interpret that by making nullables optional and non-nullables required at the model layer.  So typically it's necessary to pad resolved objects with empty (but not null) data.&lt;/p&gt;
+&lt;p&gt;Although a minor problem, it reveals the bias related to single-purpose resolvers.  The point of GraphQL is to efficiently return only the requested fields, yet standard practice in GraphQL models is to require populating fields that haven't been requested.&lt;/p&gt;
+&lt;p&gt;Over- and under- fetching can be addressed directly in resolvers, with the data layer's own interface, instead of hidden behind another abstraction layer.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/div&gt;</description><guid>https://coady.github.io/posts/graphql-orm/</guid><pubDate>Mon, 06 Jul 2020 07:00:00 GMT</pubDate></item><item><title>Closing files</title><link>https://coady.github.io/posts/closing-files/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;h2 id="Contrarian-view-on-closing-files."&gt;Contrarian view on closing files.&lt;a class="anchor-link" href="https://coady.github.io/posts/closing-files/#Contrarian-view-on-closing-files."&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;It has become conventional wisdom to always explicitly close file-like objects, via context managers.
@@ -111,7 +261,7 @@ Leaving files, sockets or other file-like objects open unnecessarily has many do
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;p&gt;No, it will not be fixed.  This version only appears to work by &lt;em&gt;not&lt;/em&gt; closing the file until the generator is exhausted or collected.&lt;/p&gt;
 &lt;p&gt;This trivial example has deeper implications.  If one accepts this practice, then one must also accept that storing a file handle anywhere, such as on an instance, is also disallowed.  Unless of course that object then virally implements it owns context manager, ad infinitum.&lt;/p&gt;
-&lt;p&gt;Furthermore it demonstrates that often the context is not being managed locally.  If a file object is passed another function, then it's being used outside of the context.  Let's revisit the &lt;code&gt;json&lt;/code&gt; version, which works because the file is fully read.  Doesn't a json parser have some expensive parsing to do after it's read the file?  It might even throw an error.  And isn't it be desirable, trivial, &lt;a href="https://github.com/python/cpython/blob/master/Lib/json/__init__.py#L274"&gt;and likely&lt;/a&gt; that the implementation releases interest in the file as soon as possible?&lt;/p&gt;
+&lt;p&gt;Furthermore it demonstrates that often the context is not being managed locally.  If a file object is passed another function, then it's being used outside of the context.  Let's revisit the &lt;code&gt;json&lt;/code&gt; version, which works because the file is fully read.  Doesn't a json parser have some expensive parsing to do after it's read the file?  It might even throw an error.  And isn't it desirable, trivial, &lt;a href="https://github.com/python/cpython/blob/master/Lib/json/__init__.py#L274"&gt;and likely&lt;/a&gt; that the implementation releases interest in the file as soon as possible?&lt;/p&gt;
 &lt;p&gt;So in reality there are scenarios where the supposedly good way could keep the file open &lt;em&gt;longer&lt;/em&gt; than the supposedly bad way.  The original inline version does exactly what it's supposed to do: close the file when all interested parties are done with it.  Python uses garbage collection to manage shared resources.  Any attempt to pretend otherwise will result in code that is broken, inefficient, or reinventing reference counting.&lt;/p&gt;
 &lt;p&gt;A true believer now has to accept that &lt;code&gt;json.load&lt;/code&gt; is a useless and dangerous wrapper, and that the only correct implementation is:&lt;/p&gt;
 
@@ -174,7 +324,7 @@ The whole point of a connection pool is that it may leave connections open, so u
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;h3 id="Truce"&gt;Truce&lt;a class="anchor-link" href="https://coady.github.io/posts/closing-files/#Truce"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;Prior to &lt;code&gt;with&lt;/code&gt; being introduced in Python 2.5, it was &lt;em&gt;not&lt;/em&gt; recommended that inlined reading of a file required a &lt;code&gt;try... finally&lt;/code&gt; block.  Far from it, in the past idioms like &lt;code&gt;open(...).read()&lt;/code&gt; and &lt;code&gt;for line in open(...)&lt;/code&gt; were lauded for being succinct and expressive.  But if all this orphaned file descriptor paranoia was well-founded, it would have been a problem back then too.&lt;/p&gt;
-&lt;p&gt;Finally, let's address readability.  It could be argued (though it rarely is) that showing the reader when the file is closed has inherent value.  Conveniently, that tends to align with having opened the file for writing anyway, thereby needing a reference to it.  In which case, the readability is approximately equal, and potential pitfalls are more realistic.  But readability is genuinely lost when the file would have been opened in a inline expression.&lt;/p&gt;
+&lt;p&gt;Finally, let's address readability.  It could be argued (though it rarely is) that showing the reader when the file is closed has inherent value.  Conveniently, that tends to align with having opened the file for writing anyway, thereby needing an reference to it.  In which case, the readability is approximately equal, and potential pitfalls are more realistic.  But readability is genuinely lost when the file would have been opened in a inline expression.&lt;/p&gt;
 &lt;p&gt;The best practice is unjustifiably special-casing file descriptors, and not seeing its own reasoning through to its logical conclusion.  This author proposes advocating for &lt;em&gt;anonymous read-only&lt;/em&gt; &lt;code&gt;open&lt;/code&gt; expressions.  Your setup script is not going to run out of file descriptors because you wrote &lt;code&gt;open("README.md").read()&lt;/code&gt;.&lt;/p&gt;
 
 &lt;/div&gt;
@@ -2755,370 +2905,4 @@ FizzBuzz
 
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;/div&gt;</description><guid>https://coady.github.io/posts/fizz-buzz/</guid><pubDate>Sun, 25 Mar 2018 07:00:00 GMT</pubDate></item><item><title>Cheryl's Birthday</title><link>https://coady.github.io/posts/cheryls-birthday/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h3 id="How-to-solve-the-Cheryl's-Birthday-puzzle-programmatically."&gt;How to solve the &lt;a href="https://en.wikipedia.org/wiki/Cheryl's_Birthday"&gt;Cheryl's Birthday&lt;/a&gt; puzzle programmatically.&lt;a class="anchor-link" href="https://coady.github.io/posts/cheryls-birthday/#How-to-solve-the-Cheryl's-Birthday-puzzle-programmatically."&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;blockquote&gt;&lt;ol&gt;
-&lt;li&gt;Albert and Bernard just became friends with Cheryl, and they want to know when her birthday is. Cheryl gave them a list of 10 possible dates:
-&lt;pre&gt;&lt;code&gt; May 15     May 16     May 19
-June 17    June 18
-July 14    July 16
-August 14  August 15  August 17&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;Cheryl then tells Albert and Bernard separately the month and the day of the birthday respectively.&lt;/li&gt;
-&lt;li&gt;Albert: I don't know when Cheryl's birthday is, but I know that Bernard does not know too.&lt;/li&gt;
-&lt;li&gt;Bernard: At first I don't know when Cheryl's birthday is, but I know now.&lt;/li&gt;
-&lt;li&gt;Albert: Then I also know when Cheryl's birthday is.&lt;/li&gt;
-&lt;li&gt;So when is Cheryl's birthday?&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;As with the &lt;a href="https://github.com/norvig/pytudes/blob/master/ipynb/Cheryl.ipynb"&gt;pytudes solution&lt;/a&gt;, the goal is to solve the puzzle in code.  A different approach is taken here though, for simplicity and extensibility.&lt;/p&gt;
-&lt;p&gt;The first step is to model the data.  A &lt;code&gt;set&lt;/code&gt; of &lt;code&gt;Date&lt;/code&gt; objects is suitable to represent the current possible dates.  Since &lt;code&gt;datetime.date&lt;/code&gt; objects require a year, a minimal &lt;code&gt;collections.namedtuple&lt;/code&gt; is used instead.&lt;/p&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [1]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-    &lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;typing&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;NamedTuple&lt;/span&gt;
-
-&lt;span class="n"&gt;DATES&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'May 15'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;    &lt;span class="s1"&gt;'May 16'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;    &lt;span class="s1"&gt;'May 19'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-        &lt;span class="s1"&gt;'June 17'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;   &lt;span class="s1"&gt;'June 18'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-        &lt;span class="s1"&gt;'July 14'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;   &lt;span class="s1"&gt;'July 16'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-      &lt;span class="s1"&gt;'August 14'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'August 15'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'August 17'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-
-&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Date&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;NamedTuple&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="n"&gt;month&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;
-    &lt;span class="n"&gt;day&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;
-
-    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="fm"&gt;__repr__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;' '&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;  &lt;span class="c1"&gt;# pretty printing&lt;/span&gt;
-&lt;span class="n"&gt;DATES&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;Date&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;date&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;split&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;date&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;DATES&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;span class="n"&gt;DATES&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-    &lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-
-
-&lt;div class="output_area"&gt;
-
-    &lt;div class="prompt output_prompt"&gt;Out[1]:&lt;/div&gt;
-
-
-
-
-&lt;div class="output_text output_subarea output_execute_result"&gt;
-&lt;pre&gt;{August 14,
- August 15,
- August 17,
- July 14,
- July 16,
- June 17,
- June 18,
- May 15,
- May 16,
- May 19}&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;As is typical of these kinds of puzzles, it assumes all participants have perfect &lt;a href="https://en.wikipedia.org/wiki/Theory_of_mind"&gt;Theory of Mind&lt;/a&gt;.  That is, each participant making a statement is applying their private knowledge to what is publicly known, and assuming everyone else will do the same.  With that in mind, the claims made fall into 3 categories:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;I know ...&lt;/li&gt;
-&lt;li&gt;I don't know ...&lt;/li&gt;
-&lt;li&gt;They don't know ...&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The temporal variations "now" and "at first" can be modeled by the current set of dates.  Any claim then can be implemented functionally in this form:&lt;/p&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [2]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-    &lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;claim&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dates&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-    &lt;span class="sd"&gt;"""Return subset of possible dates which would make the claim true.&lt;/span&gt;
-&lt;span class="sd"&gt;    &lt;/span&gt;
-&lt;span class="sd"&gt;    :param field: the field known by the claimant&lt;/span&gt;
-&lt;span class="sd"&gt;    :param dates: the current set of dates publicly known&lt;/span&gt;
-&lt;span class="sd"&gt;    """&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-    &lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;So what does it mean for Albert or Bernard to "know" the correct date?  It would mean applying their knowledge of the month or day leaves only one possibility.  The "I know ..." function therefore groups and filters for uniqueness.&lt;/p&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [3]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-    &lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;collections&lt;/span&gt;
-
-&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;known&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dates&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="sd"&gt;"""Return subset of possible dates which would make the claim "I know ..." true."""&lt;/span&gt;
-    &lt;span class="n"&gt;counts&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;collections&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Counter&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;getattr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;date&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;date&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;dates&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;date&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;date&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;dates&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;counts&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nb"&gt;getattr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;date&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-
-&lt;span class="c1"&gt;# test what is already publicly known&lt;/span&gt;
-&lt;span class="k"&gt;assert&lt;/span&gt; &lt;span class="n"&gt;known&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'month'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;DATES&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;span class="n"&gt;known&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'day'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;DATES&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-    &lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-
-
-&lt;div class="output_area"&gt;
-
-    &lt;div class="prompt output_prompt"&gt;Out[3]:&lt;/div&gt;
-
-
-
-
-&lt;div class="output_text output_subarea output_execute_result"&gt;
-&lt;pre&gt;{June 18, May 19}&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;To implement "I don't know ...", &lt;code&gt;known&lt;/code&gt; could be parametrized with a different predicate (&lt;code&gt;&amp;gt; 1&lt;/code&gt;), or simply use  &lt;code&gt;set.difference&lt;/code&gt;.  "I don't know ..." is so trivial it's arguably not worth the abstraction.&lt;/p&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [4]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-    &lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;unknown&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dates&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="sd"&gt;"""Return subset of possible dates which would make the claim "I don't know ..." true."""&lt;/span&gt;
-    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;dates&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;known&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dates&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-    &lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;The challenging part is what does it mean for Albert to claim Bernard doesn't know.  All dates that would be knowable to Bernard must clearly be excluded, but Albert would have to exclude them based on his knowledge of the month.  So "They don't know ..." is similar to &lt;code&gt;unknown&lt;/code&gt;, but the exclusion is based on a different field.&lt;/p&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [5]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-    &lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;unknowable&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dates&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="sd"&gt;"""Return subset of possible dates which would make the claim "They don't know ..." true."""&lt;/span&gt;
-    &lt;span class="n"&gt;other&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Date&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;_fields&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-    &lt;span class="n"&gt;exclude&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nb"&gt;getattr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;date&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;date&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;known&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;other&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dates&lt;/span&gt;&lt;span class="p"&gt;)}&lt;/span&gt;
-    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;date&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;date&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;dates&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;getattr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;date&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;exclude&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-    &lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;This is sufficient to simply walk through the statements, one at a time.&lt;/p&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [6]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-    &lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# Albert: I don't know when Cheryl's birthday is, but I know that Bernard does not know too.&lt;/span&gt;
-&lt;span class="n"&gt;dates&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;unknown&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'month'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;DATES&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="k"&gt;assert&lt;/span&gt; &lt;span class="n"&gt;dates&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;DATES&lt;/span&gt;  &lt;span class="c1"&gt;# already public known&lt;/span&gt;
-&lt;span class="n"&gt;dates&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;unknowable&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'month'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dates&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;dates&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-    &lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-
-
-&lt;div class="output_area"&gt;
-
-    &lt;div class="prompt output_prompt"&gt;Out[6]:&lt;/div&gt;
-
-
-
-
-&lt;div class="output_text output_subarea output_execute_result"&gt;
-&lt;pre&gt;{August 14, August 15, August 17, July 14, July 16}&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [7]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-    &lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# Bernard: At first I don't know when Cheryl's birthday is, but I know now.&lt;/span&gt;
-&lt;span class="k"&gt;assert&lt;/span&gt; &lt;span class="n"&gt;dates&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;isdisjoint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;known&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'day'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;DATES&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;  &lt;span class="c1"&gt;# already claimed by Albert&lt;/span&gt;
-&lt;span class="n"&gt;dates&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;known&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'day'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dates&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;dates&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-    &lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-
-
-&lt;div class="output_area"&gt;
-
-    &lt;div class="prompt output_prompt"&gt;Out[7]:&lt;/div&gt;
-
-
-
-
-&lt;div class="output_text output_subarea output_execute_result"&gt;
-&lt;pre&gt;{August 15, August 17, July 16}&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [8]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-    &lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# Albert: Then I also know when Cheryl's birthday is.&lt;/span&gt;
-&lt;span class="n"&gt;known&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'month'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dates&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-    &lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-
-
-&lt;div class="output_area"&gt;
-
-    &lt;div class="prompt output_prompt"&gt;Out[8]:&lt;/div&gt;
-
-
-
-
-&lt;div class="output_text output_subarea output_execute_result"&gt;
-&lt;pre&gt;{July 16}&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;Exactly one date is left, indicating success.  Now the succinct in-lined version, with no superfluous statements.&lt;/p&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [9]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-    &lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;known&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'month'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;                        &lt;span class="c1"&gt;# Albert: I know&lt;/span&gt;
-    &lt;span class="n"&gt;known&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'day'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;                      &lt;span class="c1"&gt;# Bernard: I know&lt;/span&gt;
-        &lt;span class="n"&gt;unknowable&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'month'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;DATES&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;  &lt;span class="c1"&gt;# Albert: Bernard doesn't know&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-    &lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-
-
-&lt;div class="output_area"&gt;
-
-    &lt;div class="prompt output_prompt"&gt;Out[9]:&lt;/div&gt;
-
-
-
-
-&lt;div class="output_text output_subarea output_execute_result"&gt;
-&lt;pre&gt;{July 16}&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;&lt;/div&gt;</description><guid>https://coady.github.io/posts/cheryls-birthday/</guid><pubDate>Tue, 20 Mar 2018 07:00:00 GMT</pubDate></item></channel></rss>
+&lt;/div&gt;&lt;/div&gt;</description><guid>https://coady.github.io/posts/fizz-buzz/</guid><pubDate>Sun, 25 Mar 2018 07:00:00 GMT</pubDate></item></channel></rss>

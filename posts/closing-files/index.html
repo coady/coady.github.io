@@ -26,6 +26,7 @@ MathJax.Hub.Config({
 });
 </script><!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="A. Coady">
 <link rel="prev" href="../mutable-defaults/" title="Mutable defaults" type="text/html">
+<link rel="next" href="../graphql-orm/" title="GraphQL - ORM" type="text/html">
 <meta property="og:site_name" content="Pythonicity">
 <meta property="og:title" content="Closing files">
 <meta property="og:url" content="https://coady.github.io/posts/closing-files/">
@@ -238,7 +239,7 @@ Leaving files, sockets or other file-like objects open unnecessarily has many do
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>No, it will not be fixed.  This version only appears to work by <em>not</em> closing the file until the generator is exhausted or collected.</p>
 <p>This trivial example has deeper implications.  If one accepts this practice, then one must also accept that storing a file handle anywhere, such as on an instance, is also disallowed.  Unless of course that object then virally implements it owns context manager, ad infinitum.</p>
-<p>Furthermore it demonstrates that often the context is not being managed locally.  If a file object is passed another function, then it's being used outside of the context.  Let's revisit the <code>json</code> version, which works because the file is fully read.  Doesn't a json parser have some expensive parsing to do after it's read the file?  It might even throw an error.  And isn't it be desirable, trivial, <a href="https://github.com/python/cpython/blob/master/Lib/json/__init__.py#L274">and likely</a> that the implementation releases interest in the file as soon as possible?</p>
+<p>Furthermore it demonstrates that often the context is not being managed locally.  If a file object is passed another function, then it's being used outside of the context.  Let's revisit the <code>json</code> version, which works because the file is fully read.  Doesn't a json parser have some expensive parsing to do after it's read the file?  It might even throw an error.  And isn't it desirable, trivial, <a href="https://github.com/python/cpython/blob/master/Lib/json/__init__.py#L274">and likely</a> that the implementation releases interest in the file as soon as possible?</p>
 <p>So in reality there are scenarios where the supposedly good way could keep the file open <em>longer</em> than the supposedly bad way.  The original inline version does exactly what it's supposed to do: close the file when all interested parties are done with it.  Python uses garbage collection to manage shared resources.  Any attempt to pretend otherwise will result in code that is broken, inefficient, or reinventing reference counting.</p>
 <p>A true believer now has to accept that <code>json.load</code> is a useless and dangerous wrapper, and that the only correct implementation is:</p>
 
@@ -311,7 +312,7 @@ The whole point of a connection pool is that it may leave connections open, so u
 <h3 id="Truce">Truce<a class="anchor-link" href="#Truce">¶</a>
 </h3>
 <p>Prior to <code>with</code> being introduced in Python 2.5, it was <em>not</em> recommended that inlined reading of a file required a <code>try... finally</code> block.  Far from it, in the past idioms like <code>open(...).read()</code> and <code>for line in open(...)</code> were lauded for being succinct and expressive.  But if all this orphaned file descriptor paranoia was well-founded, it would have been a problem back then too.</p>
-<p>Finally, let's address readability.  It could be argued (though it rarely is) that showing the reader when the file is closed has inherent value.  Conveniently, that tends to align with having opened the file for writing anyway, thereby needing a reference to it.  In which case, the readability is approximately equal, and potential pitfalls are more realistic.  But readability is genuinely lost when the file would have been opened in a inline expression.</p>
+<p>Finally, let's address readability.  It could be argued (though it rarely is) that showing the reader when the file is closed has inherent value.  Conveniently, that tends to align with having opened the file for writing anyway, thereby needing an reference to it.  In which case, the readability is approximately equal, and potential pitfalls are more realistic.  But readability is genuinely lost when the file would have been opened in a inline expression.</p>
 <p>The best practice is unjustifiably special-casing file descriptors, and not seeing its own reasoning through to its logical conclusion.  This author proposes advocating for <em>anonymous read-only</em> <code>open</code> expressions.  Your setup script is not going to run out of file descriptors because you wrote <code>open("README.md").read()</code>.</p>
 
 </div>
@@ -322,6 +323,9 @@ The whole point of a connection pool is that it may leave connections open, so u
     <aside class="postpromonav"><nav><ul class="pager hidden-print">
 <li class="previous">
                 <a href="../mutable-defaults/" rel="prev" title="Mutable defaults">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../graphql-orm/" rel="next" title="GraphQL - ORM">Next post</a>
             </li>
         </ul></nav></aside><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha384-3lJUsx1TJHt7BA4udB5KPnDrlkO8T6J6v/op7ui0BbCjvZ9WqV4Xm6DTP6kQ/iBH" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
 MathJax.Hub.Config({
