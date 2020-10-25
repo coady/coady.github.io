@@ -11,22 +11,10 @@
 <link href="https://fonts.googleapis.com/css?family=Playfair+Display:700,900" rel="stylesheet">
 <meta name="theme-color" content="#5670d4">
 <meta name="generator" content="Nikola (getnikola.com)">
-<link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="rss.xml">
 <link rel="canonical" href="https://coady.github.io/">
 <link rel="next" href="index-1.html" type="text/html">
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-    tex2jax: {
-        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-        processEscapes: true
-    },
-    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
-    "HTML-CSS": {
-        styles: {'.MathJax_Display': {"margin": 0}}
-    }
-});
-</script><!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><link rel="prefetch" href="posts/graphql-orm/" type="text/html">
+<!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><link rel="prefetch" href="posts/graphql-orm/" type="text/html">
 </head>
 <body>
 <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
@@ -43,7 +31,7 @@ MathJax.Hub.Config({
             </div>
         </div>
           <div class="col-md-6 col-xs-10 col-sm-10 bootblog4-brand" style="width: auto;">
-            <a class="navbar-brand blog-header-logo text-dark" href="https://coady.github.io/">
+            <a class="navbar-brand blog-header-logo text-dark" href=".">
 
             <span id="blog-title">Pythonicity</span>
         </a>
@@ -199,7 +187,7 @@ MathJax.Hub.Config({
 </blockquote>
 <p>That's an understatement.  It's not clear how "naive" differs from best practice.</p>
 <p>Clearly there is value in transforming multiple <code>primary key =</code> queries into a single <code>primary key in</code> query.  As in the <code>starships</code> example however, that can be done more simply in the parent resolver.  There is more value in not needing a <code>primary key in</code> query at all.  Furthermore adding caching to a dataloader avoids the central issue.</p>
-<p>Again reminiscent of ORMS, any data layer can add caching.  The point is efficiently resolving a query requires context, which strict adherence to single-purpose resolvers explictly disregards.</p>
+<p>Again reminiscent of ORMs, any data layer can add caching.  The point is efficiently resolving a query requires context, which strict adherence to single-purpose resolvers explictly disregards.</p>
 
 </div>
 </div>
@@ -1703,7 +1691,7 @@ a
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The complicated puzzle is actually a trivial recurrence relation.
+<p>The complicated puzzle is actually a trivial recurrence relation:
 $$
 2^n = 2^{n-1} * 2
 $$
