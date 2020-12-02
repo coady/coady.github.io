@@ -272,7 +272,7 @@
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Notice that the correctness of this code relies on the member list being newly created in either case.  What could possible go wrong with:</p>
+<p>Notice that the correctness of this code relies on the member list being newly created in either case.  What could possibly go wrong with:</p>
 
 </div>
 </div>
@@ -369,9 +369,7 @@ MathJax.Hub.Config({
         <script src="../../assets/js/all-nocdn.js"></script><script>
     baguetteBox.run('div#content', {
         ignoreClass: 'islink',
-        captions: function(element) {
-            return element.getElementsByTagName('img')[0].alt;
-    }});
+        captions: function(element){var i=element.getElementsByTagName('img')[0];return i===undefined?'':i.alt;}});
     </script>
 </body>
 </html>
