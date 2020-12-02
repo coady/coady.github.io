@@ -1,3 +1,5 @@
+[![image](https://github.com/coady/coady.github.io/workflows/build/badge.svg)](https://github.com/coady/coady.github.io/actions)
+
 # Pythonicity
 
 pythonicity | pīˈTHänisədē |
