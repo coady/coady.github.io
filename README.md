@@ -13,6 +13,7 @@ noun</br>
 * [Hat puzzle](posts/hat-puzzle.ipynb)
 * [Coin balance](posts/coin-balance.ipynb)
 * [Water pouring](posts/water-pouring.ipynb)
+* [Hardest logic puzzle ever](posts/hardest-logic-puzzle-ever.ipynb)
 
 ### Interviews
 * [Fizz Buzz](posts/fizz-buzz.ipynb)
