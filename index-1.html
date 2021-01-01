@@ -74,7 +74,303 @@
     
         
     <div class="postindex">
-            <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/cheryls-birthday/" class="u-url">Cheryl's Birthday</a></h1>
+            <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/fizz-buzz/" class="u-url">Fizz Buzz</a></h1>
+                <div class="metadata">
+                    <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                        A. Coady
+                    </span></p>
+            <p class="dateline">
+            <a href="posts/fizz-buzz/" rel="bookmark">
+            <time class="published dt-published" datetime="2018-03-25T00:00:00-07:00" itemprop="datePublished" title="2018-03-25">2018-03-25</time></a>
+            </p>
+                </div>
+            </header><div class="e-content entry-content">
+                    <div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="The-infamously-simple-FizzBuzz-problem.">The infamously simple <a href="https://en.wikipedia.org/wiki/Fizz_buzz#Programming_interviews">FizzBuzz</a> problem.<a class="anchor-link" href="posts/fizz-buzz/#The-infamously-simple-FizzBuzz-problem.">¶</a>
+</h2>
+<p>Reportedly a high percentage of programmer applicants can't solve this quickly.</p>
+<blockquote>
+<p>Write a program that prints the numbers from 1 to 100. But for multiples of three print “Fizz” instead of the number and for the multiples of five print “Buzz”. For numbers which are multiples of both three and five print “FizzBuzz”.</p>
+</blockquote>
+<p>A deep dive on this problem has been done in jest many times, e.g., deliberate over-engineering or <a href="https://en.wikipedia.org/wiki/Code_golf">code golf</a>.  But in all seriousness, let's consider what's the most Pythonic solution.  A truncated version of the common solution:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">16</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">num</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'FizzBuzz'</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">num</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Fizz'</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">num</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Buzz'</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>1
+2
+Fizz
+4
+Buzz
+Fizz
+7
+8
+Fizz
+Buzz
+11
+Fizz
+13
+14
+FizzBuzz
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Naturally interview questions tend to focus on output, e.g. <code>print</code>, but that's no reason to skip over basic abstractions or data structures.  First, this could be written as a generator, to decouple the <code>print</code> operation and parametrize the numeric range.  Alternatively, Python has such strong iterator support that it could also be just a function, ready to be mapped.  So let's reframe the basic solution as:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">fizzbuzz</span><span class="p">(</span><span class="n">stop</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="s1">'FizzBuzz'</span>
+        <span class="k">elif</span> <span class="n">num</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="s1">'Fizz'</span>
+        <span class="k">elif</span> <span class="n">num</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="s1">'Buzz'</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="k">yield</span> <span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+
+<span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fizzbuzz</span><span class="p">(</span><span class="mi">16</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[2]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>'1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Even at this size, it's already violating <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a>, or the <a href="https://en.wikipedia.org/wiki/Rule_of_three_%28computer_programming%29">Rule of 3</a>.  Clearly the same logic is being repeated with different data.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">fizzbuzz</span><span class="p">(</span><span class="n">stop</span><span class="p">):</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="s1">'FizzBuzz'</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">'Fizz'</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">'Buzz'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="nb">next</span><span class="p">((</span><span class="n">text</span> <span class="k">for</span> <span class="n">div</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">items</span> <span class="k">if</span> <span class="n">num</span> <span class="o">%</span> <span class="n">div</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">))</span>
+
+<span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fizzbuzz</span><span class="p">(</span><span class="mi">16</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[3]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>'1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, that variation had to introduce the concept of the <a href="https://en.wikipedia.org/wiki/Least_common_multiple">least common multiple</a>.  Even in such a trivial problem, there's a subtlety in how one interprets requirements.  The final directive to output "FizzBuzz" can be seen as a mere clarification of the previous directives; certainly not a coincidence.  Making this the more obvious solution:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">fizzbuzz</span><span class="p">(</span><span class="n">stop</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s1">''</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">+=</span> <span class="s1">'Fizz'</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">+=</span> <span class="s1">'Buzz'</span>
+        <span class="k">yield</span> <span class="n">text</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+
+<span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fizzbuzz</span><span class="p">(</span><span class="mi">16</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[4]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>'1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Arguably that insight is more important, because its duplication grows exponentially, not linearly.  There's a <code>2**N</code> sized case statement to handle <code>N</code> cases, luckily <code>N == 2</code>.  Adding just one more directive for the number 7 would make the basic solution unwieldy.</p>
+<p>And of course both approaches can be combined.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">fizzbuzz</span><span class="p">(</span><span class="n">stop</span><span class="p">):</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">'Fizz'</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">'Buzz'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span> <span class="k">for</span> <span class="n">div</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">items</span> <span class="k">if</span> <span class="n">num</span> <span class="o">%</span> <span class="n">div</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+
+<span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fizzbuzz</span><span class="p">(</span><span class="mi">16</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>'1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So is that over-engineered?  This author would argue that both deduplication and decoupling logic from data are worth observing.  So maybe at this size the final version isn't necessary, but surely the basic version is not the most Pythonic.</p>
+
+</div>
+</div>
+</div>
+</div>
+                </div>
+            </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/cheryls-birthday/" class="u-url">Cheryl's Birthday</a></h1>
                 <div class="metadata">
                     <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
                         A. Coady
@@ -489,7 +785,7 @@ MathJax.Hub.Config({
     }
 });
 </script><!--End of body content--><footer id="footer">
-            Contents © 2020         <a href="mailto:aric.coady@gmail.com">A. Coady</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            Contents © 2021         <a href="mailto:aric.coady@gmail.com">A. Coady</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
             
             
         </footer>

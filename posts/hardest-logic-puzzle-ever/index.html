@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hardest Logic Puzzle Ever | Pythonicity</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/ipython.min.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/nikola_ipython.css" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Playfair+Display:700,900" rel="stylesheet">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://coady.github.io/posts/hardest-logic-puzzle-ever/">
+<!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="A. Coady">
+<link rel="prev" href="../graphql-orm/" title="GraphQL - ORM" type="text/html">
+<meta property="og:site_name" content="Pythonicity">
+<meta property="og:title" content="Hardest Logic Puzzle Ever">
+<meta property="og:url" content="https://coady.github.io/posts/hardest-logic-puzzle-ever/">
+<meta property="og:description" content="How to solve the Hardest Logic Puzzle Ever programmatically.¶Three gods A, B, and C are called, in no particular order, True, False, and Random. True always speaks truly, False always speaks falsely, ">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-01-01T00:00:00-08:00">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Header and menu bar -->
+<div class="container">
+      <header class="blog-header py-3"><div class="row nbb-header align-items-center">
+          <div class="col-md-3 col-xs-2 col-sm-2" style="width: auto;">
+            <button class="navbar-toggler navbar-light bg-light nbb-navbar-toggler" type="button" data-toggle="collapse" data-target=".bs-nav-collapsible" aria-controls="bs-navbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse bs-nav-collapsible bootblog4-search-form-holder">
+                
+            </div>
+        </div>
+          <div class="col-md-6 col-xs-10 col-sm-10 bootblog4-brand" style="width: auto;">
+            <a class="navbar-brand blog-header-logo text-dark" href="../../">
+
+            <span id="blog-title">Pythonicity</span>
+        </a>
+          </div>
+            <div class="col-md-3 justify-content-end align-items-center bs-nav-collapsible collapse flex-collapse bootblog4-right-nav">
+            <nav class="navbar navbar-light bg-white"><ul class="navbar-nav bootblog4-right-nav">
+<li class="nav-item">
+    <a href="index.ipynb" id="sourcelink" class="nav-link">Source</a>
+    </li>
+
+
+                    
+            </ul></nav>
+</div>
+    </div>
+</header><nav class="navbar navbar-expand-md navbar-light bg-white static-top"><div class="collapse navbar-collapse bs-nav-collapsible" id="bs-navbar">
+            <ul class="navbar-nav nav-fill d-flex w-100">
+<li class="nav-item">
+<a href="../../archive.html" class="nav-link">Archive</a>
+                </li>
+<li class="nav-item">
+<a href="../../categories/" class="nav-link">Tags</a>
+                </li>
+<li class="nav-item">
+<a href="../../rss.xml" class="nav-link">RSS feed</a>
+                </li>
+<li class="nav-item">
+<a href="https://github.com/coady/coady.github.io" class="nav-link">Source</a>
+
+                
+            </li>
+</ul>
+</div>
+<!-- /.navbar-collapse -->
+</nav>
+</div>
+
+<div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        
+        
+        
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Hardest Logic Puzzle Ever</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
+                    A. Coady
+            </span></p>
+            <p class="dateline">
+            <a href="." rel="bookmark">
+            <time class="published dt-published" datetime="2021-01-01T00:00:00-08:00" itemprop="datePublished" title="2020-01-01">2020-01-01</time></a>
+            </p>
+            
+        <p class="sourceline"><a href="index.ipynb" class="sourcelink">Source</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="How-to-solve-the-Hardest-Logic-Puzzle-Ever-programmatically.">How to solve the <a href="https://en.wikipedia.org/wiki/The_Hardest_Logic_Puzzle_Ever">Hardest Logic Puzzle Ever</a> programmatically.<a class="anchor-link" href="#How-to-solve-the-Hardest-Logic-Puzzle-Ever-programmatically.">¶</a>
+</h2>
+<blockquote>
+<p>Three gods A, B, and C are called, in no particular order, True, False, and Random. True always speaks truly, False always speaks falsely, but whether Random speaks truly or falsely is a completely random matter. Your task is to determine the identities of A, B, and C by asking three yes-no questions; each question must be put to exactly one god. The gods understand English, but will answer all questions in their own language, in which the words for yes and no are <code>da</code> and <code>ja</code>, in some order. You do not know which word means which.</p>
+</blockquote>
+<p>With 3 binary questions, it's possible to distinguish $2^3 = 8$ scenarios. And there are $3! = 6$ possibilities. Note that means it's impossible to additionally identify what <code>da</code> and <code>ja</code> mean, as that would be $3! * 2 = 12$ possibilities.</p>
+<p>As always, start with modeling the data. We need a ternary enumeration for the god identifiers. It's almost a boolean anyway, so let's use <code>None</code> to indicate neither, i.e., Random. To represent the identities, a mapping from names to ids would be natural. But the mapping has to be one-to-one and onto, and using an immutable key is convenient, so an implicitly ordered tuple of names is also a valid choice. Here a named tuple represents the "state" of the world .</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">NamedTuple</span>
+
+<span class="n">IDS</span> <span class="o">=</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">NAMES</span> <span class="o">=</span> <span class="s1">'ABC'</span>
+<span class="n">WORDS</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'da'</span><span class="p">,</span> <span class="s1">'ja'</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">State</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="n">names</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># order corresponds to IDS</span>
+    <span class="n">yes</span><span class="p">:</span> <span class="nb">str</span>
+
+<span class="n">STATES</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">State</span><span class="p">,</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">,</span> <span class="n">itertools</span><span class="o">.</span><span class="n">permutations</span><span class="p">(</span><span class="n">NAMES</span><span class="p">)),</span> <span class="n">WORDS</span><span class="p">)))</span>
+<span class="n">STATES</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[1]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[State(names='ABC', yes='da'),
+ State(names='ABC', yes='ja'),
+ State(names='ACB', yes='da'),
+ State(names='ACB', yes='ja'),
+ State(names='BAC', yes='da'),
+ State(names='BAC', yes='ja'),
+ State(names='BCA', yes='da'),
+ State(names='BCA', yes='ja'),
+ State(names='CAB', yes='da'),
+ State(names='CAB', yes='ja'),
+ State(names='CBA', yes='da'),
+ State(names='CBA', yes='ja')]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now to model asking a question. A typical approach would take input parameters relevant to the question, such as asking a god which one they are. And the current reality would be need to be encapsulated to answer the question.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">ask</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">State</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">"""Ask `name`: are you `id`?"""</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The problem with that approach is Random's answer would have to be modeled as actually random, which would require running many simulations. Since this is a logic puzzle, it's easier to model Random's answer as non-deterministic, i.e., could answer either way. The question will take as input the current set of possible states, splitting the states into two groups corresponding to answers da or ja. This function will be used in a search algorithm anyway, so it's effectively participating in the search.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">ask</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="nb">set</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">"""Ask `name`: are you `id`? and return mapping of answers to possible states."""</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="p">{</span><span class="n">word</span><span class="p">:</span> <span class="nb">set</span><span class="p">()</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">WORDS</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+        <span class="n">identity</span> <span class="o">=</span> <span class="n">IDS</span><span class="p">[</span><span class="n">state</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)]</span>
+        <span class="n">truth</span> <span class="o">=</span> <span class="n">identity</span> <span class="o">==</span> <span class="nb">id</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">WORDS</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">yes</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">identity</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">groups</span><span class="p">[</span><span class="n">words</span><span class="p">[</span><span class="n">truth</span><span class="p">]]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">identity</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">groups</span><span class="p">[</span><span class="n">words</span><span class="p">[</span><span class="ow">not</span> <span class="n">truth</span><span class="p">]]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">groups</span>
+
+<span class="n">ask</span><span class="p">(</span><span class="s1">'A'</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">STATES</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[3]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{'da': {State(names='ABC', yes='da'),
+  State(names='ACB', yes='da'),
+  State(names='BAC', yes='ja'),
+  State(names='BCA', yes='da'),
+  State(names='BCA', yes='ja'),
+  State(names='CAB', yes='ja'),
+  State(names='CBA', yes='da'),
+  State(names='CBA', yes='ja')},
+ 'ja': {State(names='ABC', yes='ja'),
+  State(names='ACB', yes='ja'),
+  State(names='BAC', yes='da'),
+  State(names='BCA', yes='da'),
+  State(names='BCA', yes='ja'),
+  State(names='CAB', yes='da'),
+  State(names='CBA', yes='da'),
+  State(names='CBA', yes='ja')}}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To determine if a question is making progress, we need to look at the set of names returned for each answer. A valid solution would need to output sets of at most size $2^2 = 4$ on the first question in order to proceed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">IDS</span><span class="p">:</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="n">ask</span><span class="p">(</span><span class="s1">'A'</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">STATES</span><span class="p">)</span>
+    <span class="n">identities</span> <span class="o">=</span> <span class="p">[{</span><span class="n">names</span> <span class="k">for</span> <span class="n">names</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">group</span><span class="p">}</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="o">*</span><span class="n">identities</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>False {'BAC', 'CBA', 'CAB', 'ABC', 'ACB', 'BCA'} {'CAB', 'CBA', 'BAC', 'ABC', 'ACB', 'BCA'}
+True {'CAB', 'CBA', 'BAC', 'ABC', 'ACB', 'BCA'} {'BAC', 'CBA', 'CAB', 'ABC', 'ACB', 'BCA'}
+None {'BAC', 'CBA', 'CAB', 'ABC', 'ACB', 'BCA'} {'CAB', 'CBA', 'BAC', 'ABC', 'ACB', 'BCA'}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So that question made no progress. Unsurprising given that we don't know which god is "Random". Here one could resort to heuristics and increasingly convoluted questions.</p>
+<p>Let's do the opposite: write the most general question possible and automate the search. Any question can be modeled by asking whether any of a given set of states is accurate.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">ask</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">include</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span> <span class="n">exclude</span><span class="p">:</span> <span class="nb">set</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">"""Ask `name`: are we in any of `include` states? and return mapping of answers to possible states."""</span>
+    <span class="k">assert</span> <span class="n">include</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">exclude</span><span class="p">)</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="p">{</span><span class="n">word</span><span class="p">:</span> <span class="nb">set</span><span class="p">()</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">WORDS</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">include</span> <span class="o">|</span> <span class="n">exclude</span><span class="p">:</span>
+        <span class="n">identity</span> <span class="o">=</span> <span class="n">IDS</span><span class="p">[</span><span class="n">state</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)]</span>
+        <span class="n">truth</span> <span class="o">=</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">include</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">WORDS</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">yes</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">identity</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">groups</span><span class="p">[</span><span class="n">words</span><span class="p">[</span><span class="n">truth</span><span class="p">]]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">identity</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">groups</span><span class="p">[</span><span class="n">words</span><span class="p">[</span><span class="ow">not</span> <span class="n">truth</span><span class="p">]]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">groups</span>
+
+<span class="n">include</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">STATES</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">STATES</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">ask</span><span class="p">(</span><span class="s1">'A'</span><span class="p">,</span> <span class="n">include</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">STATES</span><span class="p">)</span> <span class="o">-</span> <span class="n">include</span><span class="p">)</span>        
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{'da': {State(names='ABC', yes='ja'),
+  State(names='ACB', yes='ja'),
+  State(names='BAC', yes='da'),
+  State(names='BCA', yes='da'),
+  State(names='BCA', yes='ja'),
+  State(names='CAB', yes='ja'),
+  State(names='CBA', yes='da'),
+  State(names='CBA', yes='ja')},
+ 'ja': {State(names='ABC', yes='da'),
+  State(names='ACB', yes='da'),
+  State(names='BAC', yes='ja'),
+  State(names='BCA', yes='da'),
+  State(names='BCA', yes='ja'),
+  State(names='CAB', yes='da'),
+  State(names='CBA', yes='da'),
+  State(names='CBA', yes='ja')}}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With that, the <a href="https://en.wikipedia.org/wiki/Power_set">power set</a> of all possible combinations can be searched.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">powerset</span><span class="p">(</span><span class="n">states</span><span class="p">:</span> <span class="nb">set</span><span class="p">):</span>
+    <span class="sd">"""Generate all possible subsets."""</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">yield from</span> <span class="nb">map</span><span class="p">(</span><span class="nb">set</span><span class="p">,</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">r</span><span class="p">))</span>
+
+<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">states</span> <span class="ow">in</span> <span class="n">powerset</span><span class="p">(</span><span class="n">STATES</span><span class="p">):</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="n">ask</span><span class="p">(</span><span class="s1">'A'</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">STATES</span><span class="p">)</span> <span class="o">-</span> <span class="n">states</span><span class="p">)</span>
+    <span class="n">identities</span> <span class="o">=</span> <span class="p">[{</span><span class="n">names</span> <span class="k">for</span> <span class="n">names</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">group</span><span class="p">}</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+    <span class="n">count</span> <span class="o">+=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">identities</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="mi">4</span>
+<span class="n">count</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[6]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>96</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So there are many potential solutions. Onto automating the search.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="n">states</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+    <span class="sd">"""Recursively ask all possible questions until a solution is found."""</span>
+    <span class="n">identities</span> <span class="o">=</span> <span class="p">{</span><span class="n">names</span> <span class="k">for</span> <span class="n">names</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">states</span><span class="p">}</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">identities</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># solved</span>
+        <span class="k">return</span> <span class="n">identities</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">count</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">identities</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">count</span><span class="p">):</span>  <span class="c1"># impossible</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">NAMES</span><span class="p">,</span> <span class="n">powerset</span><span class="p">(</span><span class="n">states</span><span class="p">)):</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="n">ask</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">subset</span><span class="p">,</span> <span class="n">states</span> <span class="o">-</span> <span class="n">subset</span><span class="p">)</span>
+        <span class="n">solutions</span> <span class="o">=</span> <span class="p">[</span><span class="n">search</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">solutions</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">subset</span><span class="p">,</span> <span class="n">solutions</span>
+
+<span class="n">search</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">STATES</span><span class="p">[:</span><span class="mi">2</span><span class="p">]),</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[7]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>'ABC'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">search</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">STATES</span><span class="p">[:</span><span class="mi">4</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>('A',
+ {State(names='ABC', yes='da'), State(names='ACB', yes='ja')},
+ ['ACB', 'ABC'])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">search</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">STATES</span><span class="p">[:</span><span class="mi">6</span><span class="p">]),</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>('A',
+ {State(names='ABC', yes='da'), State(names='ACB', yes='ja')},
+ [('A', {State(names='ACB', yes='da')}, ['BAC', 'ACB']),
+  ('A', {State(names='ABC', yes='ja')}, ['ABC', 'BAC'])])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So far, so good. The output is binary tree specifying the addressed god and the states asked about at each node.</p>
+<p>The sub-problems are solving a sufficient number of cases. It's no surpise that there should be solutions asking "A" first since it can't matter who gets the first question. Now for the real solution.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">time</span> search(set(STATES))
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>CPU times: user 1.29 s, sys: 10.8 ms, total: 1.3 s
+Wall time: 1.3 s
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>('A',
+ {State(names='ABC', yes='da'),
+  State(names='ACB', yes='ja'),
+  State(names='BAC', yes='ja'),
+  State(names='CAB', yes='da')},
+ [('C',
+   {State(names='ACB', yes='ja'),
+    State(names='BCA', yes='da'),
+    State(names='CAB', yes='da'),
+    State(names='CBA', yes='ja')},
+   [('B',
+     {State(names='BCA', yes='ja'), State(names='CBA', yes='ja')},
+     ['BCA', 'CBA']),
+    ('A',
+     {State(names='ACB', yes='da'), State(names='CAB', yes='da')},
+     ['CAB', 'ACB'])]),
+  ('B',
+   {State(names='ABC', yes='da'),
+    State(names='BAC', yes='da'),
+    State(names='BCA', yes='ja'),
+    State(names='CBA', yes='ja')},
+   [('B',
+     {State(names='ABC', yes='da'), State(names='BCA', yes='da')},
+     ['ABC', 'BCA']),
+    ('B',
+     {State(names='BAC', yes='ja'), State(names='CBA', yes='ja')},
+     ['BAC', 'CBA'])])])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The puzzle is solved. Can it be simplified? Depends on your point of view.</p>
+<p><a href="https://en.wikipedia.org/wiki/The_Hardest_Logic_Puzzle_Ever#The_solution">Canonical solutions</a> introduce <a href="https://en.wikipedia.org/wiki/Logical_biconditional">biconditionals</a> or <a href="https://en.wikipedia.org/wiki/Counterfactual_conditional">conterfactuals</a> in an attempt to collapse the output possibilities. This is ultimately hopeless though, as the solution is a binary search tree regardless. Is asking a question of the form "If I asked you ..., would just say ja" actually clearer than asking "Are we in any of these possibilities: ..."?</p>
+<p>Nonetheless patterns do emerge:</p>
+<ul>
+<li>The first question revolves around ruling out "Random".</li>
+<li>Subsequent questions address non-"Random" gods.</li>
+</ul>
+<p>The random behavior adds true complexity to the algorithm, whereas the the boolean encoding adds arbitrary complications.</p>
+
+</div>
+</div>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../graphql-orm/" rel="prev" title="GraphQL - ORM">Previous post</a>
+            </li>
+        </ul></nav></aside><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha384-3lJUsx1TJHt7BA4udB5KPnDrlkO8T6J6v/op7ui0BbCjvZ9WqV4Xm6DTP6kQ/iBH" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script></article><!--End of body content--><footer id="footer">
+            Contents © 2021         <a href="mailto:aric.coady@gmail.com">A. Coady</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+            
+        </footer>
+</div>
+</div>
+
+
+        <script src="../../assets/js/all-nocdn.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element){var i=element.getElementsByTagName('img')[0];return i===undefined?'':i.alt;}});
+    </script>
+</body>
+</html>

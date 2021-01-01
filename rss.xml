@@ -1,5 +1,549 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pythonicity</title><link>https://coady.github.io/</link><description>the quality of being Pythonic</description><atom:link href="https://coady.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2020 &lt;a href="mailto:aric.coady@gmail.com"&gt;A. Coady&lt;/a&gt; </copyright><lastBuildDate>Wed, 02 Dec 2020 04:02:10 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>GraphQL - ORM</title><link>https://coady.github.io/posts/graphql-orm/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pythonicity</title><link>https://coady.github.io/</link><description>the quality of being Pythonic</description><atom:link href="https://coady.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2021 &lt;a href="mailto:aric.coady@gmail.com"&gt;A. Coady&lt;/a&gt; </copyright><lastBuildDate>Fri, 01 Jan 2021 21:07:17 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Hardest Logic Puzzle Ever</title><link>https://coady.github.io/posts/hardest-logic-puzzle-ever/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h2 id="How-to-solve-the-Hardest-Logic-Puzzle-Ever-programmatically."&gt;How to solve the &lt;a href="https://en.wikipedia.org/wiki/The_Hardest_Logic_Puzzle_Ever"&gt;Hardest Logic Puzzle Ever&lt;/a&gt; programmatically.&lt;a class="anchor-link" href="https://coady.github.io/posts/hardest-logic-puzzle-ever/#How-to-solve-the-Hardest-Logic-Puzzle-Ever-programmatically."&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;blockquote&gt;&lt;p&gt;Three gods A, B, and C are called, in no particular order, True, False, and Random. True always speaks truly, False always speaks falsely, but whether Random speaks truly or falsely is a completely random matter. Your task is to determine the identities of A, B, and C by asking three yes-no questions; each question must be put to exactly one god. The gods understand English, but will answer all questions in their own language, in which the words for yes and no are &lt;code&gt;da&lt;/code&gt; and &lt;code&gt;ja&lt;/code&gt;, in some order. You do not know which word means which.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;With 3 binary questions, it's possible to distinguish $2^3 = 8$ scenarios. And there are $3! = 6$ possibilities. Note that means it's impossible to additionally identify what &lt;code&gt;da&lt;/code&gt; and &lt;code&gt;ja&lt;/code&gt; mean, as that would be $3! * 2 = 12$ possibilities.&lt;/p&gt;
+&lt;p&gt;As always, start with modeling the data. We need a ternary enumeration for the god identifiers. It's almost a boolean anyway, so let's use &lt;code&gt;None&lt;/code&gt; to indicate neither, i.e., Random. To represent the identities, a mapping from names to ids would be natural. But the mapping has to be one-to-one and onto, and using an immutable key is convenient, so an implicitly ordered tuple of names is also a valid choice. Here a named tuple represents the "state" of the world .&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [1]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+    &lt;div class="input_area"&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;itertools&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;typing&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;NamedTuple&lt;/span&gt;
+
+&lt;span class="n"&gt;IDS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kc"&gt;False&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;NAMES&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'ABC'&lt;/span&gt;
+&lt;span class="n"&gt;WORDS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'da'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'ja'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;State&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;NamedTuple&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;names&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;  &lt;span class="c1"&gt;# order corresponds to IDS&lt;/span&gt;
+    &lt;span class="n"&gt;yes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;
+
+&lt;span class="n"&gt;STATES&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;list&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;itertools&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;starmap&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;State&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;itertools&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;product&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;''&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;itertools&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;permutations&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;NAMES&lt;/span&gt;&lt;span class="p"&gt;)),&lt;/span&gt; &lt;span class="n"&gt;WORDS&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+&lt;span class="n"&gt;STATES&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="output_wrapper"&gt;
+&lt;div class="output"&gt;
+
+
+&lt;div class="output_area"&gt;
+
+    &lt;div class="prompt output_prompt"&gt;Out[1]:&lt;/div&gt;
+
+
+
+
+&lt;div class="output_text output_subarea output_execute_result"&gt;
+&lt;pre&gt;[State(names='ABC', yes='da'),
+ State(names='ABC', yes='ja'),
+ State(names='ACB', yes='da'),
+ State(names='ACB', yes='ja'),
+ State(names='BAC', yes='da'),
+ State(names='BAC', yes='ja'),
+ State(names='BCA', yes='da'),
+ State(names='BCA', yes='ja'),
+ State(names='CAB', yes='da'),
+ State(names='CAB', yes='ja'),
+ State(names='CBA', yes='da'),
+ State(names='CBA', yes='ja')]&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;Now to model asking a question. A typical approach would take input parameters relevant to the question, such as asking a god which one they are. And the current reality would be need to be encapsulated to answer the question.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [2]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+    &lt;div class="input_area"&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;ask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;State&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;id&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="sd"&gt;"""Ask `name`: are you `id`?"""&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;The problem with that approach is Random's answer would have to be modeled as actually random, which would require running many simulations. Since this is a logic puzzle, it's easier to model Random's answer as non-deterministic, i.e., could answer either way. The question will take as input the current set of possible states, splitting the states into two groups corresponding to answers da or ja. This function will be used in a search algorithm anyway, so it's effectively participating in the search.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [3]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+    &lt;div class="input_area"&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;ask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;states&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;dict&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="sd"&gt;"""Ask `name`: are you `id`? and return mapping of answers to possible states."""&lt;/span&gt;
+    &lt;span class="n"&gt;groups&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;WORDS&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;states&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;identity&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;IDS&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;names&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
+        &lt;span class="n"&gt;truth&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;identity&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="nb"&gt;id&lt;/span&gt;
+        &lt;span class="n"&gt;words&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;sorted&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;WORDS&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;yes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="fm"&gt;__eq__&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;identity&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+            &lt;span class="n"&gt;groups&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;words&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;truth&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;identity&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kc"&gt;False&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+            &lt;span class="n"&gt;groups&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;words&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;truth&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;groups&lt;/span&gt;
+
+&lt;span class="n"&gt;ask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'A'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;STATES&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="output_wrapper"&gt;
+&lt;div class="output"&gt;
+
+
+&lt;div class="output_area"&gt;
+
+    &lt;div class="prompt output_prompt"&gt;Out[3]:&lt;/div&gt;
+
+
+
+
+&lt;div class="output_text output_subarea output_execute_result"&gt;
+&lt;pre&gt;{'da': {State(names='ABC', yes='da'),
+  State(names='ACB', yes='da'),
+  State(names='BAC', yes='ja'),
+  State(names='BCA', yes='da'),
+  State(names='BCA', yes='ja'),
+  State(names='CAB', yes='ja'),
+  State(names='CBA', yes='da'),
+  State(names='CBA', yes='ja')},
+ 'ja': {State(names='ABC', yes='ja'),
+  State(names='ACB', yes='ja'),
+  State(names='BAC', yes='da'),
+  State(names='BCA', yes='da'),
+  State(names='BCA', yes='ja'),
+  State(names='CAB', yes='da'),
+  State(names='CBA', yes='da'),
+  State(names='CBA', yes='ja')}}&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;To determine if a question is making progress, we need to look at the set of names returned for each answer. A valid solution would need to output sets of at most size $2^2 = 4$ on the first question in order to proceed.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [4]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+    &lt;div class="input_area"&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="nb"&gt;id&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;IDS&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;groups&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'A'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;STATES&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;identities&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="n"&gt;names&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;names&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;group&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;group&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;groups&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;values&lt;/span&gt;&lt;span class="p"&gt;()]&lt;/span&gt;
+    &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;identities&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="output_wrapper"&gt;
+&lt;div class="output"&gt;
+
+
+&lt;div class="output_area"&gt;
+
+    &lt;div class="prompt"&gt;&lt;/div&gt;
+
+
+&lt;div class="output_subarea output_stream output_stdout output_text"&gt;
+&lt;pre&gt;False {'BAC', 'CBA', 'CAB', 'ABC', 'ACB', 'BCA'} {'CAB', 'CBA', 'BAC', 'ABC', 'ACB', 'BCA'}
+True {'CAB', 'CBA', 'BAC', 'ABC', 'ACB', 'BCA'} {'BAC', 'CBA', 'CAB', 'ABC', 'ACB', 'BCA'}
+None {'BAC', 'CBA', 'CAB', 'ABC', 'ACB', 'BCA'} {'CAB', 'CBA', 'BAC', 'ABC', 'ACB', 'BCA'}
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;So that question made no progress. Unsurprising given that we don't know which god is "Random". Here one could resort to heuristics and increasingly convoluted questions.&lt;/p&gt;
+&lt;p&gt;Let's do the opposite: write the most general question possible and automate the search. Any question can be modeled by asking whether any of a given set of states is accurate.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [5]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+    &lt;div class="input_area"&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;ask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;include&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;exclude&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;dict&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="sd"&gt;"""Ask `name`: are we in any of `include` states? and return mapping of answers to possible states."""&lt;/span&gt;
+    &lt;span class="k"&gt;assert&lt;/span&gt; &lt;span class="n"&gt;include&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;isdisjoint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;exclude&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;groups&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;WORDS&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;include&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;exclude&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;identity&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;IDS&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;names&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
+        &lt;span class="n"&gt;truth&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;include&lt;/span&gt;
+        &lt;span class="n"&gt;words&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;sorted&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;WORDS&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;yes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="fm"&gt;__eq__&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;identity&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+            &lt;span class="n"&gt;groups&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;words&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;truth&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;identity&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kc"&gt;False&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+            &lt;span class="n"&gt;groups&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;words&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;truth&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;groups&lt;/span&gt;
+
+&lt;span class="n"&gt;include&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;STATES&lt;/span&gt;&lt;span class="p"&gt;[:&lt;/span&gt;&lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;STATES&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;//&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;span class="n"&gt;ask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'A'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;include&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;STATES&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;include&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;        
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="output_wrapper"&gt;
+&lt;div class="output"&gt;
+
+
+&lt;div class="output_area"&gt;
+
+    &lt;div class="prompt output_prompt"&gt;Out[5]:&lt;/div&gt;
+
+
+
+
+&lt;div class="output_text output_subarea output_execute_result"&gt;
+&lt;pre&gt;{'da': {State(names='ABC', yes='ja'),
+  State(names='ACB', yes='ja'),
+  State(names='BAC', yes='da'),
+  State(names='BCA', yes='da'),
+  State(names='BCA', yes='ja'),
+  State(names='CAB', yes='ja'),
+  State(names='CBA', yes='da'),
+  State(names='CBA', yes='ja')},
+ 'ja': {State(names='ABC', yes='da'),
+  State(names='ACB', yes='da'),
+  State(names='BAC', yes='ja'),
+  State(names='BCA', yes='da'),
+  State(names='BCA', yes='ja'),
+  State(names='CAB', yes='da'),
+  State(names='CBA', yes='da'),
+  State(names='CBA', yes='ja')}}&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;With that, the &lt;a href="https://en.wikipedia.org/wiki/Power_set"&gt;power set&lt;/a&gt; of all possible combinations can be searched.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [6]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+    &lt;div class="input_area"&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;powerset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;states&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="sd"&gt;"""Generate all possible subsets."""&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;states&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="k"&gt;yield from&lt;/span&gt; &lt;span class="nb"&gt;map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;itertools&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;combinations&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;states&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="n"&gt;count&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;states&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;powerset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;STATES&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;groups&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'A'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;states&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;STATES&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;states&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;identities&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="n"&gt;names&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;names&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;group&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;group&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;groups&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;values&lt;/span&gt;&lt;span class="p"&gt;()]&lt;/span&gt;
+    &lt;span class="n"&gt;count&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="nb"&gt;max&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;identities&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;=&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;
+&lt;span class="n"&gt;count&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="output_wrapper"&gt;
+&lt;div class="output"&gt;
+
+
+&lt;div class="output_area"&gt;
+
+    &lt;div class="prompt output_prompt"&gt;Out[6]:&lt;/div&gt;
+
+
+
+
+&lt;div class="output_text output_subarea output_execute_result"&gt;
+&lt;pre&gt;96&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;So there are many potential solutions. Onto automating the search.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [7]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+    &lt;div class="input_area"&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;states&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;count&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;int&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="sd"&gt;"""Recursively ask all possible questions until a solution is found."""&lt;/span&gt;
+    &lt;span class="n"&gt;identities&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;names&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;names&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;states&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;identities&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;  &lt;span class="c1"&gt;# solved&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;identities&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pop&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;count&lt;/span&gt; &lt;span class="ow"&gt;or&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;identities&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt; &lt;span class="n"&gt;count&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;  &lt;span class="c1"&gt;# impossible&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="kc"&gt;None&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;subset&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;itertools&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;product&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;NAMES&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;powerset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;states&lt;/span&gt;&lt;span class="p"&gt;)):&lt;/span&gt;
+        &lt;span class="n"&gt;groups&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;subset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;states&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;subset&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;solutions&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;group&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;count&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;group&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;groups&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;values&lt;/span&gt;&lt;span class="p"&gt;()]&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;all&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;solutions&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+            &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;subset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;solutions&lt;/span&gt;
+
+&lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;STATES&lt;/span&gt;&lt;span class="p"&gt;[:&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]),&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="output_wrapper"&gt;
+&lt;div class="output"&gt;
+
+
+&lt;div class="output_area"&gt;
+
+    &lt;div class="prompt output_prompt"&gt;Out[7]:&lt;/div&gt;
+
+
+
+
+&lt;div class="output_text output_subarea output_execute_result"&gt;
+&lt;pre&gt;'ABC'&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [8]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+    &lt;div class="input_area"&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;STATES&lt;/span&gt;&lt;span class="p"&gt;[:&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;]),&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="output_wrapper"&gt;
+&lt;div class="output"&gt;
+
+
+&lt;div class="output_area"&gt;
+
+    &lt;div class="prompt output_prompt"&gt;Out[8]:&lt;/div&gt;
+
+
+
+
+&lt;div class="output_text output_subarea output_execute_result"&gt;
+&lt;pre&gt;('A',
+ {State(names='ABC', yes='da'), State(names='ACB', yes='ja')},
+ ['ACB', 'ABC'])&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [9]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+    &lt;div class="input_area"&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;STATES&lt;/span&gt;&lt;span class="p"&gt;[:&lt;/span&gt;&lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;]),&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="output_wrapper"&gt;
+&lt;div class="output"&gt;
+
+
+&lt;div class="output_area"&gt;
+
+    &lt;div class="prompt output_prompt"&gt;Out[9]:&lt;/div&gt;
+
+
+
+
+&lt;div class="output_text output_subarea output_execute_result"&gt;
+&lt;pre&gt;('A',
+ {State(names='ABC', yes='da'), State(names='ACB', yes='ja')},
+ [('A', {State(names='ACB', yes='da')}, ['BAC', 'ACB']),
+  ('A', {State(names='ABC', yes='ja')}, ['ABC', 'BAC'])])&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;So far, so good. The output is binary tree specifying the addressed god and the states asked about at each node.&lt;/p&gt;
+&lt;p&gt;The sub-problems are solving a sufficient number of cases. It's no surpise that there should be solutions asking "A" first since it can't matter who gets the first question. Now for the real solution.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [10]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+    &lt;div class="input_area"&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="k"&gt;time&lt;/span&gt; search(set(STATES))
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="output_wrapper"&gt;
+&lt;div class="output"&gt;
+
+
+&lt;div class="output_area"&gt;
+
+    &lt;div class="prompt"&gt;&lt;/div&gt;
+
+
+&lt;div class="output_subarea output_stream output_stdout output_text"&gt;
+&lt;pre&gt;CPU times: user 1.29 s, sys: 10.8 ms, total: 1.3 s
+Wall time: 1.3 s
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="output_area"&gt;
+
+    &lt;div class="prompt output_prompt"&gt;Out[10]:&lt;/div&gt;
+
+
+
+
+&lt;div class="output_text output_subarea output_execute_result"&gt;
+&lt;pre&gt;('A',
+ {State(names='ABC', yes='da'),
+  State(names='ACB', yes='ja'),
+  State(names='BAC', yes='ja'),
+  State(names='CAB', yes='da')},
+ [('C',
+   {State(names='ACB', yes='ja'),
+    State(names='BCA', yes='da'),
+    State(names='CAB', yes='da'),
+    State(names='CBA', yes='ja')},
+   [('B',
+     {State(names='BCA', yes='ja'), State(names='CBA', yes='ja')},
+     ['BCA', 'CBA']),
+    ('A',
+     {State(names='ACB', yes='da'), State(names='CAB', yes='da')},
+     ['CAB', 'ACB'])]),
+  ('B',
+   {State(names='ABC', yes='da'),
+    State(names='BAC', yes='da'),
+    State(names='BCA', yes='ja'),
+    State(names='CBA', yes='ja')},
+   [('B',
+     {State(names='ABC', yes='da'), State(names='BCA', yes='da')},
+     ['ABC', 'BCA']),
+    ('B',
+     {State(names='BAC', yes='ja'), State(names='CBA', yes='ja')},
+     ['BAC', 'CBA'])])])&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;The puzzle is solved. Can it be simplified? Depends on your point of view.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://en.wikipedia.org/wiki/The_Hardest_Logic_Puzzle_Ever#The_solution"&gt;Canonical solutions&lt;/a&gt; introduce &lt;a href="https://en.wikipedia.org/wiki/Logical_biconditional"&gt;biconditionals&lt;/a&gt; or &lt;a href="https://en.wikipedia.org/wiki/Counterfactual_conditional"&gt;conterfactuals&lt;/a&gt; in an attempt to collapse the output possibilities. This is ultimately hopeless though, as the solution is a binary search tree regardless. Is asking a question of the form "If I asked you ..., would just say ja" actually clearer than asking "Are we in any of these possibilities: ..."?&lt;/p&gt;
+&lt;p&gt;Nonetheless patterns do emerge:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The first question revolves around ruling out "Random".&lt;/li&gt;
+&lt;li&gt;Subsequent questions address non-"Random" gods.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The random behavior adds true complexity to the algorithm, whereas the the boolean encoding adds arbitrary complications.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/div&gt;</description><guid>https://coady.github.io/posts/hardest-logic-puzzle-ever/</guid><pubDate>Fri, 01 Jan 2021 08:00:00 GMT</pubDate></item><item><title>GraphQL - ORM</title><link>https://coady.github.io/posts/graphql-orm/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;h2 id="GraphQL-is-the-new-ORM."&gt;GraphQL is the new ORM.&lt;a class="anchor-link" href="https://coady.github.io/posts/graphql-orm/#GraphQL-is-the-new-ORM."&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;a href="https://en.wikipedia.org/wiki/Representational_state_transfer"&gt;REST&lt;/a&gt; and &lt;a href="https://en.wikipedia.org/wiki/Object-relational_mapping"&gt;ORMs&lt;/a&gt; are both infamous for:&lt;/p&gt;
@@ -2639,270 +3183,4 @@ There are $2^n$ states of the prisoners, and each prisoner has $n-1$ bits of dat
 
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;/div&gt;</description><guid>https://coady.github.io/posts/map-and-filter/</guid><pubDate>Sat, 31 Mar 2018 07:00:00 GMT</pubDate></item><item><title>Fizz Buzz</title><link>https://coady.github.io/posts/fizz-buzz/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h2 id="The-infamously-simple-FizzBuzz-problem."&gt;The infamously simple &lt;a href="https://en.wikipedia.org/wiki/Fizz_buzz#Programming_interviews"&gt;FizzBuzz&lt;/a&gt; problem.&lt;a class="anchor-link" href="https://coady.github.io/posts/fizz-buzz/#The-infamously-simple-FizzBuzz-problem."&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Reportedly a high percentage of programmer applicants can't solve this quickly.&lt;/p&gt;
-&lt;blockquote&gt;&lt;p&gt;Write a program that prints the numbers from 1 to 100. But for multiples of three print “Fizz” instead of the number and for the multiples of five print “Buzz”. For numbers which are multiples of both three and five print “FizzBuzz”.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;A deep dive on this problem has been done in jest many times, e.g., deliberate over-engineering or &lt;a href="https://en.wikipedia.org/wiki/Code_golf"&gt;code golf&lt;/a&gt;.  But in all seriousness, let's consider what's the most Pythonic solution.  A truncated version of the common solution:&lt;/p&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [1]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-    &lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'FizzBuzz'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="k"&gt;elif&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'Fizz'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="k"&gt;elif&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'Buzz'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;num&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-    &lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-
-
-&lt;div class="output_area"&gt;
-
-    &lt;div class="prompt"&gt;&lt;/div&gt;
-
-
-&lt;div class="output_subarea output_stream output_stdout output_text"&gt;
-&lt;pre&gt;1
-2
-Fizz
-4
-Buzz
-Fizz
-7
-8
-Fizz
-Buzz
-11
-Fizz
-13
-14
-FizzBuzz
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;Naturally interview questions tend to focus on output, e.g. &lt;code&gt;print&lt;/code&gt;, but that's no reason to skip over basic abstractions or data structures.  First, this could be written as a generator, to decouple the &lt;code&gt;print&lt;/code&gt; operation and parametrize the numeric range.  Alternatively, Python has such strong iterator support that it could also be just a function, ready to be mapped.  So let's reframe the basic solution as:&lt;/p&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [2]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-    &lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;fizzbuzz&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stop&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;stop&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="s1"&gt;'FizzBuzz'&lt;/span&gt;
-        &lt;span class="k"&gt;elif&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="s1"&gt;'Fizz'&lt;/span&gt;
-        &lt;span class="k"&gt;elif&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="s1"&gt;'Buzz'&lt;/span&gt;
-        &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; 
-            &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;num&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
-&lt;span class="s1"&gt;' '&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fizzbuzz&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-    &lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-
-
-&lt;div class="output_area"&gt;
-
-    &lt;div class="prompt output_prompt"&gt;Out[2]:&lt;/div&gt;
-
-
-
-
-&lt;div class="output_text output_subarea output_execute_result"&gt;
-&lt;pre&gt;'1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz'&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;Even at this size, it's already violating &lt;a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself"&gt;DRY&lt;/a&gt;, or the &lt;a href="https://en.wikipedia.org/wiki/Rule_of_three_%28computer_programming%29"&gt;Rule of 3&lt;/a&gt;.  Clearly the same logic is being repeated with different data.&lt;/p&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [3]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-    &lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;fizzbuzz&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stop&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="n"&gt;items&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;15&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'FizzBuzz'&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'Fizz'&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'Buzz'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;stop&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="nb"&gt;next&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;div&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;text&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;items&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="n"&gt;div&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;num&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-
-&lt;span class="s1"&gt;' '&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fizzbuzz&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-    &lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-
-
-&lt;div class="output_area"&gt;
-
-    &lt;div class="prompt output_prompt"&gt;Out[3]:&lt;/div&gt;
-
-
-
-
-&lt;div class="output_text output_subarea output_execute_result"&gt;
-&lt;pre&gt;'1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz'&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;However, that variation had to introduce the concept of the &lt;a href="https://en.wikipedia.org/wiki/Least_common_multiple"&gt;least common multiple&lt;/a&gt;.  Even in such a trivial problem, there's a subtlety in how one interprets requirements.  The final directive to output "FizzBuzz" can be seen as a mere clarification of the previous directives; certainly not a coincidence.  Making this the more obvious solution:&lt;/p&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [4]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-    &lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;fizzbuzz&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stop&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;stop&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="n"&gt;text&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;
-        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="n"&gt;text&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="s1"&gt;'Fizz'&lt;/span&gt;
-        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="n"&gt;text&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="s1"&gt;'Buzz'&lt;/span&gt;
-        &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;text&lt;/span&gt; &lt;span class="ow"&gt;or&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;num&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
-&lt;span class="s1"&gt;' '&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fizzbuzz&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-    &lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-
-
-&lt;div class="output_area"&gt;
-
-    &lt;div class="prompt output_prompt"&gt;Out[4]:&lt;/div&gt;
-
-
-
-
-&lt;div class="output_text output_subarea output_execute_result"&gt;
-&lt;pre&gt;'1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz'&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;Arguably that insight is more important, because its duplication grows exponentially, not linearly.  There's a &lt;code&gt;2**N&lt;/code&gt; sized case statement to handle &lt;code&gt;N&lt;/code&gt; cases, luckily &lt;code&gt;N == 2&lt;/code&gt;.  Adding just one more directive for the number 7 would make the basic solution unwieldy.&lt;/p&gt;
-&lt;p&gt;And of course both approaches can be combined.&lt;/p&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [5]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-    &lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;fizzbuzz&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stop&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="n"&gt;items&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'Fizz'&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'Buzz'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;stop&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;div&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;text&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;items&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="n"&gt;div&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="ow"&gt;or&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;num&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
-&lt;span class="s1"&gt;' '&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fizzbuzz&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-    &lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-
-
-&lt;div class="output_area"&gt;
-
-    &lt;div class="prompt output_prompt"&gt;Out[5]:&lt;/div&gt;
-
-
-
-
-&lt;div class="output_text output_subarea output_execute_result"&gt;
-&lt;pre&gt;'1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz'&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;So is that over-engineered?  This author would argue that both deduplication and decoupling logic from data are worth observing.  So maybe at this size the final version isn't necessary, but surely the basic version is not the most Pythonic.&lt;/p&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;/div&gt;</description><guid>https://coady.github.io/posts/fizz-buzz/</guid><pubDate>Sun, 25 Mar 2018 07:00:00 GMT</pubDate></item></channel></rss>
+&lt;/div&gt;&lt;/div&gt;</description><guid>https://coady.github.io/posts/map-and-filter/</guid><pubDate>Sat, 31 Mar 2018 07:00:00 GMT</pubDate></item></channel></rss>
