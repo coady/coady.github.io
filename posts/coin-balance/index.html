@@ -251,7 +251,7 @@ a
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now with the sub-problem solved, there's just one thing missing for the main puzzle.  In the known case, splitting into 3 equal sized groups is cleary optimal.  But in the unknown case, we need to know how many coins to exclude from the weighing.  This requires computing how many coins can be handled in the subsolution.  Lucikly it's a trivial <a href="https://en.wikipedia.org/wiki/Recurrence_relation">recurrence relation</a>: <code>n</code> weighings can solve 3 times the number of <code>n - 1</code> weighings.
+<p>Now with the sub-problem solved, there's just one thing missing for the main puzzle.  In the known case, splitting into 3 equal sized groups is cleary optimal.  But in the unknown case, we need to know how many coins to exclude from the weighing.  This requires computing how many coins can be handled in the subsolution.  Luckily it's a trivial <a href="https://en.wikipedia.org/wiki/Recurrence_relation">recurrence relation</a>: <code>n</code> weighings can solve 3 times the number of <code>n - 1</code> weighings.
 $$
 \prod_{}^n 3 = 3^n
 $$</p>
