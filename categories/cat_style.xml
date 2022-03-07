@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pythonicity (Posts about style and conventions)</title><link>https://coady.github.io/</link><description></description><atom:link href="https://coady.github.io/categories/cat_style.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2021 &lt;a href="mailto:aric.coady@gmail.com"&gt;A. Coady&lt;/a&gt; </copyright><lastBuildDate>Sat, 10 Jul 2021 16:03:01 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>GraphQL - ORM</title><link>https://coady.github.io/posts/graphql-orm/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pythonicity (Posts about style and conventions)</title><link>https://coady.github.io/</link><description></description><atom:link href="https://coady.github.io/categories/cat_style.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2022 &lt;a href="mailto:aric.coady@gmail.com"&gt;A. Coady&lt;/a&gt; </copyright><lastBuildDate>Mon, 07 Mar 2022 16:09:15 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>GraphQL - ORM</title><link>https://coady.github.io/posts/graphql-orm/</link><dc:creator>A. Coady</dc:creator><description>&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;h2 id="GraphQL-is-the-new-ORM."&gt;GraphQL is the new ORM.&lt;a class="anchor-link" href="https://coady.github.io/posts/graphql-orm/#GraphQL-is-the-new-ORM."&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;a href="https://en.wikipedia.org/wiki/Representational_state_transfer"&gt;REST&lt;/a&gt; and &lt;a href="https://en.wikipedia.org/wiki/Object-relational_mapping"&gt;ORMs&lt;/a&gt; are both infamous for:&lt;/p&gt;
@@ -21,7 +21,7 @@
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nx"&gt;Query&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
   &lt;span class="nx"&gt;human&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;context&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;info&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;context&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;db&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;loadHumanByID&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;args&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;id&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;then&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
-      &lt;span class="nx"&gt;userData&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Human&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;userData&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="nx"&gt;userData&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="ow"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Human&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;userData&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="p"&gt;)&lt;/span&gt;
   &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
@@ -53,7 +53,7 @@
   &lt;span class="nx"&gt;starships&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;context&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;info&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;starshipIDs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
       &lt;span class="nx"&gt;id&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;context&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;db&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;loadStarshipByID&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;id&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;then&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
-        &lt;span class="nx"&gt;shipData&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Starship&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;shipData&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="nx"&gt;shipData&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="ow"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Starship&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;shipData&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
       &lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="p"&gt;)&lt;/span&gt;
   &lt;span class="p"&gt;}&lt;/span&gt;
@@ -149,7 +149,7 @@
 
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;/div&gt;</description><guid>https://coady.github.io/posts/graphql-orm/</guid><pubDate>Mon, 06 Jul 2020 07:00:00 GMT</pubDate></item><item><title>Closing files</title><link>https://coady.github.io/posts/closing-files/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;</description><guid>https://coady.github.io/posts/graphql-orm/</guid><pubDate>Mon, 06 Jul 2020 07:00:00 GMT</pubDate></item><item><title>Closing files</title><link>https://coady.github.io/posts/closing-files/</link><dc:creator>A. Coady</dc:creator><description>&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;h2 id="Contrarian-view-on-closing-files."&gt;Contrarian view on closing files.&lt;a class="anchor-link" href="https://coady.github.io/posts/closing-files/#Contrarian-view-on-closing-files."&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;It has become conventional wisdom to always explicitly close file-like objects, via context managers.
@@ -329,7 +329,7 @@ The whole point of a connection pool is that it may leave connections open, so u
 
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;/div&gt;</description><guid>https://coady.github.io/posts/closing-files/</guid><pubDate>Sun, 05 Jul 2020 07:00:00 GMT</pubDate></item><item><title>Mutable defaults</title><link>https://coady.github.io/posts/mutable-defaults/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;</description><guid>https://coady.github.io/posts/closing-files/</guid><pubDate>Sun, 05 Jul 2020 07:00:00 GMT</pubDate></item><item><title>Mutable defaults</title><link>https://coady.github.io/posts/mutable-defaults/</link><dc:creator>A. Coady</dc:creator><description>&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;h2 id="Contrarian-view-on-mutable-default-arguments."&gt;Contrarian view on mutable default arguments.&lt;a class="anchor-link" href="https://coady.github.io/posts/mutable-defaults/#Contrarian-view-on-mutable-default-arguments."&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The use of &lt;a href="https://docs.python-guide.org/writing/gotchas/#mutable-default-arguments"&gt;mutable defaults&lt;/a&gt; is probably the most infamous Python gotcha.  Default values are evaluated at definition time, which means mutating them will be persistent across multiple calls.  Many articles on this topic even use the same &lt;code&gt;append&lt;/code&gt; example.&lt;/p&gt;
@@ -549,7 +549,7 @@ The whole point of a connection pool is that it may leave connections open, so u
 
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;/div&gt;</description><guid>https://coady.github.io/posts/mutable-defaults/</guid><pubDate>Sun, 28 Jun 2020 07:00:00 GMT</pubDate></item><item><title>Accumulator</title><link>https://coady.github.io/posts/accumulator/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;</description><guid>https://coady.github.io/posts/mutable-defaults/</guid><pubDate>Sun, 28 Jun 2020 07:00:00 GMT</pubDate></item><item><title>Accumulator</title><link>https://coady.github.io/posts/accumulator/</link><dc:creator>A. Coady</dc:creator><description>&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;h2 id="A-Paul-Graham-classic,-the-accumulator-function."&gt;A &lt;a href="http://www.paulgraham.com/icad.html"&gt;Paul Graham classic&lt;/a&gt;, the accumulator function.&lt;a class="anchor-link" href="https://coady.github.io/posts/accumulator/#A-Paul-Graham-classic,-the-accumulator-function."&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;blockquote&gt;&lt;p&gt;As an illustration of what I mean about the relative power of programming languages, consider the following problem. We want to write a function that generates accumulators-- a function that takes a number n, and returns a function that takes another number i and returns n incremented by i.&lt;/p&gt;
@@ -867,7 +867,7 @@ The whole point of a connection pool is that it may leave connections open, so u
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;/div&gt;&lt;/div&gt;</description><guid>https://coady.github.io/posts/accumulator/</guid><pubDate>Mon, 28 May 2018 07:00:00 GMT</pubDate></item><item><title>Map and Filter</title><link>https://coady.github.io/posts/map-and-filter/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;</description><guid>https://coady.github.io/posts/accumulator/</guid><pubDate>Mon, 28 May 2018 07:00:00 GMT</pubDate></item><item><title>Map and Filter</title><link>https://coady.github.io/posts/map-and-filter/</link><dc:creator>A. Coady</dc:creator><description>&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;h2 id="Contrarian-view-on-map-and-filter."&gt;Contrarian view on &lt;code&gt;map&lt;/code&gt; and &lt;code&gt;filter&lt;/code&gt;.&lt;a class="anchor-link" href="https://coady.github.io/posts/map-and-filter/#Contrarian-view-on-map-and-filter."&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Although &lt;a href="https://www.python.org/dev/peps/pep-0008/"&gt;PEP 8&lt;/a&gt; is silent on the topic, it's become recommended in many Python circles to eschew &lt;code&gt;map&lt;/code&gt; and &lt;code&gt;filter&lt;/code&gt; in favor of generator expressions or list comprehensions.  For example, this &lt;a href="http://stackoverflow.com/questions/5426754/google-python-style-guide"&gt;Stack Overflow question&lt;/a&gt; received and accepted a typical response.  Ironically, that question misquoted the &lt;a href="https://google.github.io/styleguide/pyguide.html?showone=Deprecated_Language_Features#Deprecated_Language_Features"&gt;google style guide&lt;/a&gt;, which this author happens to agree with.&lt;/p&gt;
@@ -1181,4 +1181,4 @@ The whole point of a connection pool is that it may leave connections open, so u
 
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;/div&gt;</description><guid>https://coady.github.io/posts/map-and-filter/</guid><pubDate>Sat, 31 Mar 2018 07:00:00 GMT</pubDate></item></channel></rss>
+&lt;/div&gt;</description><guid>https://coady.github.io/posts/map-and-filter/</guid><pubDate>Sat, 31 Mar 2018 07:00:00 GMT</pubDate></item></channel></rss>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pythonicity (Posts about common interview questions)</title><link>https://coady.github.io/</link><description></description><atom:link href="https://coady.github.io/categories/cat_interviews.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2021 &lt;a href="mailto:aric.coady@gmail.com"&gt;A. Coady&lt;/a&gt; </copyright><lastBuildDate>Sat, 10 Jul 2021 16:03:01 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Primes</title><link>https://coady.github.io/posts/primes/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pythonicity (Posts about common interview questions)</title><link>https://coady.github.io/</link><description></description><atom:link href="https://coady.github.io/categories/cat_interviews.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2022 &lt;a href="mailto:aric.coady@gmail.com"&gt;A. Coady&lt;/a&gt; </copyright><lastBuildDate>Mon, 07 Mar 2022 16:09:15 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Primes</title><link>https://coady.github.io/posts/primes/</link><dc:creator>A. Coady</dc:creator><description>&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;p&gt;An old interview challenge is to generate prime numbers or check if a number is prime. No advanced mathematics needed, just variants on the &lt;a href="https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes"&gt;Sieve of Eratosthenes&lt;/a&gt;. Starting with a basic prime checker.&lt;/p&gt;
@@ -712,7 +712,7 @@ Wall time: 43.2 µs
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;/div&gt;&lt;/div&gt;</description><guid>https://coady.github.io/posts/primes/</guid><pubDate>Sat, 10 Jul 2021 07:00:00 GMT</pubDate></item><item><title>Split an Iterable</title><link>https://coady.github.io/posts/split-an-iterable/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;</description><guid>https://coady.github.io/posts/primes/</guid><pubDate>Sat, 10 Jul 2021 07:00:00 GMT</pubDate></item><item><title>Split an Iterable</title><link>https://coady.github.io/posts/split-an-iterable/</link><dc:creator>A. Coady</dc:creator><description>&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;h2 id="Split-an-iterable-into-equal-sized-chunks."&gt;Split an iterable into equal sized chunks.&lt;a class="anchor-link" href="https://coady.github.io/posts/split-an-iterable/#Split-an-iterable-into-equal-sized-chunks."&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;A common task and interview question, with many variants.  It's frequently &lt;a href="http://stackoverflow.com/questions/312443/"&gt;asked and answered&lt;/a&gt; in a way that's suboptimal and only handles &lt;a href="http://stackoverflow.com/questions/6822725/"&gt;one specific case&lt;/a&gt;.  The goal here is to present definitive, general, and efficient solutions.&lt;/p&gt;
@@ -1017,7 +1017,7 @@ Wall time: 43.2 µs
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;/div&gt;&lt;/div&gt;</description><guid>https://coady.github.io/posts/split-an-iterable/</guid><pubDate>Sat, 28 Dec 2019 08:00:00 GMT</pubDate></item><item><title>Fizz Buzz</title><link>https://coady.github.io/posts/fizz-buzz/</link><dc:creator>A. Coady</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;</description><guid>https://coady.github.io/posts/split-an-iterable/</guid><pubDate>Sat, 28 Dec 2019 08:00:00 GMT</pubDate></item><item><title>Fizz Buzz</title><link>https://coady.github.io/posts/fizz-buzz/</link><dc:creator>A. Coady</dc:creator><description>&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;h2 id="The-infamously-simple-FizzBuzz-problem."&gt;The infamously simple &lt;a href="https://en.wikipedia.org/wiki/Fizz_buzz#Programming_interviews"&gt;FizzBuzz&lt;/a&gt; problem.&lt;a class="anchor-link" href="https://coady.github.io/posts/fizz-buzz/#The-infamously-simple-FizzBuzz-problem."&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Reportedly a high percentage of programmer applicants can't solve this quickly.&lt;/p&gt;
@@ -1283,4 +1283,4 @@ FizzBuzz
 
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;/div&gt;</description><guid>https://coady.github.io/posts/fizz-buzz/</guid><pubDate>Sun, 25 Mar 2018 07:00:00 GMT</pubDate></item></channel></rss>
+&lt;/div&gt;</description><guid>https://coady.github.io/posts/fizz-buzz/</guid><pubDate>Sun, 25 Mar 2018 07:00:00 GMT</pubDate></item></channel></rss>
