@@ -1436,19 +1436,19 @@ Wall time: 1.3 s
 <h3 id="Example">Example<a class="anchor-link" href="posts/graphql-orm/#Example">¶</a>
 </h3>
 <p>The problems can be seen immediately in GraphQL's own introductory <a href="https://graphql.org/learn/execution/#root-fields-resolvers">resolver example</a>.</p>
-<div class="highlight"><pre><span></span><span class="nx">Query</span><span class="o">:</span> <span class="p">{</span>
-  <span class="nx">human</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">info</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">context</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">loadHumanByID</span><span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">id</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span>
-      <span class="nx">userData</span> <span class="p">=&gt;</span> <span class="ow">new</span> <span class="nx">Human</span><span class="p">(</span><span class="nx">userData</span><span class="p">)</span>
-    <span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><span class="nx">Query</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nx">human</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span><span class="w"> </span><span class="nx">args</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="p">,</span><span class="w"> </span><span class="nx">info</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">loadHumanByID</span><span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">id</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="w"></span>
+<span class="w">      </span><span class="nx">userData</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Human</span><span class="p">(</span><span class="nx">userData</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 
-<span class="nx">Human</span><span class="o">:</span> <span class="p">{</span>
-  <span class="nx">name</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">info</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">name</span>
-  <span class="p">}</span>
-<span class="p">}</span>
+<span class="nx">Human</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nx">name</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span><span class="w"> </span><span class="nx">args</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="p">,</span><span class="w"> </span><span class="nx">info</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">obj</span><span class="p">.</span><span class="nx">name</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 <p>What makes the <code>name</code> resolver trivial?  It's pre-fetched by <code>loadHumanByID</code>, whose only parameter is <code>id</code>, so it's clearly unaware of whether <code>name</code> has been requested.  What if the requested field was a nested object, or a json field, or just a large text blob?  Then one would clearly be directed towards using a non-trivial resolver which fetches the field on demand.  Of course, but then whatever work is common in the human <code>id</code> lookup is duplicated.</p>
 <p>This is by no means specific to SQL or relational databases, but SQL is a convenient lingua franca of databases to demonstrate the inefficiency.  The choices are:</p>
@@ -1463,21 +1463,21 @@ Wall time: 1.3 s
 <code>SELECT f1, f2, ... FROM human WHERE id = ?</code> for requested fields</li>
 </ul>
 <p>In other words, exactly what happens with ORMs, except even ORMs typically offer an option of requesting a subset of fields.  Naturally the problem gets worse with list fields.</p>
-<div class="highlight"><pre><span></span><span class="nx">Human</span><span class="o">:</span> <span class="p">{</span>
-  <span class="nx">appearsIn</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">appearsIn</span> <span class="c1">// returns [ 4, 5, 6 ]</span>
-  <span class="p">}</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><span class="nx">Human</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nx">appearsIn</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">obj</span><span class="p">.</span><span class="nx">appearsIn</span><span class="w"> </span><span class="c1">// returns [ 4, 5, 6 ]</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 
-<span class="nx">Human</span><span class="o">:</span> <span class="p">{</span>
-  <span class="nx">starships</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">info</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">starshipIDs</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span>
-      <span class="nx">id</span> <span class="p">=&gt;</span> <span class="nx">context</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">loadStarshipByID</span><span class="p">(</span><span class="nx">id</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span>
-        <span class="nx">shipData</span> <span class="p">=&gt;</span> <span class="ow">new</span> <span class="nx">Starship</span><span class="p">(</span><span class="nx">shipData</span><span class="p">)</span>
-      <span class="p">)</span>
-    <span class="p">)</span>
-  <span class="p">}</span>
-<span class="p">}</span>
+<span class="nx">Human</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nx">starships</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span><span class="w"> </span><span class="nx">args</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="p">,</span><span class="w"> </span><span class="nx">info</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">obj</span><span class="p">.</span><span class="nx">starshipIDs</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="w"></span>
+<span class="w">      </span><span class="nx">id</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">loadStarshipByID</span><span class="p">(</span><span class="nx">id</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="w"></span>
+<span class="w">        </span><span class="nx">shipData</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Starship</span><span class="p">(</span><span class="nx">shipData</span><span class="p">)</span><span class="w"></span>
+<span class="w">      </span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 <p>Now there are two sets of associate keys (<code>.appearsIn</code> and <code>.starshipIDs</code>) that have been over-fetched.  Nonetheless <code>starships</code> is  under-fetched as well.  The <code>starships</code> resolver is neither the most efficient nor the simplest way of resolving this field:</p>
 <ul>
