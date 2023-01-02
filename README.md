@@ -19,6 +19,7 @@ noun</br>
 * [Fizz Buzz](posts/fizz-buzz.ipynb)
 * [Split an Iterable](posts/split-an-iterable.ipynb)
 * [Primes](posts/primes.ipynb)
+* [Random Selection](posts/random-selection.ipynb)
 
 ### Style
 * [Map and Filter](posts/map-and-filter.ipynb)

@@ -1,4 +1,4 @@
-.doit.db
+.doit.db*
 .venv/
 __pycache__/
 cache/
