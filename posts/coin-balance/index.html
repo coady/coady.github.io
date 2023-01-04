@@ -108,6 +108,8 @@
 <p>Given a balance and a set of coins, which are all equal in weight except for one, determine which coin is of different weight in as few weighings as possible.</p>
 <blockquote>
 <p>Twelve-coin problem</p>
+</blockquote>
+<blockquote>
 <p>A more complex version has twelve coins, eleven or twelve of which are identical. If one is different, we don't know whether it is heavier or lighter than the others. This time the balance may be used three times to determine if there is a unique coin—and if there is, to isolate it and determine its weight relative to the others. (This puzzle and its solution first appeared in an article in 1945.[2]) The problem has a simpler variant with three coins in two weighings, and a more complex variant with 39 coins in four weighings.</p>
 </blockquote>
 <p>First to model the data:</p>
@@ -137,7 +139,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span>
 
     <span class="k">def</span> <span class="nf">weigh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="nb">set</span><span class="p">):</span>
-        <span class="sd">"""Return relative Weight of left side to right side."""</span>
+<span class="w">        </span><span class="sd">"""Return relative Weight of left side to right side."""</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">left</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">right</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coin</span> <span class="ow">in</span> <span class="n">left</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span>
@@ -186,7 +188,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">filler</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">weigh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="nb">set</span><span class="p">):</span>
-        <span class="sd">"""Return relative Weight of left side to right side."""</span>
+<span class="w">        </span><span class="sd">"""Return relative Weight of left side to right side."""</span>
         <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">left</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">right</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filler</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coin</span> <span class="ow">in</span> <span class="n">left</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span>
@@ -195,7 +197,7 @@
         <span class="k">return</span> <span class="n">Weight</span><span class="o">.</span><span class="n">EVEN</span>
 
     <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">light</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span> <span class="n">heavy</span><span class="p">:</span> <span class="nb">set</span><span class="p">):</span>
-        <span class="sd">"""Recursively find target coin from sets of potentially light and heavy coins."""</span>
+<span class="w">        </span><span class="sd">"""Recursively find target coin from sets of potentially light and heavy coins."""</span>
         <span class="k">yield</span> <span class="n">light</span><span class="p">,</span> <span class="n">heavy</span>
         <span class="n">union</span> <span class="o">=</span> <span class="n">light</span> <span class="o">|</span> <span class="n">heavy</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">union</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
@@ -265,7 +267,7 @@ $$</p>
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Balance</span><span class="p">(</span><span class="n">Balance</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">coins</span><span class="p">):</span>
-        <span class="sd">"""Recursively find target coin."""</span>
+<span class="w">        </span><span class="sd">"""Recursively find target coin."""</span>
         <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">weigh</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="n">coins</span><span class="p">,</span> <span class="mi">3</span> <span class="o">**</span> <span class="p">(</span><span class="n">count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">filler</span><span class="p">)))</span>
@@ -415,7 +417,7 @@ MathJax.Hub.Config({
     }
 });
 </script></article><!--End of body content--><footer id="footer">
-            Contents © 2022         <a href="mailto:aric.coady@gmail.com">A. Coady</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            Contents © 2023         <a href="mailto:aric.coady@gmail.com">A. Coady</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
             
             
         </footer>

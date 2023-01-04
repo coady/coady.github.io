@@ -21,7 +21,8 @@
 <meta property="og:description" content="Contrarian view on closing files.¶It has become conventional wisdom to always explicitly close file-like objects, via context managers.
 The google style guide
 is representative:
-Explicitly close files">
+
+Explicitly close file">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2020-07-05T00:00:00-07:00">
 </head>
@@ -112,25 +113,31 @@ Explicitly close files">
 The <a href="https://google.github.io/styleguide/pyguide.html#311-files-and-sockets">google style guide</a>
 is representative:</p>
 <blockquote>
-<p>Explicitly close files and sockets when done with them.
-Leaving files, sockets or other file-like objects open unnecessarily has many downsides, including:</p>
+<p>Explicitly close files and sockets when done with them.</p>
+</blockquote>
+<p>Leaving files, sockets or other file-like objects open unnecessarily has many downsides, including:</p>
+<blockquote>
 <p>They may consume limited system resources, such as file descriptors.</p>
+</blockquote>
 <ul>
 <li>Code that deals with many such objects may exhaust those resources unnecessarily if they're not returned to the system promptly after use.</li>
 <li>Holding files open may prevent other actions being performed on them, such as moves or deletion.</li>
 <li>Files and sockets that are shared throughout a program may inadvertantly be read from or written to after logically being closed. If they are actually closed, attempts to read or write from them will throw exceptions, making the problem known sooner.</li>
 </ul>
+<blockquote>
 <p>Furthermore, while files and sockets are automatically closed when the file object is destructed, tying the life-time of the file object to the state of the file is poor practice, for several reasons:</p>
+</blockquote>
 <ul>
 <li>There are no guarantees as to when the runtime will actually run the file's destructor. Different Python implementations use different memory management techniques, such as delayed Garbage Collection, which may increase the object's lifetime arbitrarily and indefinitely.</li>
 <li>Unexpected references to the file may keep it around longer than intended (e.g. in tracebacks of exceptions, inside globals, etc).</li>
 </ul>
+<blockquote>
 <p>The preferred way to manage files is using the "with" statement:</p>
-
+</blockquote>
 <pre><code>with open("hello.txt") as hello_file:
     for line in hello_file:
-        print line</code></pre>
-</blockquote>
+        print line
+</code></pre>
 <h3 id="In-theory">In theory<a class="anchor-link" href="#In-theory">¶</a>
 </h3>
 <p>Good points, and why limit this advice to file descriptors?  Any resource may be limited or require exclusivity;  that's why they're called resources.  Similarly one should always explicitly call <code>dict.clear</code> when finished with a <code>dict</code>.  After all, "there are no guarantees as to when the runtime will actually run the &lt;object's&gt; destructor.  And "code that deals with many such objects may exhaust those resources unnecessarily", such as memory, or whatever else is in the <code>dict</code>.</p>
@@ -172,16 +179,16 @@ Leaving files, sockets or other file-like objects open unnecessarily has many do
 <span class="kn">import</span> <span class="nn">json</span>
 
 <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
-    <span class="sd">"""the supposedly bad way"""</span>
+<span class="w">    </span><span class="sd">"""the supposedly bad way"""</span>
     <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">))</span>
 
 <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
-    <span class="sd">"""the supposedly good way"""</span>
+<span class="w">    </span><span class="sd">"""the supposedly good way"""</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
-    <span class="sd">"""with a different file format"""</span>
+<span class="w">    </span><span class="sd">"""with a different file format"""</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 </pre></div>
@@ -326,7 +333,7 @@ MathJax.Hub.Config({
     }
 });
 </script></article><!--End of body content--><footer id="footer">
-            Contents © 2022         <a href="mailto:aric.coady@gmail.com">A. Coady</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            Contents © 2023         <a href="mailto:aric.coady@gmail.com">A. Coady</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
             
             
         </footer>

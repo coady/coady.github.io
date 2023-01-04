@@ -18,7 +18,8 @@
 <meta property="og:site_name" content="Pythonicity">
 <meta property="og:title" content="Accumulator">
 <meta property="og:url" content="https://coady.github.io/posts/accumulator/">
-<meta property="og:description" content="A Paul Graham classic, the accumulator function.¶As an illustration of what I mean about the relative power of programming languages, consider the following problem. We want to write a function that g">
+<meta property="og:description" content="A Paul Graham classic, the accumulator function.¶
+As an illustration of what I mean about the relative power of programming languages, consider the following problem. We want to write a function that ">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2018-05-28T00:00:00-07:00">
 </head>
@@ -107,24 +108,46 @@
 </h2>
 <blockquote>
 <p>As an illustration of what I mean about the relative power of programming languages, consider the following problem. We want to write a function that generates accumulators-- a function that takes a number n, and returns a function that takes another number i and returns n incremented by i.</p>
+</blockquote>
+<blockquote>
 <p>(That's incremented by, not plus. An accumulator has to accumulate.)</p>
+</blockquote>
+<blockquote>
 <p>In Common Lisp this would be</p>
-<p><code>(defun foo (n)
-  (lambda (i) (incf n i)))</code></p>
+</blockquote>
+<blockquote>
+<p>`(defun foo (n)</p>
+</blockquote>
+<p>(lambda (i) (incf n i)))`</p>
+<blockquote>
 <p>...</p>
+</blockquote>
+<blockquote>
 <p>If you try to translate the Lisp/Perl/Smalltalk/Javascript code into Python you run into some limitations. Because Python doesn't fully support lexical variables, you have to create a data structure to hold the value of n. And although Python does have a function data type, there is no literal representation for one (unless the body is only a single expression) so you need to create a named function to return. This is what you end up with:</p>
-<p><code>def foo(n):
-  s = [n]
+</blockquote>
+<blockquote>
+<p>`def foo(n):</p>
+</blockquote>
+<p>s = [n]
   def bar(i):
     s[0] += i
     return s[0] 
-  return bar</code></p>
+  return bar`</p>
+<blockquote>
 <p>Python users might legitimately ask why they can't just write</p>
-<p><code>def foo(n):
-  return lambda i: return n += i</code></p>
+</blockquote>
+<blockquote>
+<p>`def foo(n):</p>
+</blockquote>
+<p>return lambda i: return n += i`</p>
+<blockquote>
 <p>or even</p>
-<p><code>def foo(n):
-  lambda i: n += i</code></p>
+</blockquote>
+<blockquote>
+<p>`def foo(n):</p>
+</blockquote>
+<p>lambda i: n += i`</p>
+<blockquote>
 <p>and my guess is that they probably will, one day. (But if they don't want to wait for Python to evolve the rest of the way into Lisp, they could always just...)</p>
 </blockquote>
 <p>There are <a href="https://en.wikipedia.org/wiki/Function_object#In_Python">other solutions</a>, using function attributes or instances with a <code>__call__</code> method, but none are substantially more elegant.  The challenge predates Python 3, which introduced the <code>nonlocal</code> keyword, making this the presumably preferred solution:</p>
@@ -449,7 +472,7 @@ MathJax.Hub.Config({
     }
 });
 </script></article><!--End of body content--><footer id="footer">
-            Contents © 2022         <a href="mailto:aric.coady@gmail.com">A. Coady</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            Contents © 2023         <a href="mailto:aric.coady@gmail.com">A. Coady</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
             
             
         </footer>

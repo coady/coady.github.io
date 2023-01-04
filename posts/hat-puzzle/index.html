@@ -18,8 +18,11 @@
 <meta property="og:site_name" content="Pythonicity">
 <meta property="og:title" content="Hat puzzle">
 <meta property="og:url" content="https://coady.github.io/posts/hat-puzzle/">
-<meta property="og:description" content="How to solve the Hat puzzle programmatically.¶Ten-Hat Variant
-In this variant there are 10 prisoners and 10 hats. Each prisoner is assigned a random hat, either red or blue, but the number of each col">
+<meta property="og:description" content="How to solve the Hat puzzle programmatically.¶
+Ten-Hat Variant
+
+
+In this variant there are 10 prisoners and 10 hats. Each prisoner is assigned a random hat, either red or blue, but the number of each ">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2020-01-11T00:00:00-08:00">
 </head>
@@ -108,6 +111,8 @@ In this variant there are 10 prisoners and 10 hats. Each prisoner is assigned a 
 </h2>
 <blockquote>
 <p>Ten-Hat Variant</p>
+</blockquote>
+<blockquote>
 <p>In this variant there are 10 prisoners and 10 hats. Each prisoner is assigned a random hat, either red or blue, but the number of each color hat is not known to the prisoners. The prisoners will be lined up single file where each can see the hats in front of him but not behind. Starting with the prisoner in the back of the line and moving forward, they must each, in turn, say only one word which must be "red" or "blue". If the word matches their hat color they are released, if not, they are killed on the spot. A friendly guard warns them of this test one hour beforehand and tells them that they can formulate a plan where by following the stated rules, 9 of the 10 prisoners will definitely survive, and 1 has a 50/50 chance of survival. What is the plan to achieve the goal?</p>
 </blockquote>
 <p>This puzzle involves three concepts common to classic logic puzzles:</p>
@@ -267,7 +272,7 @@ In this variant there are 10 prisoners and 10 hats. Each prisoner is assigned a 
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">collections</span>
 
 <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">table</span><span class="p">):</span>
-    <span class="sd">"""Assert that the input table is a valid solution."""</span>
+<span class="w">    </span><span class="sd">"""Assert that the input table is a valid solution."""</span>
     <span class="p">(</span><span class="n">size</span><span class="p">,)</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">table</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
         <span class="n">counts</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="n">row</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="n">row</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">table</span><span class="p">)</span>
@@ -297,7 +302,7 @@ In this variant there are 10 prisoners and 10 hats. Each prisoner is assigned a 
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-    <span class="sd">"""Generate a flat table of all spoken possibilities."""</span>
+<span class="w">    </span><span class="sd">"""Generate a flat table of all spoken possibilities."""</span>
     <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">yield</span> <span class="kc">False</span><span class="p">,</span>
         <span class="k">return</span>
@@ -442,7 +447,7 @@ There are $2^n$ states of the prisoners, and each prisoner has $n-1$ bits of dat
 <span class="n">groups</span> <span class="o">=</span> <span class="n">groups</span><span class="p">[</span><span class="kc">False</span><span class="p">],</span> <span class="n">groups</span><span class="p">[</span><span class="kc">True</span><span class="p">]</span>
 
 <span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
-    <span class="sd">"""Apply summary function to groups and assert uniqueness."""</span>
+<span class="w">    </span><span class="sd">"""Apply summary function to groups and assert uniqueness."""</span>
     <span class="n">groups</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">group</span><span class="p">))</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">set</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="o">*</span><span class="n">groups</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">groups</span>
@@ -654,7 +659,7 @@ MathJax.Hub.Config({
     }
 });
 </script></article><!--End of body content--><footer id="footer">
-            Contents © 2022         <a href="mailto:aric.coady@gmail.com">A. Coady</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            Contents © 2023         <a href="mailto:aric.coady@gmail.com">A. Coady</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
             
             
         </footer>

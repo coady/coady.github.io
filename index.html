@@ -14,7 +14,7 @@
 <link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="rss.xml">
 <link rel="canonical" href="https://coady.github.io/">
 <link rel="next" href="index-1.html" type="text/html">
-<!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><link rel="prefetch" href="posts/primes/" type="text/html">
+<!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><link rel="prefetch" href="posts/random-selection/" type="text/html">
 </head>
 <body>
 <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
@@ -74,7 +74,140 @@
     
         
     <div class="postindex">
-            <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/primes/" class="u-url">Primes</a></h1>
+            <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/random-selection/" class="u-url">Random Selection</a></h1>
+                <div class="metadata">
+                    <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                        A. Coady
+                    </span></p>
+            <p class="dateline">
+            <a href="posts/random-selection/" rel="bookmark">
+            <time class="published dt-published" datetime="2023-01-02T00:00:00-08:00" itemprop="datePublished" title="2023-01-02">2023-01-02</time></a>
+            </p>
+                </div>
+            </header><div class="e-content entry-content">
+                    <div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Random selection utilities used to be common in interviews. Less so in Python circles because of the builtin <code>random</code> module. Still advanced examples may come up. First is a generalization of <code>shuffle</code> and <code>sample</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="k">def</span> <span class="nf">shuffled</span><span class="p">(</span><span class="n">iterable</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Generate values in random order for any iterable.</span>
+<span class="sd">    </span>
+<span class="sd">    Faster than `random.shuffle` if not all values are required.</span>
+<span class="sd">    More flexible than `random.sample` if the desired number is unknown a priori.</span>
+<span class="sd">    """</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">values</span><span class="p">:</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
+        <span class="n">values</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">yield</span> <span class="n">values</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+<span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="n">shuffled</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)),</span> <span class="mi">5</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[1]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[9, 7, 5, 4, 6]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Next up is a random sample in a single pass, e.g., if the data is being read from a large file. The solution requires <a href="https://en.wikipedia.org/wiki/Mathematical_induction">mathematical induction</a>:</p>
+<ul>
+<li>each Nth element has a fair chance of being selected</li>
+<li>each previously selected element has a fair chance of being removed</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return a random sample from any iterable in a single pass.</span>
+<span class="sd">    </span>
+<span class="sd">    More memory efficient than `random.sample`.</span>
+<span class="sd">    """</span>
+    <span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+    <span class="n">selection</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+    <span class="c1"># error handling and shuffling are consistent with random.sample</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">k</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">selection</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"sample larger than population"</span><span class="p">)</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">selection</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">selection</span><span class="p">):</span>
+            <span class="n">selection</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="n">selection</span>
+
+<span class="n">sample</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)),</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[2]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[1, 2, 6, 3, 8]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+                </div>
+            </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/primes/" class="u-url">Primes</a></h1>
                 <div class="metadata">
                     <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
                         A. Coady
@@ -919,7 +1052,7 @@ Wall time: 43.2 µs
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">ask</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">State</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">"""Ask `name`: are you `id`?"""</span>
+<span class="w">    </span><span class="sd">"""Ask `name`: are you `id`?"""</span>
 </pre></div>
 
     </div>
@@ -943,7 +1076,7 @@ Wall time: 43.2 µs
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">ask</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="nb">set</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="sd">"""Ask `name`: are you `id`? and return mapping of answers to possible states."""</span>
+<span class="w">    </span><span class="sd">"""Ask `name`: are you `id`? and return mapping of answers to possible states."""</span>
     <span class="n">groups</span> <span class="o">=</span> <span class="p">{</span><span class="n">word</span><span class="p">:</span> <span class="nb">set</span><span class="p">()</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">WORDS</span><span class="p">}</span>
     <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
         <span class="n">identity</span> <span class="o">=</span> <span class="n">IDS</span><span class="p">[</span><span class="n">state</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)]</span>
@@ -1061,7 +1194,7 @@ None {'BAC', 'CBA', 'CAB', 'ABC', 'ACB', 'BCA'} {'CAB', 'CBA', 'BAC', 'ABC', 'AC
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">ask</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">include</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span> <span class="n">exclude</span><span class="p">:</span> <span class="nb">set</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="sd">"""Ask `name`: are we in any of `include` states? and return mapping of answers to possible states."""</span>
+<span class="w">    </span><span class="sd">"""Ask `name`: are we in any of `include` states? and return mapping of answers to possible states."""</span>
     <span class="k">assert</span> <span class="n">include</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">exclude</span><span class="p">)</span>
     <span class="n">groups</span> <span class="o">=</span> <span class="p">{</span><span class="n">word</span><span class="p">:</span> <span class="nb">set</span><span class="p">()</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">WORDS</span><span class="p">}</span>
     <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">include</span> <span class="o">|</span> <span class="n">exclude</span><span class="p">:</span>
@@ -1134,7 +1267,7 @@ None {'BAC', 'CBA', 'CAB', 'ABC', 'ACB', 'BCA'} {'CAB', 'CBA', 'BAC', 'ABC', 'AC
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">powerset</span><span class="p">(</span><span class="n">states</span><span class="p">:</span> <span class="nb">set</span><span class="p">):</span>
-    <span class="sd">"""Generate all possible subsets."""</span>
+<span class="w">    </span><span class="sd">"""Generate all possible subsets."""</span>
     <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
         <span class="k">yield from</span> <span class="nb">map</span><span class="p">(</span><span class="nb">set</span><span class="p">,</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">r</span><span class="p">))</span>
 
@@ -1187,7 +1320,7 @@ None {'BAC', 'CBA', 'CAB', 'ABC', 'ACB', 'BCA'} {'CAB', 'CBA', 'BAC', 'ABC', 'AC
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="n">states</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
-    <span class="sd">"""Recursively ask all possible questions until a solution is found."""</span>
+<span class="w">    </span><span class="sd">"""Recursively ask all possible questions until a solution is found."""</span>
     <span class="n">identities</span> <span class="o">=</span> <span class="p">{</span><span class="n">names</span> <span class="k">for</span> <span class="n">names</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">states</span><span class="p">}</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">identities</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># solved</span>
         <span class="k">return</span> <span class="n">identities</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
@@ -1436,19 +1569,19 @@ Wall time: 1.3 s
 <h3 id="Example">Example<a class="anchor-link" href="posts/graphql-orm/#Example">¶</a>
 </h3>
 <p>The problems can be seen immediately in GraphQL's own introductory <a href="https://graphql.org/learn/execution/#root-fields-resolvers">resolver example</a>.</p>
-<div class="highlight"><pre><span></span><span class="nx">Query</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="nx">human</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span><span class="w"> </span><span class="nx">args</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="p">,</span><span class="w"> </span><span class="nx">info</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">loadHumanByID</span><span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">id</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="w"></span>
-<span class="w">      </span><span class="nx">userData</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Human</span><span class="p">(</span><span class="nx">userData</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="nx">Query</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">human</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span><span class="w"> </span><span class="nx">args</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="p">,</span><span class="w"> </span><span class="nx">info</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">loadHumanByID</span><span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">id</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span>
+<span class="w">      </span><span class="nx">userData</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Human</span><span class="p">(</span><span class="nx">userData</span><span class="p">)</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
 
-<span class="nx">Human</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="nx">name</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span><span class="w"> </span><span class="nx">args</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="p">,</span><span class="w"> </span><span class="nx">info</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">obj</span><span class="p">.</span><span class="nx">name</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="nx">Human</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">name</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span><span class="w"> </span><span class="nx">args</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="p">,</span><span class="w"> </span><span class="nx">info</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">obj</span><span class="p">.</span><span class="nx">name</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 <p>What makes the <code>name</code> resolver trivial?  It's pre-fetched by <code>loadHumanByID</code>, whose only parameter is <code>id</code>, so it's clearly unaware of whether <code>name</code> has been requested.  What if the requested field was a nested object, or a json field, or just a large text blob?  Then one would clearly be directed towards using a non-trivial resolver which fetches the field on demand.  Of course, but then whatever work is common in the human <code>id</code> lookup is duplicated.</p>
 <p>This is by no means specific to SQL or relational databases, but SQL is a convenient lingua franca of databases to demonstrate the inefficiency.  The choices are:</p>
@@ -1463,21 +1596,21 @@ Wall time: 1.3 s
 <code>SELECT f1, f2, ... FROM human WHERE id = ?</code> for requested fields</li>
 </ul>
 <p>In other words, exactly what happens with ORMs, except even ORMs typically offer an option of requesting a subset of fields.  Naturally the problem gets worse with list fields.</p>
-<div class="highlight"><pre><span></span><span class="nx">Human</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="nx">appearsIn</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">obj</span><span class="p">.</span><span class="nx">appearsIn</span><span class="w"> </span><span class="c1">// returns [ 4, 5, 6 ]</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="nx">Human</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">appearsIn</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">obj</span><span class="p">.</span><span class="nx">appearsIn</span><span class="w"> </span><span class="c1">// returns [ 4, 5, 6 ]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
 
-<span class="nx">Human</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="nx">starships</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span><span class="w"> </span><span class="nx">args</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="p">,</span><span class="w"> </span><span class="nx">info</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">obj</span><span class="p">.</span><span class="nx">starshipIDs</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="w"></span>
-<span class="w">      </span><span class="nx">id</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">loadStarshipByID</span><span class="p">(</span><span class="nx">id</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="w"></span>
-<span class="w">        </span><span class="nx">shipData</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Starship</span><span class="p">(</span><span class="nx">shipData</span><span class="p">)</span><span class="w"></span>
-<span class="w">      </span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="nx">Human</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">starships</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span><span class="w"> </span><span class="nx">args</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="p">,</span><span class="w"> </span><span class="nx">info</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">obj</span><span class="p">.</span><span class="nx">starshipIDs</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span>
+<span class="w">      </span><span class="nx">id</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">loadStarshipByID</span><span class="p">(</span><span class="nx">id</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span>
+<span class="w">        </span><span class="nx">shipData</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Starship</span><span class="p">(</span><span class="nx">shipData</span><span class="p">)</span>
+<span class="w">      </span><span class="p">)</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 <p>Now there are two sets of associate keys (<code>.appearsIn</code> and <code>.starshipIDs</code>) that have been over-fetched.  Nonetheless <code>starships</code> is  under-fetched as well.  The <code>starships</code> resolver is neither the most efficient nor the simplest way of resolving this field:</p>
 <ul>
@@ -1506,6 +1639,8 @@ Wall time: 1.3 s
 <p>From GraphQL's <a href="https://graphql.org/learn/best-practices/#server-side-batching-caching">best practices</a></p>
 <blockquote>
 <p>GraphQL is designed in a way that allows you to write clean code on the server, where every field on every type has a focused single-purpose function for resolving that value. However without additional consideration, a naive GraphQL service could be very "chatty" or repeatedly load data from your databases.</p>
+</blockquote>
+<blockquote>
 <p>This is commonly solved by a batching technique, where multiple requests for data from a backend are collected over a short period of time and then dispatched in a single request to an underlying database or microservice by using a tool like Facebook's DataLoader.</p>
 </blockquote>
 <p>That's an understatement.  It's not clear how "naive" differs from best practice.</p>
@@ -1565,7 +1700,7 @@ Wall time: 1.3 s
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">selections</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
-    <span class="sd">"""Return tree of field name selections."""</span>
+<span class="w">    </span><span class="sd">"""Return tree of field name selections."""</span>
     <span class="n">nodes</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">selection_set</span><span class="p">,</span> <span class="s1">'selections'</span><span class="p">,</span> <span class="p">[])</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">selections</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">}</span>
 </pre></div>
@@ -1612,25 +1747,31 @@ Wall time: 1.3 s
 The <a href="https://google.github.io/styleguide/pyguide.html#311-files-and-sockets">google style guide</a>
 is representative:</p>
 <blockquote>
-<p>Explicitly close files and sockets when done with them.
-Leaving files, sockets or other file-like objects open unnecessarily has many downsides, including:</p>
+<p>Explicitly close files and sockets when done with them.</p>
+</blockquote>
+<p>Leaving files, sockets or other file-like objects open unnecessarily has many downsides, including:</p>
+<blockquote>
 <p>They may consume limited system resources, such as file descriptors.</p>
+</blockquote>
 <ul>
 <li>Code that deals with many such objects may exhaust those resources unnecessarily if they're not returned to the system promptly after use.</li>
 <li>Holding files open may prevent other actions being performed on them, such as moves or deletion.</li>
 <li>Files and sockets that are shared throughout a program may inadvertantly be read from or written to after logically being closed. If they are actually closed, attempts to read or write from them will throw exceptions, making the problem known sooner.</li>
 </ul>
+<blockquote>
 <p>Furthermore, while files and sockets are automatically closed when the file object is destructed, tying the life-time of the file object to the state of the file is poor practice, for several reasons:</p>
+</blockquote>
 <ul>
 <li>There are no guarantees as to when the runtime will actually run the file's destructor. Different Python implementations use different memory management techniques, such as delayed Garbage Collection, which may increase the object's lifetime arbitrarily and indefinitely.</li>
 <li>Unexpected references to the file may keep it around longer than intended (e.g. in tracebacks of exceptions, inside globals, etc).</li>
 </ul>
+<blockquote>
 <p>The preferred way to manage files is using the "with" statement:</p>
-
+</blockquote>
 <pre><code>with open("hello.txt") as hello_file:
     for line in hello_file:
-        print line</code></pre>
-</blockquote>
+        print line
+</code></pre>
 <h3 id="In-theory">In theory<a class="anchor-link" href="posts/closing-files/#In-theory">¶</a>
 </h3>
 <p>Good points, and why limit this advice to file descriptors?  Any resource may be limited or require exclusivity;  that's why they're called resources.  Similarly one should always explicitly call <code>dict.clear</code> when finished with a <code>dict</code>.  After all, "there are no guarantees as to when the runtime will actually run the &lt;object's&gt; destructor.  And "code that deals with many such objects may exhaust those resources unnecessarily", such as memory, or whatever else is in the <code>dict</code>.</p>
@@ -1672,16 +1813,16 @@ Leaving files, sockets or other file-like objects open unnecessarily has many do
 <span class="kn">import</span> <span class="nn">json</span>
 
 <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
-    <span class="sd">"""the supposedly bad way"""</span>
+<span class="w">    </span><span class="sd">"""the supposedly bad way"""</span>
     <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">))</span>
 
 <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
-    <span class="sd">"""the supposedly good way"""</span>
+<span class="w">    </span><span class="sd">"""the supposedly good way"""</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
-    <span class="sd">"""with a different file format"""</span>
+<span class="w">    </span><span class="sd">"""with a different file format"""</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 </pre></div>
@@ -2464,6 +2605,8 @@ Which is known as a linear <a href="https://en.wikipedia.org/wiki/Diophantine_eq
 <p>Given a balance and a set of coins, which are all equal in weight except for one, determine which coin is of different weight in as few weighings as possible.</p>
 <blockquote>
 <p>Twelve-coin problem</p>
+</blockquote>
+<blockquote>
 <p>A more complex version has twelve coins, eleven or twelve of which are identical. If one is different, we don't know whether it is heavier or lighter than the others. This time the balance may be used three times to determine if there is a unique coin—and if there is, to isolate it and determine its weight relative to the others. (This puzzle and its solution first appeared in an article in 1945.[2]) The problem has a simpler variant with three coins in two weighings, and a more complex variant with 39 coins in four weighings.</p>
 </blockquote>
 <p>First to model the data:</p>
@@ -2493,7 +2636,7 @@ Which is known as a linear <a href="https://en.wikipedia.org/wiki/Diophantine_eq
         <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span>
 
     <span class="k">def</span> <span class="nf">weigh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="nb">set</span><span class="p">):</span>
-        <span class="sd">"""Return relative Weight of left side to right side."""</span>
+<span class="w">        </span><span class="sd">"""Return relative Weight of left side to right side."""</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">left</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">right</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coin</span> <span class="ow">in</span> <span class="n">left</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span>
@@ -2542,7 +2685,7 @@ Which is known as a linear <a href="https://en.wikipedia.org/wiki/Diophantine_eq
         <span class="bp">self</span><span class="o">.</span><span class="n">filler</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">weigh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="nb">set</span><span class="p">):</span>
-        <span class="sd">"""Return relative Weight of left side to right side."""</span>
+<span class="w">        </span><span class="sd">"""Return relative Weight of left side to right side."""</span>
         <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">left</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">right</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filler</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coin</span> <span class="ow">in</span> <span class="n">left</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span>
@@ -2551,7 +2694,7 @@ Which is known as a linear <a href="https://en.wikipedia.org/wiki/Diophantine_eq
         <span class="k">return</span> <span class="n">Weight</span><span class="o">.</span><span class="n">EVEN</span>
 
     <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">light</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span> <span class="n">heavy</span><span class="p">:</span> <span class="nb">set</span><span class="p">):</span>
-        <span class="sd">"""Recursively find target coin from sets of potentially light and heavy coins."""</span>
+<span class="w">        </span><span class="sd">"""Recursively find target coin from sets of potentially light and heavy coins."""</span>
         <span class="k">yield</span> <span class="n">light</span><span class="p">,</span> <span class="n">heavy</span>
         <span class="n">union</span> <span class="o">=</span> <span class="n">light</span> <span class="o">|</span> <span class="n">heavy</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">union</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
@@ -2621,7 +2764,7 @@ $$</p>
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Balance</span><span class="p">(</span><span class="n">Balance</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">coins</span><span class="p">):</span>
-        <span class="sd">"""Recursively find target coin."""</span>
+<span class="w">        </span><span class="sd">"""Recursively find target coin."""</span>
         <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">weigh</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="n">coins</span><span class="p">,</span> <span class="mi">3</span> <span class="o">**</span> <span class="p">(</span><span class="n">count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">filler</span><span class="p">)))</span>
@@ -2771,6 +2914,8 @@ a
 </h2>
 <blockquote>
 <p>Ten-Hat Variant</p>
+</blockquote>
+<blockquote>
 <p>In this variant there are 10 prisoners and 10 hats. Each prisoner is assigned a random hat, either red or blue, but the number of each color hat is not known to the prisoners. The prisoners will be lined up single file where each can see the hats in front of him but not behind. Starting with the prisoner in the back of the line and moving forward, they must each, in turn, say only one word which must be "red" or "blue". If the word matches their hat color they are released, if not, they are killed on the spot. A friendly guard warns them of this test one hour beforehand and tells them that they can formulate a plan where by following the stated rules, 9 of the 10 prisoners will definitely survive, and 1 has a 50/50 chance of survival. What is the plan to achieve the goal?</p>
 </blockquote>
 <p>This puzzle involves three concepts common to classic logic puzzles:</p>
@@ -2930,7 +3075,7 @@ a
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">collections</span>
 
 <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">table</span><span class="p">):</span>
-    <span class="sd">"""Assert that the input table is a valid solution."""</span>
+<span class="w">    </span><span class="sd">"""Assert that the input table is a valid solution."""</span>
     <span class="p">(</span><span class="n">size</span><span class="p">,)</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">table</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
         <span class="n">counts</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="n">row</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="n">row</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">table</span><span class="p">)</span>
@@ -2960,7 +3105,7 @@ a
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-    <span class="sd">"""Generate a flat table of all spoken possibilities."""</span>
+<span class="w">    </span><span class="sd">"""Generate a flat table of all spoken possibilities."""</span>
     <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">yield</span> <span class="kc">False</span><span class="p">,</span>
         <span class="k">return</span>
@@ -3105,7 +3250,7 @@ There are $2^n$ states of the prisoners, and each prisoner has $n-1$ bits of dat
 <span class="n">groups</span> <span class="o">=</span> <span class="n">groups</span><span class="p">[</span><span class="kc">False</span><span class="p">],</span> <span class="n">groups</span><span class="p">[</span><span class="kc">True</span><span class="p">]</span>
 
 <span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
-    <span class="sd">"""Apply summary function to groups and assert uniqueness."""</span>
+<span class="w">    </span><span class="sd">"""Apply summary function to groups and assert uniqueness."""</span>
     <span class="n">groups</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">group</span><span class="p">))</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">set</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="o">*</span><span class="n">groups</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">groups</span>
@@ -3333,7 +3478,7 @@ There are $2^n$ states of the prisoners, and each prisoner has $n-1$ bits of dat
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">itertools</span>
 
 <span class="k">def</span> <span class="nf">window</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-    <span class="sd">"""Generate a sliding window of values."""</span>
+<span class="w">    </span><span class="sd">"""Generate a sliding window of values."""</span>
     <span class="n">its</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">tee</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">it</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">its</span><span class="p">)))</span>
 
@@ -3383,7 +3528,7 @@ There are $2^n$ states of the prisoners, and each prisoner has $n-1$ bits of dat
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">collections</span>
 
 <span class="k">def</span> <span class="nf">window</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-    <span class="sd">"""Generate a sliding window of values."""</span>
+<span class="w">    </span><span class="sd">"""Generate a sliding window of values."""</span>
     <span class="n">its</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">tee</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">it</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">its</span><span class="p">):</span>
         <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">index</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># exhaust iterator</span>
@@ -3435,7 +3580,7 @@ There are $2^n$ states of the prisoners, and each prisoner has $n-1$ bits of dat
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">chunks</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
-    <span class="sd">"""Generate adjacent chunks of data"""</span>
+<span class="w">    </span><span class="sd">"""Generate adjacent chunks of data"""</span>
     <span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">size</span><span class="p">)),</span> <span class="p">())</span>
 
@@ -3630,348 +3775,6 @@ There are $2^n$ states of the prisoners, and each prisoner has $n-1$ bits of dat
 
 </div>
                 </div>
-            </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/accumulator/" class="u-url">Accumulator</a></h1>
-                <div class="metadata">
-                    <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
-                        A. Coady
-                    </span></p>
-            <p class="dateline">
-            <a href="posts/accumulator/" rel="bookmark">
-            <time class="published dt-published" datetime="2018-05-28T00:00:00-07:00" itemprop="datePublished" title="2018-05-28">2018-05-28</time></a>
-            </p>
-                </div>
-            </header><div class="e-content entry-content">
-                    <div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="A-Paul-Graham-classic,-the-accumulator-function.">A <a href="http://www.paulgraham.com/icad.html">Paul Graham classic</a>, the accumulator function.<a class="anchor-link" href="posts/accumulator/#A-Paul-Graham-classic,-the-accumulator-function.">¶</a>
-</h2>
-<blockquote>
-<p>As an illustration of what I mean about the relative power of programming languages, consider the following problem. We want to write a function that generates accumulators-- a function that takes a number n, and returns a function that takes another number i and returns n incremented by i.</p>
-<p>(That's incremented by, not plus. An accumulator has to accumulate.)</p>
-<p>In Common Lisp this would be</p>
-<p><code>(defun foo (n)
-  (lambda (i) (incf n i)))</code></p>
-<p>...</p>
-<p>If you try to translate the Lisp/Perl/Smalltalk/Javascript code into Python you run into some limitations. Because Python doesn't fully support lexical variables, you have to create a data structure to hold the value of n. And although Python does have a function data type, there is no literal representation for one (unless the body is only a single expression) so you need to create a named function to return. This is what you end up with:</p>
-<p><code>def foo(n):
-  s = [n]
-  def bar(i):
-    s[0] += i
-    return s[0] 
-  return bar</code></p>
-<p>Python users might legitimately ask why they can't just write</p>
-<p><code>def foo(n):
-  return lambda i: return n += i</code></p>
-<p>or even</p>
-<p><code>def foo(n):
-  lambda i: n += i</code></p>
-<p>and my guess is that they probably will, one day. (But if they don't want to wait for Python to evolve the rest of the way into Lisp, they could always just...)</p>
-</blockquote>
-<p>There are <a href="https://en.wikipedia.org/wiki/Function_object#In_Python">other solutions</a>, using function attributes or instances with a <code>__call__</code> method, but none are substantially more elegant.  The challenge predates Python 3, which introduced the <code>nonlocal</code> keyword, making this the presumably preferred solution:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In [1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">inc</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-        <span class="k">nonlocal</span> <span class="n">n</span>
-        <span class="n">n</span> <span class="o">+=</span> <span class="n">x</span>
-        <span class="k">return</span> <span class="n">n</span>
-    <span class="k">return</span> <span class="n">inc</span>
-
-<span class="n">acc</span> <span class="o">=</span> <span class="n">foo</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">acc</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">acc</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[1]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>3</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>There was also yet another alternative as of Python 2.6: using a generator as a coroutine.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In [2]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">n</span> <span class="o">+=</span> <span class="k">yield</span> <span class="n">n</span>
-
-<span class="n">acc</span> <span class="o">=</span> <span class="n">foo</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="nb">next</span><span class="p">(</span><span class="n">acc</span><span class="p">)</span>
-<span class="n">acc</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">acc</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[2]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>3</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>To satisfy the challenge, that would need to be wrapped with a decorator.  The triple <code>partial</code> expression below may seem a little obtuse, but it's not as bad as it looks.  Just unwind it one step at a time.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In [3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-
-<span class="nd">@partial</span><span class="p">(</span><span class="n">partial</span><span class="p">,</span> <span class="n">partial</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">coroutine</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">gen</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="nb">next</span><span class="p">(</span><span class="n">gen</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">gen</span><span class="o">.</span><span class="n">send</span>
-
-<span class="n">coroutine</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[3]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>functools.partial(&lt;class 'functools.partial'&gt;, &lt;function coroutine at 0x10bf970e0&gt;)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In [4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nd">@coroutine</span>
-<span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">n</span> <span class="o">+=</span> <span class="k">yield</span> <span class="n">n</span>
-
-<span class="n">foo</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[4]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>functools.partial(&lt;function coroutine at 0x10bf970e0&gt;, &lt;function foo at 0x10bf7eb90&gt;)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In [5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">acc</span> <span class="o">=</span> <span class="n">foo</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">acc</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[5]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>&lt;function generator.send&gt;</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In [6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">acc</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">acc</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[6]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>3</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>But what's the most Pythonic solution?  This author would argue... don't.  In my experience, I have never really needed <code>global</code> or <code>nonlocal</code> in production code.  Typically it's because the objects in question are <em>mutable</em>, so it's not necessary to rebind a name in a different scope to a new object.</p>
-<p>A typical tell of these kinds of code challenges are that they focus on the interface or implementation exclusively, never both in context.  Python numbers are immutable, and have syntactic support for incrementing, so there's nothing more readable about <code>acc(...)</code> instead of <code>n += ...</code>.</p>
-<p>Futhermore, the accumulator object is intended to be used repeatedly, such as in a loop.  In a language with such strong iteration support as Python, it's extremely likely that accumulation will occur in a iterative loop.  Indeed, the <em>real</em> accumulator has since been added to the standard library.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In [7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">itertools</span>
-
-<span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">accumulate</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)))</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[7]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[0, 1, 3, 6, 10, 15, 21, 28, 36, 45]</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-                </div>
             </article>
 </div>
     
@@ -3991,7 +3794,7 @@ MathJax.Hub.Config({
     }
 });
 </script><!--End of body content--><footer id="footer">
-            Contents © 2022         <a href="mailto:aric.coady@gmail.com">A. Coady</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            Contents © 2023         <a href="mailto:aric.coady@gmail.com">A. Coady</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
             
             
         </footer>

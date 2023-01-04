@@ -7,98 +7,106 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>https://coady.github.io/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/2018/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/2019/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/2020/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/2021/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://coady.github.io/2023/</loc>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/archive.html</loc>
-  <lastmod>2022-06-27T15:48:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/categories/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/categories/cat_interviews/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/categories/cat_puzzles/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/categories/cat_style/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/index-1.html</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/posts/accumulator/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/posts/cheryls-birthday/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/posts/closing-files/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/posts/coin-balance/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/posts/fizz-buzz/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/posts/graphql-orm/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/posts/hardest-logic-puzzle-ever/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/posts/hat-puzzle/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/posts/map-and-filter/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/posts/mutable-defaults/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/posts/primes/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://coady.github.io/posts/random-selection/</loc>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/posts/split-an-iterable/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
  <url>
   <loc>https://coady.github.io/posts/water-pouring/</loc>
-  <lastmod>2022-06-27T15:49:00Z</lastmod>
+  <lastmod>2023-01-04T02:51:00Z</lastmod>
  </url>
 </urlset>

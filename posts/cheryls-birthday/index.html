@@ -18,7 +18,8 @@
 <meta property="og:title" content="Cheryl's Birthday">
 <meta property="og:url" content="https://coady.github.io/posts/cheryls-birthday/">
 <meta property="og:description" content="How to solve the Cheryl's Birthday puzzle programmatically.¶
-Albert and Bernard just became friends with Cheryl, and they want to know when her birthday is. Cheryl gave them a list of 10 possible date">
+
+Albert and Bernard just became friends with Cheryl, and they want to know when her birthday is. Cheryl gave them a list of 10 possible dat">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2018-03-20T00:00:00-07:00">
 </head>
@@ -103,21 +104,25 @@ Albert and Bernard just became friends with Cheryl, and they want to know when h
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="How-to-solve-the-Cheryl's-Birthday-puzzle-programmatically.">How to solve the <a href="https://en.wikipedia.org/wiki/Cheryl's_Birthday">Cheryl's Birthday</a> puzzle programmatically.<a class="anchor-link" href="#How-to-solve-the-Cheryl's-Birthday-puzzle-programmatically.">¶</a>
+<h3 id="How-to-solve-the-Cheryl's-Birthday-puzzle-programmatically.">How to solve the <a href="https://en.wikipedia.org/wiki/Cheryl%27s_Birthday">Cheryl's Birthday</a> puzzle programmatically.<a class="anchor-link" href="#How-to-solve-the-Cheryl's-Birthday-puzzle-programmatically.">¶</a>
 </h3>
-<blockquote><ol>
-<li>Albert and Bernard just became friends with Cheryl, and they want to know when her birthday is. Cheryl gave them a list of 10 possible dates:
-<pre><code> May 15     May 16     May 19
-June 17    June 18
-July 14    July 16
-August 14  August 15  August 17</code></pre>
-</li>
+<blockquote>
+<ol>
+<li>Albert and Bernard just became friends with Cheryl, and they want to know when her birthday is. Cheryl gave them a list of 10 possible dates:</li>
+</ol>
+</blockquote>
+<pre><code>    May 15     May 16     May 19
+   June 17    June 18
+   July 14    July 16
+ August 14  August 15  August 17
+</code></pre>
+<ol>
 <li>Cheryl then tells Albert and Bernard separately the month and the day of the birthday respectively.</li>
 <li>Albert: I don't know when Cheryl's birthday is, but I know that Bernard does not know too.</li>
 <li>Bernard: At first I don't know when Cheryl's birthday is, but I know now.</li>
 <li>Albert: Then I also know when Cheryl's birthday is.</li>
 <li>So when is Cheryl's birthday?</li>
-</ol></blockquote>
+</ol>
 <p>As with the <a href="https://github.com/norvig/pytudes/blob/master/ipynb/Cheryl.ipynb">pytudes solution</a>, the goal is to solve the puzzle in code.  A different approach is taken here though, for simplicity and extensibility.</p>
 <p>The first step is to model the data.  A <code>set</code> of <code>Date</code> objects is suitable to represent the current possible dates.  Since <code>datetime.date</code> objects require a year, a minimal <code>collections.namedtuple</code> is used instead.</p>
 
@@ -202,7 +207,7 @@ August 14  August 15  August 17</code></pre>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">claim</span><span class="p">(</span><span class="n">field</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dates</span><span class="p">:</span> <span class="nb">set</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">:</span>
-    <span class="sd">"""Return subset of possible dates which would make the claim true.</span>
+<span class="w">    </span><span class="sd">"""Return subset of possible dates which would make the claim true.</span>
 <span class="sd">    </span>
 <span class="sd">    :param field: the field known by the claimant</span>
 <span class="sd">    :param dates: the current set of dates publicly known</span>
@@ -232,7 +237,7 @@ August 14  August 15  August 17</code></pre>
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">collections</span>
 
 <span class="k">def</span> <span class="nf">known</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">dates</span><span class="p">):</span>
-    <span class="sd">"""Return subset of possible dates which would make the claim "I know ..." true."""</span>
+<span class="w">    </span><span class="sd">"""Return subset of possible dates which would make the claim "I know ..." true."""</span>
     <span class="n">counts</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">date</span> <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">dates</span> <span class="k">if</span> <span class="n">counts</span><span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">field</span><span class="p">)]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">}</span>
 
@@ -282,7 +287,7 @@ August 14  August 15  August 17</code></pre>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">unknown</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">dates</span><span class="p">):</span>
-    <span class="sd">"""Return subset of possible dates which would make the claim "I don't know ..." true."""</span>
+<span class="w">    </span><span class="sd">"""Return subset of possible dates which would make the claim "I don't know ..." true."""</span>
     <span class="k">return</span> <span class="n">dates</span> <span class="o">-</span> <span class="n">known</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">dates</span><span class="p">)</span>
 </pre></div>
 
@@ -307,7 +312,7 @@ August 14  August 15  August 17</code></pre>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">unknowable</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">dates</span><span class="p">):</span>
-    <span class="sd">"""Return subset of possible dates which would make the claim "They don't know ..." true."""</span>
+<span class="w">    </span><span class="sd">"""Return subset of possible dates which would make the claim "They don't know ..." true."""</span>
     <span class="n">other</span><span class="p">,</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">Date</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span> <span class="o">-</span> <span class="p">{</span><span class="n">field</span><span class="p">}</span>
     <span class="n">exclude</span> <span class="o">=</span> <span class="p">{</span><span class="nb">getattr</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">known</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">dates</span><span class="p">)}</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">date</span> <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">dates</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">}</span>
@@ -498,7 +503,7 @@ MathJax.Hub.Config({
     }
 });
 </script></article><!--End of body content--><footer id="footer">
-            Contents © 2022         <a href="mailto:aric.coady@gmail.com">A. Coady</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            Contents © 2023         <a href="mailto:aric.coady@gmail.com">A. Coady</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
             
             
         </footer>

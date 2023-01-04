@@ -18,7 +18,8 @@
 <meta property="og:site_name" content="Pythonicity">
 <meta property="og:title" content="Hardest Logic Puzzle Ever">
 <meta property="og:url" content="https://coady.github.io/posts/hardest-logic-puzzle-ever/">
-<meta property="og:description" content="How to solve the Hardest Logic Puzzle Ever programmatically.¶Three gods A, B, and C are called, in no particular order, True, False, and Random. True always speaks truly, False always speaks falsely, ">
+<meta property="og:description" content="How to solve the Hardest Logic Puzzle Ever programmatically.¶
+Three gods A, B, and C are called, in no particular order, True, False, and Random. True always speaks truly, False always speaks falsely,">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2021-01-01T00:00:00-08:00">
 </head>
@@ -186,7 +187,7 @@
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">ask</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">State</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">"""Ask `name`: are you `id`?"""</span>
+<span class="w">    </span><span class="sd">"""Ask `name`: are you `id`?"""</span>
 </pre></div>
 
     </div>
@@ -210,7 +211,7 @@
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">ask</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="nb">set</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="sd">"""Ask `name`: are you `id`? and return mapping of answers to possible states."""</span>
+<span class="w">    </span><span class="sd">"""Ask `name`: are you `id`? and return mapping of answers to possible states."""</span>
     <span class="n">groups</span> <span class="o">=</span> <span class="p">{</span><span class="n">word</span><span class="p">:</span> <span class="nb">set</span><span class="p">()</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">WORDS</span><span class="p">}</span>
     <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
         <span class="n">identity</span> <span class="o">=</span> <span class="n">IDS</span><span class="p">[</span><span class="n">state</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)]</span>
@@ -328,7 +329,7 @@ None {'BAC', 'CBA', 'CAB', 'ABC', 'ACB', 'BCA'} {'CAB', 'CBA', 'BAC', 'ABC', 'AC
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">ask</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">include</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span> <span class="n">exclude</span><span class="p">:</span> <span class="nb">set</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="sd">"""Ask `name`: are we in any of `include` states? and return mapping of answers to possible states."""</span>
+<span class="w">    </span><span class="sd">"""Ask `name`: are we in any of `include` states? and return mapping of answers to possible states."""</span>
     <span class="k">assert</span> <span class="n">include</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">exclude</span><span class="p">)</span>
     <span class="n">groups</span> <span class="o">=</span> <span class="p">{</span><span class="n">word</span><span class="p">:</span> <span class="nb">set</span><span class="p">()</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">WORDS</span><span class="p">}</span>
     <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">include</span> <span class="o">|</span> <span class="n">exclude</span><span class="p">:</span>
@@ -401,7 +402,7 @@ None {'BAC', 'CBA', 'CAB', 'ABC', 'ACB', 'BCA'} {'CAB', 'CBA', 'BAC', 'ABC', 'AC
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">powerset</span><span class="p">(</span><span class="n">states</span><span class="p">:</span> <span class="nb">set</span><span class="p">):</span>
-    <span class="sd">"""Generate all possible subsets."""</span>
+<span class="w">    </span><span class="sd">"""Generate all possible subsets."""</span>
     <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
         <span class="k">yield from</span> <span class="nb">map</span><span class="p">(</span><span class="nb">set</span><span class="p">,</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">r</span><span class="p">))</span>
 
@@ -454,7 +455,7 @@ None {'BAC', 'CBA', 'CAB', 'ABC', 'ACB', 'BCA'} {'CAB', 'CBA', 'BAC', 'ABC', 'AC
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="n">states</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
-    <span class="sd">"""Recursively ask all possible questions until a solution is found."""</span>
+<span class="w">    </span><span class="sd">"""Recursively ask all possible questions until a solution is found."""</span>
     <span class="n">identities</span> <span class="o">=</span> <span class="p">{</span><span class="n">names</span> <span class="k">for</span> <span class="n">names</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">states</span><span class="p">}</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">identities</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># solved</span>
         <span class="k">return</span> <span class="n">identities</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
@@ -685,7 +686,7 @@ MathJax.Hub.Config({
     }
 });
 </script></article><!--End of body content--><footer id="footer">
-            Contents © 2022         <a href="mailto:aric.coady@gmail.com">A. Coady</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            Contents © 2023         <a href="mailto:aric.coady@gmail.com">A. Coady</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
             
             
         </footer>
