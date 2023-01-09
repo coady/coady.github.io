@@ -1,0 +1,15 @@
+project:
+  type: website
+
+website:
+  title: Pythonicity
+  site-url: https://coady.github.io/
+  navbar:
+    right:
+      - icon: github
+        href: https://github.com/coady/coady.github.io
+      - icon: rss
+        href: index.xml
+format:
+  html:
+    theme: darkly

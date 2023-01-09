@@ -1,5 +1,2 @@
-.doit.db*
-.venv/
-__pycache__/
-cache/
-output/
+/.quarto/
+/_site/
