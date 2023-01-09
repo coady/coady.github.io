@@ -1,4 +1,1 @@
-Sitemap: https://coady.github.io/sitemapindex.xml
-
-User-Agent: *
-Host: coady.github.io
+Sitemap: https://coady.github.io/sitemap.xml

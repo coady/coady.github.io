@@ -1,0 +1,21 @@
+[
+  {
+    "listing": "/index.html",
+    "items": [
+      "/posts/random-selection.html",
+      "/posts/primes.html",
+      "/posts/hardest-logic-puzzle-ever.html",
+      "/posts/graphql-orm.html",
+      "/posts/closing-files.html",
+      "/posts/mutable-defaults.html",
+      "/posts/water-pouring.html",
+      "/posts/coin-balance.html",
+      "/posts/hat-puzzle.html",
+      "/posts/split-an-iterable.html",
+      "/posts/accumulator.html",
+      "/posts/map-and-filter.html",
+      "/posts/fizz-buzz.html",
+      "/posts/cheryls-birthday.html"
+    ]
+  }
+]
