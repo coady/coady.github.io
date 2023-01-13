@@ -42,7 +42,11 @@
 <pre><code>[9, 7, 5, 4, 6]</code></pre>
 </div>
 </div>
-<p>Next up is a random sample in a single pass, e.g., if the data is being read from a large file. The solution requires <a href="https://en.wikipedia.org/wiki/Mathematical_induction">mathematical induction</a>: * each Nth element has a fair chance of being selected * each previously selected element has a fair chance of being removed</p>
+<p>Next up is a random sample in a single pass, e.g., if the data is being read from a large file. The solution requires <a href="https://en.wikipedia.org/wiki/Mathematical_induction">mathematical induction</a>:</p>
+<ul>
+<li>each Nth element has a fair chance of being selected</li>
+<li>each previously selected element has a fair chance of being removed</li>
+</ul>
 <div class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;">def</span> sample(iterable, k):</span>
 <span id="cb3-2">    <span class="co" style="color: #5E5E5E;">"""Return a random sample from any iterable in a single pass.</span></span>
@@ -552,7 +556,11 @@ Wall time: 1.3 s</code></pre>
 </div>
 <p>The puzzle is solved. Can it be simplified? Depends on your point of view.</p>
 <p><a href="https://en.wikipedia.org/wiki/The_Hardest_Logic_Puzzle_Ever#The_solution">Canonical solutions</a> introduce <a href="https://en.wikipedia.org/wiki/Logical_biconditional">biconditionals</a> or <a href="https://en.wikipedia.org/wiki/Counterfactual_conditional">conterfactuals</a> in an attempt to collapse the output possibilities. This is ultimately hopeless though, as the solution is a binary search tree regardless. Is asking a question of the form “If I asked you …, would just say ja” actually clearer than asking “Are we in any of these possibilities: …”?</p>
-<p>Nonetheless patterns do emerge: * The first question revolves around ruling out “Random”. * Subsequent questions address non-“Random” gods.</p>
+<p>Nonetheless patterns do emerge:</p>
+<ul>
+<li>The first question revolves around ruling out “Random”.</li>
+<li>Subsequent questions address non-“Random” gods.</li>
+</ul>
 <p>The random behavior adds true complexity to the algorithm, whereas the the boolean encoding adds arbitrary complications.</p>
 
 
@@ -594,8 +602,15 @@ Wall time: 1.3 s</code></pre>
 <span id="cb1-12">  }</span>
 <span id="cb1-13">}</span></code></pre></div>
 <p>What makes the <code>name</code> resolver trivial? It’s pre-fetched by <code>loadHumanByID</code>, whose only parameter is <code>id</code>, so it’s clearly unaware of whether <code>name</code> has been requested. What if the requested field was a nested object, or a json field, or just a large text blob? Then one would clearly be directed towards using a non-trivial resolver which fetches the field on demand. Of course, but then whatever work is common in the human <code>id</code> lookup is duplicated.</p>
-<p>This is by no means specific to SQL or relational databases, but SQL is a convenient lingua franca of databases to demonstrate the inefficiency. The choices are: * <code>SELECT * FROM human WHERE id = ?</code> * <code>SELECT field FROM human WHERE id = ?</code> repeated for each “expensive” field</p>
-<p>Even in the simplest possible example, over-fetching has already occurred, and the only proposed workaround is under-fetching. The single query we want is: * <code>SELECT f1, f2, ... FROM human WHERE id = ?</code> for requested fields</p>
+<p>This is by no means specific to SQL or relational databases, but SQL is a convenient lingua franca of databases to demonstrate the inefficiency. The choices are:</p>
+<ul>
+<li><code>SELECT * FROM human WHERE id = ?</code></li>
+<li><code>SELECT field FROM human WHERE id = ?</code> repeated for each “expensive” field</li>
+</ul>
+<p>Even in the simplest possible example, over-fetching has already occurred, and the only proposed workaround is under-fetching. The single query we want is:</p>
+<ul>
+<li><code>SELECT f1, f2, ... FROM human WHERE id = ?</code> for requested fields</li>
+</ul>
 <p>In other words, exactly what happens with ORMs, except even ORMs typically offer an option of requesting a subset of fields. Naturally the problem gets worse with list fields.</p>
 <div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb2-1">Human<span class="op" style="color: #5E5E5E;">:</span> {</span>
 <span id="cb2-2">  <span class="fu" style="color: #4758AB;">appearsIn</span>(obj) {</span>
@@ -612,7 +627,12 @@ Wall time: 1.3 s</code></pre>
 <span id="cb2-13">    )</span>
 <span id="cb2-14">  }</span>
 <span id="cb2-15">}</span></code></pre></div>
-<p>Now there are two sets of associate keys (<code>.appearsIn</code> and <code>.starshipIDs</code>) that have been over-fetched. Nonetheless <code>starships</code> is under-fetched as well. The <code>starships</code> resolver is neither the most efficient nor the simplest way of resolving this field: * fetch all the data by human <code>id</code> in the <code>starships</code> resolver * fetch all the data in bulk by <code>starshipIDs</code> * push the resolution down to the <code>Starship</code> layer if forced to fetch one at a time</p>
+<p>Now there are two sets of associate keys (<code>.appearsIn</code> and <code>.starshipIDs</code>) that have been over-fetched. Nonetheless <code>starships</code> is under-fetched as well. The <code>starships</code> resolver is neither the most efficient nor the simplest way of resolving this field:</p>
+<ul>
+<li>fetch all the data by human <code>id</code> in the <code>starships</code> resolver</li>
+<li>fetch all the data in bulk by <code>starshipIDs</code></li>
+<li>push the resolution down to the <code>Starship</code> layer if forced to fetch one at a time</li>
+</ul>
 <p>The example implementation seems to be going out of its way to showcase JavaScript promises. And the assumptions being made about the underlying data store are unusual:</p>
 <ol type="1">
 <li>The data is relational in nature.</li>
@@ -636,7 +656,11 @@ Wall time: 1.3 s</code></pre>
 </section>
 <section id="aggregation" class="level2">
 <h2 class="anchored" data-anchor-id="aggregation">Aggregation</h2>
-<p>The inefficencies becomes even more glaring when moving beyond associative keys. Nearly any aggregation requires knowing what summaries are requested. Such as if the <code>appearsIn</code> field optionally included counts or times. Using SQL as an example again, the query would resemble one of: * <code>SELECT distinct field FROM ...</code> * <code>SELECT field, count(*) FROM ... GROUP BY field</code></p>
+<p>The inefficencies becomes even more glaring when moving beyond associative keys. Nearly any aggregation requires knowing what summaries are requested. Such as if the <code>appearsIn</code> field optionally included counts or times. Using SQL as an example again, the query would resemble one of:</p>
+<ul>
+<li><code>SELECT distinct field FROM ...</code></li>
+<li><code>SELECT field, count(*) FROM ... GROUP BY field</code></li>
+</ul>
 <p>The conditional logic <code>if "count" in requested_fields</code> must exist in some form in the code, because the alternatives are over-fetching or under-fetching. Both of which are far more inefficient in this scenario than in the “select N+1” problem. A dataloader-esque approach is not going to be applicable to “group by” operations.</p>
 </section>
 <section id="computation" class="level2">
@@ -818,7 +842,11 @@ Wall time: 1.3 s</code></pre>
 <span id="cb6-2">    to.append(element)</span>
 <span id="cb6-3">    <span class="cf" style="color: #003B4F;">return</span> to</span></code></pre></div>
 </div>
-<p>Sure, there are rare occassions where a parameter is mutable but optional, such as a recursive algorithm that’s implicitly passing around its own cache. But this author would wager that given any real-world code that’s been bitten by this gotcha there is: * a ~90% chance the function would have a related bug if defaults were evaluated at runtime * a ~95% chance the function has a poor interface</p>
+<p>Sure, there are rare occassions where a parameter is mutable but optional, such as a recursive algorithm that’s implicitly passing around its own cache. But this author would wager that given any real-world code that’s been bitten by this gotcha there is:</p>
+<ul>
+<li>a ~90% chance the function would have a related bug if defaults were evaluated at runtime</li>
+<li>a ~95% chance the function has a poor interface</li>
+</ul>
 <p>What harm does this advice do? Well, it’s caused an over-reaction resulting in using <code>None</code> as the only default, even for immutables. It’s so prevalent that it appears many beginners believe using <code>None</code> is the one and only way of making an argument optional.</p>
 <p>Besides immutable types, there are also cases where mutation is irrelevant. Consider the following example adapted from a popular project.</p>
 <div class="cell" data-execution_count="5">
@@ -870,7 +898,12 @@ Wall time: 1.3 s</code></pre>
 <section id="how-to-solve-the-water-pouring-puzzle-programmatically." class="level1">
 <h1>How to solve the <a href="https://en.wikipedia.org/wiki/Water_pouring_puzzle#Variant_with_taps_and_sinks">water pouring puzzle</a> programmatically.</h1>
 <p>Given two jugs of capcity of 3 and 5 liters, acquire exactly 4 liters in a jug. Assume an unlimited water supply, and that jugs can only be filled or emptied, i.e., no estimations.</p>
-<p>First to model the data: a mapping of jug sizes to their current quantity. There are 3 primitive operations: * filling a jug to capacity * emptying a jug entirely * pouring from a source jug to a destination jug, until either the source is emptied or the destination is full</p>
+<p>First to model the data: a mapping of jug sizes to their current quantity. There are 3 primitive operations:</p>
+<ul>
+<li>filling a jug to capacity</li>
+<li>emptying a jug entirely</li>
+<li>pouring from a source jug to a destination jug, until either the source is emptied or the destination is full</li>
+</ul>
 <div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;">class</span> Jugs(<span class="bu" style="color: null;">dict</span>):</span>
 <span id="cb1-2">    <span class="kw" style="color: #003B4F;">def</span> fill(<span class="va" style="color: #111111;">self</span>, size):</span>
@@ -1010,7 +1043,12 @@ Wall time: 88.7 µs</code></pre>
 <blockquote class="blockquote">
 <p>A more complex version has twelve coins, eleven or twelve of which are identical. If one is different, we don’t know whether it is heavier or lighter than the others. This time the balance may be used three times to determine if there is a unique coin—and if there is, to isolate it and determine its weight relative to the others. (This puzzle and its solution first appeared in an article in 1945.[2]) The problem has a simpler variant with three coins in two weighings, and a more complex variant with 39 coins in four weighings.</p>
 </blockquote>
-<p>First to model the data: * An <code>enum</code> to represent different weights. Following the ternary comparison convention, such as Python 2’s <a href="https://docs.python.org/2.7/library/functions.html?highlight=cmp#cmp">cmp</a>, is convenient. * An object to represent the balance. For testing, it will need to be configurable with the target coin and relative weight. * An object to represent a coin and its state. A <code>class</code> is tempting, but the most useful data structure would keep the coins grouped by their known (or unknown) state anyway. So any hashable unique identifier is sufficient.</p>
+<p>First to model the data:</p>
+<ul>
+<li>An <code>enum</code> to represent different weights. Following the ternary comparison convention, such as Python 2’s <a href="https://docs.python.org/2.7/library/functions.html?highlight=cmp#cmp">cmp</a>, is convenient.</li>
+<li>An object to represent the balance. For testing, it will need to be configurable with the target coin and relative weight.</li>
+<li>An object to represent a coin and its state. A <code>class</code> is tempting, but the most useful data structure would keep the coins grouped by their known (or unknown) state anyway. So any hashable unique identifier is sufficient.</li>
+</ul>
 <div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;">import</span> enum</span>
 <span id="cb1-2"></span>
@@ -1185,7 +1223,12 @@ a </code></pre>
 <blockquote class="blockquote">
 <p>In this variant there are 10 prisoners and 10 hats. Each prisoner is assigned a random hat, either red or blue, but the number of each color hat is not known to the prisoners. The prisoners will be lined up single file where each can see the hats in front of him but not behind. Starting with the prisoner in the back of the line and moving forward, they must each, in turn, say only one word which must be “red” or “blue”. If the word matches their hat color they are released, if not, they are killed on the spot. A friendly guard warns them of this test one hour beforehand and tells them that they can formulate a plan where by following the stated rules, 9 of the 10 prisoners will definitely survive, and 1 has a 50/50 chance of survival. What is the plan to achieve the goal?</p>
 </blockquote>
-<p>This puzzle involves three concepts common to classic logic puzzles: * <a href="https://en.wikipedia.org/wiki/Theory_of_mind">Theory of mind</a> * <a href="https://en.wikipedia.org/wiki/Functional_fixedness">Functional fixedness</a> * <a href="https://en.wikipedia.org/wiki/Induction_puzzles">Induction</a></p>
+<p>This puzzle involves three concepts common to classic logic puzzles:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Theory_of_mind">Theory of mind</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Functional_fixedness">Functional fixedness</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Induction_puzzles">Induction</a></li>
+</ul>
 <p>Theory of mind comes into play because each prisoner has differing knowledge, but assumes everyone else will think similarly. Functional fixedness occurs more subtly; each prisoner may state a color only to convey information. But because the information is encoded as a color, it tends to focus thinking on the colors themselves. So to combat that cognitive bias, first create a different enumeration to represent statements. Any binary <code>enum</code> can be mapped back to colors, so why not <code>bool</code>.</p>
 <div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1">colors <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'red'</span>, <span class="st" style="color: #20794D;">'blue'</span></span>
@@ -1861,7 +1904,12 @@ FizzBuzz</code></pre>
  May 19}</code></pre>
 </div>
 </div>
-<p>As is typical of these kinds of puzzles, it assumes all participants have perfect <a href="https://en.wikipedia.org/wiki/Theory_of_mind">Theory of Mind</a>. That is, each participant making a statement is applying their private knowledge to what is publicly known, and assuming everyone else will do the same. With that in mind, the claims made fall into 3 categories: * I know … * I don’t know … * They don’t know …</p>
+<p>As is typical of these kinds of puzzles, it assumes all participants have perfect <a href="https://en.wikipedia.org/wiki/Theory_of_mind">Theory of Mind</a>. That is, each participant making a statement is applying their private knowledge to what is publicly known, and assuming everyone else will do the same. With that in mind, the claims made fall into 3 categories:</p>
+<ul>
+<li>I know …</li>
+<li>I don’t know …</li>
+<li>They don’t know …</li>
+</ul>
 <p>The temporal variations “now” and “at first” can be modeled by the current set of dates. Any claim then can be implemented functionally in this form:</p>
 <div class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;">def</span> claim(field: <span class="bu" style="color: null;">str</span>, dates: <span class="bu" style="color: null;">set</span>) <span class="op" style="color: #5E5E5E;">-&gt;</span> <span class="bu" style="color: null;">set</span>:</span>

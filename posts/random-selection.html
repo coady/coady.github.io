@@ -224,7 +224,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>[9, 7, 5, 4, 6]</code></pre>
 </div>
 </div>
-<p>Next up is a random sample in a single pass, e.g., if the data is being read from a large file. The solution requires <a href="https://en.wikipedia.org/wiki/Mathematical_induction">mathematical induction</a>: * each Nth element has a fair chance of being selected * each previously selected element has a fair chance of being removed</p>
+<p>Next up is a random sample in a single pass, e.g., if the data is being read from a large file. The solution requires <a href="https://en.wikipedia.org/wiki/Mathematical_induction">mathematical induction</a>:</p>
+<ul>
+<li>each Nth element has a fair chance of being selected</li>
+<li>each previously selected element has a fair chance of being removed</li>
+</ul>
 <div class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sample(iterable, k):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return a random sample from any iterable in a single pass.</span></span>

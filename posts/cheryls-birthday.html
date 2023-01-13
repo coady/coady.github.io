@@ -251,7 +251,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
  May 19}</code></pre>
 </div>
 </div>
-<p>As is typical of these kinds of puzzles, it assumes all participants have perfect <a href="https://en.wikipedia.org/wiki/Theory_of_mind">Theory of Mind</a>. That is, each participant making a statement is applying their private knowledge to what is publicly known, and assuming everyone else will do the same. With that in mind, the claims made fall into 3 categories: * I know … * I don’t know … * They don’t know …</p>
+<p>As is typical of these kinds of puzzles, it assumes all participants have perfect <a href="https://en.wikipedia.org/wiki/Theory_of_mind">Theory of Mind</a>. That is, each participant making a statement is applying their private knowledge to what is publicly known, and assuming everyone else will do the same. With that in mind, the claims made fall into 3 categories:</p>
+<ul>
+<li>I know …</li>
+<li>I don’t know …</li>
+<li>They don’t know …</li>
+</ul>
 <p>The temporal variations “now” and “at first” can be modeled by the current set of dates. Any claim then can be implemented functionally in this form:</p>
 <div class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> claim(field: <span class="bu">str</span>, dates: <span class="bu">set</span>) <span class="op">-&gt;</span> <span class="bu">set</span>:</span>

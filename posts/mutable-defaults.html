@@ -237,7 +237,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    to.append(element)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> to</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Sure, there are rare occassions where a parameter is mutable but optional, such as a recursive algorithm that’s implicitly passing around its own cache. But this author would wager that given any real-world code that’s been bitten by this gotcha there is: * a ~90% chance the function would have a related bug if defaults were evaluated at runtime * a ~95% chance the function has a poor interface</p>
+<p>Sure, there are rare occassions where a parameter is mutable but optional, such as a recursive algorithm that’s implicitly passing around its own cache. But this author would wager that given any real-world code that’s been bitten by this gotcha there is:</p>
+<ul>
+<li>a ~90% chance the function would have a related bug if defaults were evaluated at runtime</li>
+<li>a ~95% chance the function has a poor interface</li>
+</ul>
 <p>What harm does this advice do? Well, it’s caused an over-reaction resulting in using <code>None</code> as the only default, even for immutables. It’s so prevalent that it appears many beginners believe using <code>None</code> is the one and only way of making an argument optional.</p>
 <p>Besides immutable types, there are also cases where mutation is irrelevant. Consider the following example adapted from a popular project.</p>
 <div class="cell" data-execution_count="5">

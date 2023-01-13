@@ -212,7 +212,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <blockquote class="blockquote">
 <p>A more complex version has twelve coins, eleven or twelve of which are identical. If one is different, we don’t know whether it is heavier or lighter than the others. This time the balance may be used three times to determine if there is a unique coin—and if there is, to isolate it and determine its weight relative to the others. (This puzzle and its solution first appeared in an article in 1945.[2]) The problem has a simpler variant with three coins in two weighings, and a more complex variant with 39 coins in four weighings.</p>
 </blockquote>
-<p>First to model the data: * An <code>enum</code> to represent different weights. Following the ternary comparison convention, such as Python 2’s <a href="https://docs.python.org/2.7/library/functions.html?highlight=cmp#cmp">cmp</a>, is convenient. * An object to represent the balance. For testing, it will need to be configurable with the target coin and relative weight. * An object to represent a coin and its state. A <code>class</code> is tempting, but the most useful data structure would keep the coins grouped by their known (or unknown) state anyway. So any hashable unique identifier is sufficient.</p>
+<p>First to model the data:</p>
+<ul>
+<li>An <code>enum</code> to represent different weights. Following the ternary comparison convention, such as Python 2’s <a href="https://docs.python.org/2.7/library/functions.html?highlight=cmp#cmp">cmp</a>, is convenient.</li>
+<li>An object to represent the balance. For testing, it will need to be configurable with the target coin and relative weight.</li>
+<li>An object to represent a coin and its state. A <code>class</code> is tempting, but the most useful data structure would keep the coins grouped by their known (or unknown) state anyway. So any hashable unique identifier is sufficient.</li>
+</ul>
 <div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> enum</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>

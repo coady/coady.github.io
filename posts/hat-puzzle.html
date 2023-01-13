@@ -211,7 +211,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <blockquote class="blockquote">
 <p>In this variant there are 10 prisoners and 10 hats. Each prisoner is assigned a random hat, either red or blue, but the number of each color hat is not known to the prisoners. The prisoners will be lined up single file where each can see the hats in front of him but not behind. Starting with the prisoner in the back of the line and moving forward, they must each, in turn, say only one word which must be “red” or “blue”. If the word matches their hat color they are released, if not, they are killed on the spot. A friendly guard warns them of this test one hour beforehand and tells them that they can formulate a plan where by following the stated rules, 9 of the 10 prisoners will definitely survive, and 1 has a 50/50 chance of survival. What is the plan to achieve the goal?</p>
 </blockquote>
-<p>This puzzle involves three concepts common to classic logic puzzles: * <a href="https://en.wikipedia.org/wiki/Theory_of_mind">Theory of mind</a> * <a href="https://en.wikipedia.org/wiki/Functional_fixedness">Functional fixedness</a> * <a href="https://en.wikipedia.org/wiki/Induction_puzzles">Induction</a></p>
+<p>This puzzle involves three concepts common to classic logic puzzles:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Theory_of_mind">Theory of mind</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Functional_fixedness">Functional fixedness</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Induction_puzzles">Induction</a></li>
+</ul>
 <p>Theory of mind comes into play because each prisoner has differing knowledge, but assumes everyone else will think similarly. Functional fixedness occurs more subtly; each prisoner may state a color only to convey information. But because the information is encoded as a color, it tends to focus thinking on the colors themselves. So to combat that cognitive bias, first create a different enumeration to represent statements. Any binary <code>enum</code> can be mapped back to colors, so why not <code>bool</code>.</p>
 <div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> <span class="st">'red'</span>, <span class="st">'blue'</span></span>

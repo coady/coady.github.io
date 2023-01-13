@@ -206,7 +206,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="how-to-solve-the-water-pouring-puzzle-programmatically." class="level1">
 <h1>How to solve the <a href="https://en.wikipedia.org/wiki/Water_pouring_puzzle#Variant_with_taps_and_sinks">water pouring puzzle</a> programmatically.</h1>
 <p>Given two jugs of capcity of 3 and 5 liters, acquire exactly 4 liters in a jug. Assume an unlimited water supply, and that jugs can only be filled or emptied, i.e., no estimations.</p>
-<p>First to model the data: a mapping of jug sizes to their current quantity. There are 3 primitive operations: * filling a jug to capacity * emptying a jug entirely * pouring from a source jug to a destination jug, until either the source is emptied or the destination is full</p>
+<p>First to model the data: a mapping of jug sizes to their current quantity. There are 3 primitive operations:</p>
+<ul>
+<li>filling a jug to capacity</li>
+<li>emptying a jug entirely</li>
+<li>pouring from a source jug to a destination jug, until either the source is emptied or the destination is full</li>
+</ul>
 <div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Jugs(<span class="bu">dict</span>):</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> fill(<span class="va">self</span>, size):</span>

@@ -224,8 +224,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>What makes the <code>name</code> resolver trivial? It’s pre-fetched by <code>loadHumanByID</code>, whose only parameter is <code>id</code>, so it’s clearly unaware of whether <code>name</code> has been requested. What if the requested field was a nested object, or a json field, or just a large text blob? Then one would clearly be directed towards using a non-trivial resolver which fetches the field on demand. Of course, but then whatever work is common in the human <code>id</code> lookup is duplicated.</p>
-<p>This is by no means specific to SQL or relational databases, but SQL is a convenient lingua franca of databases to demonstrate the inefficiency. The choices are: * <code>SELECT * FROM human WHERE id = ?</code> * <code>SELECT field FROM human WHERE id = ?</code> repeated for each “expensive” field</p>
-<p>Even in the simplest possible example, over-fetching has already occurred, and the only proposed workaround is under-fetching. The single query we want is: * <code>SELECT f1, f2, ... FROM human WHERE id = ?</code> for requested fields</p>
+<p>This is by no means specific to SQL or relational databases, but SQL is a convenient lingua franca of databases to demonstrate the inefficiency. The choices are:</p>
+<ul>
+<li><code>SELECT * FROM human WHERE id = ?</code></li>
+<li><code>SELECT field FROM human WHERE id = ?</code> repeated for each “expensive” field</li>
+</ul>
+<p>Even in the simplest possible example, over-fetching has already occurred, and the only proposed workaround is under-fetching. The single query we want is:</p>
+<ul>
+<li><code>SELECT f1, f2, ... FROM human WHERE id = ?</code> for requested fields</li>
+</ul>
 <p>In other words, exactly what happens with ORMs, except even ORMs typically offer an option of requesting a subset of fields. Naturally the problem gets worse with list fields.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Human<span class="op">:</span> {</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">appearsIn</span>(obj) {</span>
@@ -242,7 +249,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Now there are two sets of associate keys (<code>.appearsIn</code> and <code>.starshipIDs</code>) that have been over-fetched. Nonetheless <code>starships</code> is under-fetched as well. The <code>starships</code> resolver is neither the most efficient nor the simplest way of resolving this field: * fetch all the data by human <code>id</code> in the <code>starships</code> resolver * fetch all the data in bulk by <code>starshipIDs</code> * push the resolution down to the <code>Starship</code> layer if forced to fetch one at a time</p>
+<p>Now there are two sets of associate keys (<code>.appearsIn</code> and <code>.starshipIDs</code>) that have been over-fetched. Nonetheless <code>starships</code> is under-fetched as well. The <code>starships</code> resolver is neither the most efficient nor the simplest way of resolving this field:</p>
+<ul>
+<li>fetch all the data by human <code>id</code> in the <code>starships</code> resolver</li>
+<li>fetch all the data in bulk by <code>starshipIDs</code></li>
+<li>push the resolution down to the <code>Starship</code> layer if forced to fetch one at a time</li>
+</ul>
 <p>The example implementation seems to be going out of its way to showcase JavaScript promises. And the assumptions being made about the underlying data store are unusual:</p>
 <ol type="1">
 <li>The data is relational in nature.</li>
@@ -266,7 +278,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="aggregation" class="level2">
 <h2 class="anchored" data-anchor-id="aggregation">Aggregation</h2>
-<p>The inefficencies becomes even more glaring when moving beyond associative keys. Nearly any aggregation requires knowing what summaries are requested. Such as if the <code>appearsIn</code> field optionally included counts or times. Using SQL as an example again, the query would resemble one of: * <code>SELECT distinct field FROM ...</code> * <code>SELECT field, count(*) FROM ... GROUP BY field</code></p>
+<p>The inefficencies becomes even more glaring when moving beyond associative keys. Nearly any aggregation requires knowing what summaries are requested. Such as if the <code>appearsIn</code> field optionally included counts or times. Using SQL as an example again, the query would resemble one of:</p>
+<ul>
+<li><code>SELECT distinct field FROM ...</code></li>
+<li><code>SELECT field, count(*) FROM ... GROUP BY field</code></li>
+</ul>
 <p>The conditional logic <code>if "count" in requested_fields</code> must exist in some form in the code, because the alternatives are over-fetching or under-fetching. Both of which are far more inefficient in this scenario than in the “select N+1” problem. A dataloader-esque approach is not going to be applicable to “group by” operations.</p>
 </section>
 <section id="computation" class="level2">
