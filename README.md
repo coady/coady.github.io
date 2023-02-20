@@ -26,4 +26,7 @@ noun</br>
 * [Accumulator](posts/accumulator.ipynb)
 * [Mutable defaults](posts/mutable-defaults.ipynb)
 * [Closing files](posts/closing-files.ipynb)
+
+### GraphQL
 * [GraphQL - ORM](posts/graphql-orm.ipynb)
+* [GraphQL coroutines](posts/graphql-coroutines.ipynb)
