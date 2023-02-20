@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/graphql-coroutines.html",
       "/posts/random-selection.html",
       "/posts/primes.html",
       "/posts/hardest-logic-puzzle-ever.html",

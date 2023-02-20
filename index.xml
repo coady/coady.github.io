@@ -9,8 +9,197 @@
 <link>https://coady.github.io/index.html</link>
 <atom:link href="https://coady.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>pythonicity | pīˈTHänisədē | noun the quality of being Pythonic</description>
-<generator>quarto-1.2.313</generator>
-<lastBuildDate>Mon, 02 Jan 2023 00:00:00 GMT</lastBuildDate>
+<generator>quarto-1.2.335</generator>
+<lastBuildDate>Mon, 20 Feb 2023 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>GraphQL coroutines</title>
+  <dc:creator>A. Coady</dc:creator>
+  <link>https://coady.github.io/posts/graphql-coroutines.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="graphql-resolvers-should-have-been-coroutines." class="level1">
+<h1>GraphQL resolvers should have been coroutines.</h1>
+<p>This is how the GraphQL documentation <a href="https://graphql.org/learn/execution/">introduces execution</a>, as a hierarchy of resolvers:</p>
+<blockquote class="blockquote">
+<p>You can think of each field in a GraphQL query as a function or method of the previous type which returns the next type. In fact, this is exactly how GraphQL works. Each field on each type is backed by a function called the resolver which is provided by the GraphQL server developer. When a field is executed, the corresponding resolver is called to produce the next value.</p>
+<p>If a field produces a scalar value like a string or number, then the execution completes. However if a field produces an object value then the query will contain another selection of fields which apply to that object. This continues until scalar values are reached. GraphQL queries always end at scalar values.</p>
+</blockquote>
+<p>There is a subtlety in the summary which is left as an exercise to the reader. The previous type must <em>prepare</em> the next types correctly such that their resolvers succeed. Specifically, all the trivial fields of the next type must be populated, not only because they may be requested, but because the next type’s resolvers invariably rely on that data.</p>
+<p>It is as if parent types have a <code>pre</code> or <code>start</code> hook to setup child types. When framed that way, it becomes obvious that there is no <code>post</code> or <code>end</code> hook for a parent to finalize its result. Consider how unusual that is:</p>
+<ul>
+<li>test frameworks have fixture <code>setUp</code> and <code>tearDown</code></li>
+<li>web frameworks have hooks around both sides of a stage in a request flow</li>
+<li>inherited methods which support <code>super</code> allow code before and after the <code>super</code> call</li>
+</ul>
+<p>Whereas GraphQL resolvers can only provide context to child fields, with no visibility into the result. It would be like only allowing <code>super</code> as the last line in a method.</p>
+<section id="example" class="level2">
+<h2 class="anchored" data-anchor-id="example">Example</h2>
+<p>The effect is an entire class of common problems which should be trivial. Typically - but not limited too - lists of objects which have since been deleted or for which the user is not authorized. The problem can be seen in the best practices <a href="https://graphql.org/learn/authorization/">example on authorization</a>.</p>
+<blockquote class="blockquote">
+<p>Authorization is a type of business logic that describes whether a given user/session/context has permission to perform an action or see a piece of data. For example:</p>
+<p>“Only authors can see their drafts”</p>
+</blockquote>
+<p>…</p>
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="op" style="color: #5E5E5E;">//</span>Authorization logic lives inside postRepository</span>
+<span id="cb1-2">var postRepository <span class="op" style="color: #5E5E5E;">=</span> require(<span class="st" style="color: #20794D;">'postRepository'</span>)<span class="op" style="color: #5E5E5E;">;</span></span>
+<span id="cb1-3"></span>
+<span id="cb1-4">var postType <span class="op" style="color: #5E5E5E;">=</span> new GraphQLObjectType({</span>
+<span id="cb1-5">  name: ‘Post’,</span>
+<span id="cb1-6">  fields: {</span>
+<span id="cb1-7">    body: {</span>
+<span id="cb1-8">      <span class="bu" style="color: null;">type</span>: GraphQLString,</span>
+<span id="cb1-9">      resolve: (post, args, context, { rootValue }) <span class="op" style="color: #5E5E5E;">=&gt;</span> {</span>
+<span id="cb1-10">        <span class="cf" style="color: #003B4F;">return</span> postRepository.getBody(context.user, post)<span class="op" style="color: #5E5E5E;">;</span></span>
+<span id="cb1-11">      }</span>
+<span id="cb1-12">    }</span>
+<span id="cb1-13">  }</span>
+<span id="cb1-14">})<span class="op" style="color: #5E5E5E;">;</span></span></code></pre></div>
+</div>
+<p>The incomplete example does <em>not</em> implement “only authors can see their drafts”. It implements “only authors can see the <code>body</code> field of a draft”. But the user would still know the post exists and see all metadata which is not protected. “Drafts” being plural and all, a parent field with a list of <code>posts</code> is missing from the example. Surely the preferred solution would be to not return the unauthorized post in the list at all.</p>
+<p>The same problem exists if the post should be hidden for any reason, including deletion. It cannot be overstated how common a problem this is in real world APIs, and GraphQL offers no solution.</p>
+<p>Well, as constructed. The workaround is to abandon the premise of the example and push the authorization logic up to the <code>posts</code> field. But even that fails to address race conditions, which are particularly relevant for deletions.</p>
+<p>Interestingly, it would also be more efficient if the query which determined the list of posts were “correct” in the first place. This relates to a previous article <a href="graphql-orm.html">GraphQL is the new ORM</a>, which focused on performance. Ultimately this is the same issue: <strong>the elegance of single-purpose resolvers fails when context has been lost, and that failure is especially common and noticeable when lists are involved</strong>.</p>
+</section>
+<section id="solution" class="level2">
+<h2 class="anchored" data-anchor-id="solution">Solution</h2>
+<p>A general solution would be to allow resolvers to be coroutines, or equivalently to allow a <code>finalize</code> resolver. Here is an example implemented in <a href="https://github.com/graphql-python/graphql-core">graphql-core</a>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="op" style="color: #5E5E5E;">---</span> a<span class="op" style="color: #5E5E5E;">/</span>src<span class="op" style="color: #5E5E5E;">/</span>graphql<span class="op" style="color: #5E5E5E;">/</span>execution<span class="op" style="color: #5E5E5E;">/</span>execute.py</span>
+<span id="cb2-2"><span class="op" style="color: #5E5E5E;">+++</span> b<span class="op" style="color: #5E5E5E;">/</span>src<span class="op" style="color: #5E5E5E;">/</span>graphql<span class="op" style="color: #5E5E5E;">/</span>execution<span class="op" style="color: #5E5E5E;">/</span>execute.py</span>
+<span id="cb2-3"><span class="op" style="color: #5E5E5E;">@@</span> <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">546</span>,<span class="dv" style="color: #AD0000;">6</span> <span class="op" style="color: #5E5E5E;">+</span><span class="dv" style="color: #AD0000;">546</span>,<span class="dv" style="color: #AD0000;">8</span> <span class="op" style="color: #5E5E5E;">@@</span> <span class="kw" style="color: #003B4F;">class</span> ExecutionContext:</span>
+<span id="cb2-4">             completed <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">self</span>.complete_value(</span>
+<span id="cb2-5">                 return_type, field_nodes, info, path, result</span>
+<span id="cb2-6">             )</span>
+<span id="cb2-7"><span class="op" style="color: #5E5E5E;">+</span>            <span class="cf" style="color: #003B4F;">if</span> field_def.finalize <span class="kw" style="color: #003B4F;">is</span> <span class="kw" style="color: #003B4F;">not</span> <span class="va" style="color: #111111;">None</span>:</span>
+<span id="cb2-8"><span class="op" style="color: #5E5E5E;">+</span>                completed <span class="op" style="color: #5E5E5E;">=</span> field_def.finalize(completed, info, <span class="op" style="color: #5E5E5E;">*</span>args)</span>
+<span id="cb2-9">             <span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">self</span>.is_awaitable(completed):</span>
+<span id="cb2-10">                 <span class="co" style="color: #5E5E5E;"># noinspection PyShadowingNames</span></span>
+<span id="cb2-11">                 <span class="cf" style="color: #003B4F;">async</span> <span class="kw" style="color: #003B4F;">def</span> await_completed() <span class="op" style="color: #5E5E5E;">-&gt;</span> Any:</span>
+<span id="cb2-12">diff <span class="op" style="color: #5E5E5E;">--</span>git a<span class="op" style="color: #5E5E5E;">/</span>src<span class="op" style="color: #5E5E5E;">/</span>graphql<span class="op" style="color: #5E5E5E;">/</span><span class="bu" style="color: null;">type</span><span class="op" style="color: #5E5E5E;">/</span>definition.py b<span class="op" style="color: #5E5E5E;">/</span>src<span class="op" style="color: #5E5E5E;">/</span>graphql<span class="op" style="color: #5E5E5E;">/</span><span class="bu" style="color: null;">type</span><span class="op" style="color: #5E5E5E;">/</span>definition.py</span>
+<span id="cb2-13"></span>
+<span id="cb2-14"><span class="op" style="color: #5E5E5E;">---</span> a<span class="op" style="color: #5E5E5E;">/</span>src<span class="op" style="color: #5E5E5E;">/</span>graphql<span class="op" style="color: #5E5E5E;">/</span><span class="bu" style="color: null;">type</span><span class="op" style="color: #5E5E5E;">/</span>definition.py</span>
+<span id="cb2-15"><span class="op" style="color: #5E5E5E;">+++</span> b<span class="op" style="color: #5E5E5E;">/</span>src<span class="op" style="color: #5E5E5E;">/</span>graphql<span class="op" style="color: #5E5E5E;">/</span><span class="bu" style="color: null;">type</span><span class="op" style="color: #5E5E5E;">/</span>definition.py</span>
+<span id="cb2-16"><span class="op" style="color: #5E5E5E;">@@</span> <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">471</span>,<span class="dv" style="color: #AD0000;">6</span> <span class="op" style="color: #5E5E5E;">+</span><span class="dv" style="color: #AD0000;">471</span>,<span class="dv" style="color: #AD0000;">7</span> <span class="op" style="color: #5E5E5E;">@@</span> <span class="kw" style="color: #003B4F;">class</span> GraphQLField:</span>
+<span id="cb2-17">     deprecation_reason: Optional[<span class="bu" style="color: null;">str</span>]</span>
+<span id="cb2-18">     extensions: Dict[<span class="bu" style="color: null;">str</span>, Any]</span>
+<span id="cb2-19">     ast_node: Optional[FieldDefinitionNode]</span>
+<span id="cb2-20"><span class="op" style="color: #5E5E5E;">+</span>    finalize: Optional[GraphQLFieldResolver]</span>
+<span id="cb2-21"> </span>
+<span id="cb2-22">     <span class="kw" style="color: #003B4F;">def</span> <span class="fu" style="color: #4758AB;">__init__</span>(</span>
+<span id="cb2-23">         <span class="va" style="color: #111111;">self</span>,</span>
+<span id="cb2-24"><span class="op" style="color: #5E5E5E;">@@</span> <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">482</span>,<span class="dv" style="color: #AD0000;">6</span> <span class="op" style="color: #5E5E5E;">+</span><span class="dv" style="color: #AD0000;">483</span>,<span class="dv" style="color: #AD0000;">7</span> <span class="op" style="color: #5E5E5E;">@@</span> <span class="kw" style="color: #003B4F;">class</span> GraphQLField:</span>
+<span id="cb2-25">         deprecation_reason: Optional[<span class="bu" style="color: null;">str</span>] <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span>,</span>
+<span id="cb2-26">         extensions: Optional[Dict[<span class="bu" style="color: null;">str</span>, Any]] <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span>,</span>
+<span id="cb2-27">         ast_node: Optional[FieldDefinitionNode] <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span>,</span>
+<span id="cb2-28"><span class="op" style="color: #5E5E5E;">+</span>        finalize: Optional[GraphQLFieldResolver] <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span>,</span>
+<span id="cb2-29">     ) <span class="op" style="color: #5E5E5E;">-&gt;</span> <span class="va" style="color: #111111;">None</span>:</span>
+<span id="cb2-30">         <span class="cf" style="color: #003B4F;">if</span> args:</span>
+<span id="cb2-31">             args <span class="op" style="color: #5E5E5E;">=</span> {</span>
+<span id="cb2-32"><span class="op" style="color: #5E5E5E;">@@</span> <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">500</span>,<span class="dv" style="color: #AD0000;">6</span> <span class="op" style="color: #5E5E5E;">+</span><span class="dv" style="color: #AD0000;">502</span>,<span class="dv" style="color: #AD0000;">7</span> <span class="op" style="color: #5E5E5E;">@@</span> <span class="kw" style="color: #003B4F;">class</span> GraphQLField:</span>
+<span id="cb2-33">         <span class="va" style="color: #111111;">self</span>.deprecation_reason <span class="op" style="color: #5E5E5E;">=</span> deprecation_reason</span>
+<span id="cb2-34">         <span class="va" style="color: #111111;">self</span>.extensions <span class="op" style="color: #5E5E5E;">=</span> extensions <span class="kw" style="color: #003B4F;">or</span> {}</span>
+<span id="cb2-35">         <span class="va" style="color: #111111;">self</span>.ast_node <span class="op" style="color: #5E5E5E;">=</span> ast_node</span>
+<span id="cb2-36"><span class="op" style="color: #5E5E5E;">+</span>        <span class="va" style="color: #111111;">self</span>.finalize <span class="op" style="color: #5E5E5E;">=</span> finalize</span>
+<span id="cb2-37"> </span>
+<span id="cb2-38">     <span class="kw" style="color: #003B4F;">def</span> <span class="fu" style="color: #4758AB;">__repr__</span>(<span class="va" style="color: #111111;">self</span>) <span class="op" style="color: #5E5E5E;">-&gt;</span> <span class="bu" style="color: null;">str</span>:</span>
+<span id="cb2-39">         <span class="cf" style="color: #003B4F;">return</span> <span class="ss" style="color: #20794D;">f"&lt;</span><span class="sc" style="color: #5E5E5E;">{</span><span class="va" style="color: #111111;">self</span><span class="sc" style="color: #5E5E5E;">.</span>__class__<span class="sc" style="color: #5E5E5E;">.</span><span class="va" style="color: #111111;">__name__</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> </span><span class="sc" style="color: #5E5E5E;">{</span><span class="va" style="color: #111111;">self</span><span class="sc" style="color: #5E5E5E;">.</span><span class="bu" style="color: null;">type</span><span class="sc" style="color: #5E5E5E;">!r}</span><span class="ss" style="color: #20794D;">&gt;"</span></span></code></pre></div>
+</div>
+<p>With that minor extension, fields can supply a <code>finalize</code> resolver in addition to the usual one.</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;">from</span> dataclasses <span class="im" style="color: #00769E;">import</span> dataclass</span>
+<span id="cb3-2"><span class="im" style="color: #00769E;">from</span> graphql <span class="im" style="color: #00769E;">import</span> (</span>
+<span id="cb3-3">    GraphQLField,</span>
+<span id="cb3-4">    GraphQLInt,</span>
+<span id="cb3-5">    GraphQLList,</span>
+<span id="cb3-6">    GraphQLNonNull,</span>
+<span id="cb3-7">    GraphQLObjectType,</span>
+<span id="cb3-8">    GraphQLSchema,</span>
+<span id="cb3-9">    GraphQLString,</span>
+<span id="cb3-10">    graphql_sync,</span>
+<span id="cb3-11">    print_schema,</span>
+<span id="cb3-12">)</span>
+<span id="cb3-13"></span>
+<span id="cb3-14">post_data <span class="op" style="color: #5E5E5E;">=</span> {<span class="dv" style="color: #AD0000;">1</span>: <span class="st" style="color: #20794D;">"first"</span>}</span>
+<span id="cb3-15"></span>
+<span id="cb3-16"></span>
+<span id="cb3-17"><span class="at" style="color: #657422;">@dataclass</span></span>
+<span id="cb3-18"><span class="kw" style="color: #003B4F;">class</span> Post:</span>
+<span id="cb3-19">    <span class="bu" style="color: null;">id</span>: <span class="bu" style="color: null;">int</span></span>
+<span id="cb3-20"></span>
+<span id="cb3-21">    <span class="kw" style="color: #003B4F;">def</span> body(<span class="va" style="color: #111111;">self</span>, info) <span class="op" style="color: #5E5E5E;">-&gt;</span> <span class="bu" style="color: null;">str</span>:</span>
+<span id="cb3-22">        <span class="cf" style="color: #003B4F;">return</span> post_data.get(<span class="va" style="color: #111111;">self</span>.<span class="bu" style="color: null;">id</span>)</span>
+<span id="cb3-23"></span>
+<span id="cb3-24"></span>
+<span id="cb3-25">postType <span class="op" style="color: #5E5E5E;">=</span> GraphQLObjectType(</span>
+<span id="cb3-26">    name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Post"</span>,</span>
+<span id="cb3-27">    fields<span class="op" style="color: #5E5E5E;">=</span>{</span>
+<span id="cb3-28">        <span class="st" style="color: #20794D;">"id"</span>: GraphQLNonNull(GraphQLInt),</span>
+<span id="cb3-29">        <span class="st" style="color: #20794D;">"body"</span>: GraphQLField(GraphQLString, resolve<span class="op" style="color: #5E5E5E;">=</span>Post.body),</span>
+<span id="cb3-30">    },</span>
+<span id="cb3-31">)</span>
+<span id="cb3-32"></span>
+<span id="cb3-33">postsField <span class="op" style="color: #5E5E5E;">=</span> GraphQLField(</span>
+<span id="cb3-34">    GraphQLNonNull(GraphQLList(GraphQLNonNull(postType))),</span>
+<span id="cb3-35">    resolve<span class="op" style="color: #5E5E5E;">=</span><span class="kw" style="color: #003B4F;">lambda</span> <span class="op" style="color: #5E5E5E;">*</span>_: [Post(<span class="dv" style="color: #AD0000;">1</span>), Post(<span class="dv" style="color: #AD0000;">2</span>)],</span>
+<span id="cb3-36">    finalize<span class="op" style="color: #5E5E5E;">=</span><span class="kw" style="color: #003B4F;">lambda</span> objs, _: [obj <span class="cf" style="color: #003B4F;">for</span> obj <span class="kw" style="color: #003B4F;">in</span> objs <span class="cf" style="color: #003B4F;">if</span> obj[<span class="st" style="color: #20794D;">"body"</span>] <span class="kw" style="color: #003B4F;">is</span> <span class="kw" style="color: #003B4F;">not</span> <span class="va" style="color: #111111;">None</span>],</span>
+<span id="cb3-37">)</span>
+<span id="cb3-38"></span>
+<span id="cb3-39">schema <span class="op" style="color: #5E5E5E;">=</span> GraphQLSchema(</span>
+<span id="cb3-40">    query<span class="op" style="color: #5E5E5E;">=</span>GraphQLObjectType(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Query"</span>, fields<span class="op" style="color: #5E5E5E;">=</span>{<span class="st" style="color: #20794D;">"posts"</span>: postsField})</span>
+<span id="cb3-41">)</span>
+<span id="cb3-42"><span class="bu" style="color: null;">print</span>(print_schema(schema))</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>type Query {
+  posts: [Post!]!
+}
+
+type Post {
+  id: Int!
+  body: String
+}</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">source <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"{ posts { id body } }"</span></span>
+<span id="cb5-2">graphql_sync(schema, source)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>ExecutionResult(data={'posts': [{'id': 1, 'body': 'first'}]}, errors=None)</code></pre>
+</div>
+</div>
+</section>
+<section id="addendum" class="level2">
+<h2 class="anchored" data-anchor-id="addendum">Addendum</h2>
+<p>In Python, this could be implemented as a generator-based coroutine. Similar to <a href="https://docs.python.org/3/library/contextlib.html#contextlib.contextmanager">contextlib.contextmanager</a> or <a href="https://docs.pytest.org/en/7.2.x/how-to/fixtures.html#yield-fixtures-recommended">pytest fixtures</a>, the generator would yield types, receive the result maps, and yield one more final result.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;">def</span> resolve(<span class="op" style="color: #5E5E5E;">*</span>_):</span>
+<span id="cb7-2">    objs <span class="op" style="color: #5E5E5E;">=</span> <span class="cf" style="color: #003B4F;">yield</span> [Post(<span class="dv" style="color: #AD0000;">1</span>), Post(<span class="dv" style="color: #AD0000;">2</span>)]</span>
+<span id="cb7-3">    <span class="cf" style="color: #003B4F;">yield</span> [obj <span class="cf" style="color: #003B4F;">for</span> obj <span class="kw" style="color: #003B4F;">in</span> objs <span class="cf" style="color: #003B4F;">if</span> obj[<span class="st" style="color: #20794D;">"body"</span>] <span class="kw" style="color: #003B4F;">is</span> <span class="kw" style="color: #003B4F;">not</span> <span class="va" style="color: #111111;">None</span>]</span></code></pre></div>
+</div>
+<p>But there are some obstacles to that approach. The result data is in map (<code>dict</code>) form, not the domain types, so the code is not necessarily more readable. Additionally, generators can already be used to implement list types (whether intentional or not); <code>graphql-core</code> simply iterates the result. There would need to be another mechanism to distinguish a true coroutine from a regular generator.</p>
+<p>Speaking of domain types, notice how convenient and readable using a <code>dataclass</code> is, and how redundant the GraphQL type definition is. In <a href="https://strawberry.rocks">strawberry-graphql</a>, the schema is automatically derived from the domain types. The example would be simply:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="at" style="color: #657422;">@strawberry.type</span></span>
+<span id="cb8-2"><span class="kw" style="color: #003B4F;">class</span> Post:</span>
+<span id="cb8-3">    <span class="bu" style="color: null;">id</span>: <span class="bu" style="color: null;">int</span></span>
+<span id="cb8-4"></span>
+<span id="cb8-5">    <span class="at" style="color: #657422;">@strawberry.field</span></span>
+<span id="cb8-6">    <span class="kw" style="color: #003B4F;">def</span> body(<span class="va" style="color: #111111;">self</span>) <span class="op" style="color: #5E5E5E;">-&gt;</span> <span class="bu" style="color: null;">str</span>:</span>
+<span id="cb8-7">        <span class="cf" style="color: #003B4F;">return</span> post_data.get(<span class="va" style="color: #111111;">self</span>.<span class="bu" style="color: null;">id</span>)</span></code></pre></div>
+</div>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>graphql</category>
+  <guid>https://coady.github.io/posts/graphql-coroutines.html</guid>
+  <pubDate>Mon, 20 Feb 2023 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Random Selection</title>
   <dc:creator>A. Coady</dc:creator>
@@ -690,7 +879,7 @@ Wall time: 1.3 s</code></pre>
 </section>
 
  ]]></description>
-  <category>style</category>
+  <category>graphql</category>
   <guid>https://coady.github.io/posts/graphql-orm.html</guid>
   <pubDate>Mon, 06 Jul 2020 00:00:00 GMT</pubDate>
 </item>
