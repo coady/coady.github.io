@@ -30,3 +30,4 @@ noun</br>
 ### GraphQL
 * [GraphQL - ORM](posts/graphql-orm.ipynb)
 * [GraphQL coroutines](posts/graphql-coroutines.ipynb)
+* [GraphQL nulls](posts/graphql-nulls.ipynb)
