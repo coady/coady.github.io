@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="A. Coady">
+<meta name="dcterms.date" content="2023-02-24">
+
+<title>Pythonicity - GraphQL nulls</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Pythonicity</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/coady/coady.github.io"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../index.xml"><i class="bi bi-rss" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">GraphQL nulls</h1>
+            <p class="subtitle lead">Litany against nulls.</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">graphql</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>A. Coady </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">February 24, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="litany-against-nulls." class="level1">
+<h1>Litany against nulls.</h1>
+<p>The myths and misconceptions regarding null behavior in GraphQL are epic. Even <a href="http://spec.graphql.org/October2021/#sec-Non-Null.Nullable-vs-Optional">the spec</a> is wrong.</p>
+<blockquote class="blockquote">
+<p>Inputs (such as field arguments), are always optional by default. However a non-null input type is required. In addition to not accepting the value null, it also does not accept omission. For the sake of simplicity nullable types are always optional and non-null types are always required.</p>
+</blockquote>
+<p>One might pedantically ask, can a spec be wrong by definition? Yes, it can <a href="http://spec.graphql.org/October2021/#sec-Required-Arguments.Explanatory-Text">contradict</a> <a href="http://spec.graphql.org/October2021/#sec-Input-Object-Required-Fields.Explanatory-Text">itself</a>.</p>
+<blockquote class="blockquote">
+<p>Arguments can be required. An argument is required if the argument type is non-null and does not have a default value. Otherwise, the argument is optional.</p>
+<p>…</p>
+<p>Input object fields may be required. Much like a field may have required arguments, an input object may have required fields. An input field is required if it has a non-null type and does not have a default value. Otherwise, the input object field is optional.</p>
+</blockquote>
+<p>Some of the arguments being made here could be dismissed as merely semantics. In the author’s opinion, the misinformation has clearly caused real misunderstanding. Let’s break down the persistent myths.</p>
+<section id="fields-are-nullable-by-default." class="level2">
+<h2 class="anchored" data-anchor-id="fields-are-nullable-by-default.">Fields are <a href="https://graphql.org/learn/best-practices/#nullability">nullable by default</a>.</h2>
+<blockquote class="blockquote">
+<p>Most type systems which recognise “null” provide both the common type and the nullable version of that type, whereby default types do not include “null” unless explicitly declared. However, in a GraphQL type system, every field is nullable by default.</p>
+</blockquote>
+<p>This is true in the context of <a href="http://spec.graphql.org/October2021/#sec-Type-References">the spec</a> and the <a href="https://github.com/graphql/graphql-js#graphqljs">reference graphql-js</a> implementation. Whether it is relevant to a developer creating an API is entirely dependent on which graphql framework they are using.</p>
+<ul>
+<li><a href="https://docs.graphene-python.org/en/latest/types/list-and-nonnull/#nonnull">graphene-python</a>: nullable by default. Types are wrapped by a <code>NonNull</code> type or passed a <code>required=True</code> flag.</li>
+<li><a href="https://strawberry.rocks/docs/general/why#why-should-you-use-strawberry">strawberry-graphql</a>: non-null by default. Following the Python convention, types must be annotated as nullable explicitly.</li>
+<li><a href="https://ariadnegraphql.org">ariadne</a> and <em>every</em> schema-first framework: assuming there is a default, it would be nullable.</li>
+</ul>
+<p>Does the graphql schema have a “default”? In the sense that a <code>Type</code> must be annotated with a whole extra character to become <code>Type!</code>. Not in the same sense that <code>query</code> is the default operation, for example, because the operation can be omitted. There is no explicit <code>Type?</code> syntax which is being defaulted to. It is just as accurate to say there is no default in the schema; there is a syntactic binary choice.</p>
+</section>
+<section id="fields-should-default-to-nullable." class="level2">
+<h2 class="anchored" data-anchor-id="fields-should-default-to-nullable.">Fields should <a href="https://graphql.org/learn/best-practices/#nullability">default to nullable</a>.</h2>
+<blockquote class="blockquote">
+<p>When designing a GraphQL schema, it’s important to keep in mind all the problems that could go wrong and if “null” is an appropriate value for a failed field. Typically it is, but occasionally, it’s not. In those cases, use non-null types to make that guarantee.</p>
+</blockquote>
+<p>So not whether nulls literally are the default, but the recommendation that one should default to using nullable types. This advice would be fine in theory, but in practice has reversed what is “typical” versus “occasional”. Typically, errors propagate up to an enclosing type, possibly all the way up. It is common for trivial scalars to never be null, and like any tree there are far more leaf nodes than higher nodes.</p>
+<p>It is also rare to want nulls in a list. Better to omit them; even more so for input lists.</p>
+<p>The standard advice is often combined with a <a href="https://www.apollographql.com/docs/technotes/TN0023-nullability/#plan-for-backward-compatibility">compatibility claim</a>.</p>
+<blockquote class="blockquote">
+<p>Including non-null fields and arguments in a schema makes that schema harder to evolve where a client expects a previously non-null field’s value to be provided in a response. For example, if a non-null email field on a User type is converted to a nullable field, will the clients that use that field be prepared to handle this potentially null value after the schema is updated? Similarly, if the schema changes in such a way that a client is suddenly expected to send a previously nullable argument with a request, then this may also result in a breaking change.</p>
+</blockquote>
+<p>Notice the common mistake: the first sentence contradicts the last with respect to arguments. Null compatibility advice applies only to outputs; the <em>opposite</em> is true for inputs. Even the staunchest pro-null advocate must concede that one should “default” to inputs being non-null.</p>
+<p>A better question to ask is “what would a null in this field represent”? In an implemented API, if the field can actually be null, then there will be an answer to that question. But if the field is truly never null, then there may be no answer. You may find yourself not just <a href="https://en.wikipedia.org/wiki/Law_of_triviality">bike-shedding</a>, but counterfactual bike-shedding. How is the client supposed to “correctly” handle a response that is impossible, in a scenario that is indescribable?</p>
+<p>There is no need to speculate on what a hypothetical API might do, nor to agree on a “default” behavior. Analyze how the implemented API actually behaves, and describe it accurately.</p>
+</section>
+<section id="optional-nullable." class="level2">
+<h2 class="anchored" data-anchor-id="optional-nullable.">Optional == Nullable.</h2>
+<p>GraphQL is far from the first to conflate “optional” with “nullable”, but it has elevated it to a next level. There is no context in which the quote “nullable types are always optional and non-null types are always required” is both true and not <a href="https://en.wikipedia.org/wiki/Vacuous_truth">vacuous</a>.</p>
+<ul>
+<li>Output field
+<ul>
+<li>From the client’s perspective, optional would mean the client can omit the field from the request. No, all fields are optional in that sense.</li>
+<li>From the server’s perspective, optional would mean the server can omit the field from the response. No, all fields are required in that sense. Nullables may null, not omitted.</li>
+</ul></li>
+<li>Input field or argument
+<ul>
+<li>From the client’s perspective, optional would mean the client can omit the input. Yes, so they are equivalent in this case? No, an input can also be optional by having a default value, even with a non-null type. Nullable implies optional; optional does not imply nullable.</li>
+<li>From the server’s perspective, optional would mean omission is equivalent to a sent null value. No, the spec clarifies that those two scenarios are <a href="http://spec.graphql.org/October2021/#sec-Input-Objects.Input-Coercion">semantically different</a>.</li>
+</ul></li>
+</ul>
+<blockquote class="blockquote">
+<p>If the value null was provided for an input object field, and the field’s type is not a non-null type, an entry in the coerced unordered map is given the value null. In other words, there is a semantic difference between the explicitly provided value null versus having not provided a value.</p>
+</blockquote>
+<p>So there is only one context in which the concept of “optional” has any meaning: when the client can omit the input. And being nullable is only one of two ways for an input to be optional. That makes “optional” roughly 12.5% identical to “nullable”. <code>optional == omittable != nullable</code></p>
+</section>
+</section>
+<section id="alternatives" class="level1">
+<h1>Alternatives</h1>
+<p>So rather than just be a rant, let’s use this hard-fought contrarian knowledge to create better APIs.</p>
+<section id="default-values-wherever-possible." class="level2">
+<h2 class="anchored" data-anchor-id="default-values-wherever-possible.">Default values wherever possible.</h2>
+<p>Default values are under-utilized, no surprise given <a href="https://graphql.org/learn/schema/#arguments">the introduction</a>.</p>
+<blockquote class="blockquote">
+<p><code>length(unit: LengthUnit = METER): Float</code></p>
+<p>Arguments can be either required or optional. When an argument is optional, we can define a default value - if the unit argument is not passed, it will be set to METER by default.</p>
+</blockquote>
+<p>Notice the misleading phrasing combined with the nullable <code>LengthUnit</code> reinforces the false - and widespread - notion that the argument must be nullable to be optional. It would be perfectly valid for a client to send an explicit null in this example, and a good chance it is broken on the server, assuming “working” was defined. A non-null here is better in every measurable way: <code>length(unit: LengthUnit! = METER): Float</code>.</p>
+<ul>
+<li>the client does not have to guess what sending an explicit null would mean because it is disallowed</li>
+<li>the server does not have to document or support a use case that never really existed</li>
+</ul>
+<p>It can not be overstated how little known default value optionality is. Once pointed out, it is impossible to not see this in APIs everywhere.</p>
+<ul>
+<li>the vast majority of <code>Boolean</code> inputs should be <code>Boolean! = {false,true}</code></li>
+<li>the vast majority of <code>[Type!]</code> inputs should be <code>[Type!]! = []</code>. Any valid value is a valid default value, not just scalars.</li>
+<li>many <code>Int</code> and <code>Float</code> inputs should be <code>Int! = 0</code> and <code>Float! = 0.0</code></li>
+<li>some <code>String</code> inputs should be <code>String! = ""</code></li>
+</ul>
+<p>A similar dynamic has <a href="mutable-defaults.html">occurred in Python</a>. <code>None</code> is over-used as a default value, instead of a natural default. Speaking of which, Python also fell for <a href="https://docs.python.org/3/library/typing.html#typing.Optional"><code>Optional</code> equivocation</a>, but at least is trying to walk it back. <code>... | None</code> is the new preferred syntax, and the documentation is quick to point out that the <code>Optional</code> annotation does not actually mean optional.</p>
+</section>
+<section id="exploit-the-explicit-null-distinction." class="level2">
+<h2 class="anchored" data-anchor-id="exploit-the-explicit-null-distinction.">Exploit the explicit null distinction.</h2>
+<p>There are at least two scenarios where distinguishing an explicit null from omission is quite useful.</p>
+<p>A partial update where null is a valid value to set, that is an unset. Often there will be a clunky <code>Boolean</code> flag to indicate “no seriously, set the null”: <code>update(name: String, setName: Boolean, ...)</code>. Instead, drop the flag and document that passing a value will update (null or otherwise), and omission will not update.</p>
+<p>Another scenario is a filter where null is a valid value. It is a perfectly natural interpretation that omission means to not apply the filter, whereas an explicit null means to filter on null.</p>
+<p>If this path is followed, it also becomes natural to add <code>= null</code> to inputs where there is no difference. Yes, even null is a valid default value. The point is it clearly documents to the client that there is no difference, while providing assurance that the server is implemented correctly.</p>
+<p>Note many frameworks will not make it convenient to check whether an input was present. It may be necessary to check the argument map in the GraphQL info. One of the few that does is <a href="https://strawberry.rocks/docs/types/resolvers#optional-arguments">strawberry-graphql</a>, which uses <code>UNSET</code> as a sentinel. Using a sentinel when <code>None</code> is a valid value is an established pattern in Python, such as <a href="https://docs.python.org/3/library/dataclasses.html#dataclasses.MISSING"><code>dataclasses.MISSING</code></a>.</p>
+</section>
+<section id="use-an-optional-directive." class="level2">
+<h2 class="anchored" data-anchor-id="use-an-optional-directive.">Use an <span class="citation" data-cites="optional">@optional</span> directive.</h2>
+<p>There is one last case that is not well-covered. What if there is not a natural default, and no inherent meaning for null. That is, the server is being forced to declare an input as nullable when it only wants it to be optional. Using an <code>@optional</code> directive would clarify that, and remove any expectation of behavior if the client insists on sending a null.</p>
+</section>
+</section>
+<section id="advocacy" class="level1">
+<h1>Advocacy</h1>
+<p>The above suggestions are in this <a href="https://github.com/graphql/graphql-spec/issues/872">GraphQL proposal</a>, and can be see implemented in the <a href="https://github.com/coady/graphique">graphique</a> project. It demonstrates fields like: <code>slice(offset: Int! = 0, length: Int = null, reverse: Boolean! = false)</code>.</p>
+<p>When debating this topic, beware of undue JavaScript influence from a client perspective. For example, <code>undefined</code> is neither a GraphQL nor a <a href="https://www.json.org/json-en.html">JSON</a> concept. And all of the input points listed apply to <a href="http://spec.graphql.org/October2021/#sec-Input-Objects.Input-Coercion">input coercion</a> of variables as well.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
