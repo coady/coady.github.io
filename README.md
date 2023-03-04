@@ -26,6 +26,7 @@ noun</br>
 * [Accumulator](posts/accumulator.ipynb)
 * [Mutable defaults](posts/mutable-defaults.ipynb)
 * [Closing files](posts/closing-files.ipynb)
+* [Decorator overuse](posts/decorator-overuse.ipynb)
 
 ### GraphQL
 * [GraphQL - ORM](posts/graphql-orm.ipynb)
