@@ -2,70 +2,74 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://coady.github.io/posts/hat-puzzle.html</loc>
-    <lastmod>2023-02-24T20:27:48.229Z</lastmod>
+    <lastmod>2023-03-04T18:43:08.323Z</lastmod>
   </url>
   <url>
     <loc>https://coady.github.io/posts/split-an-iterable.html</loc>
-    <lastmod>2023-02-24T20:27:48.933Z</lastmod>
+    <lastmod>2023-03-04T18:43:09.163Z</lastmod>
   </url>
   <url>
     <loc>https://coady.github.io/posts/graphql-orm.html</loc>
-    <lastmod>2023-02-24T20:27:49.349Z</lastmod>
+    <lastmod>2023-03-04T18:43:09.631Z</lastmod>
   </url>
   <url>
     <loc>https://coady.github.io/posts/water-pouring.html</loc>
-    <lastmod>2023-02-24T20:27:49.717Z</lastmod>
+    <lastmod>2023-03-04T18:43:10.035Z</lastmod>
   </url>
   <url>
     <loc>https://coady.github.io/posts/random-selection.html</loc>
-    <lastmod>2023-02-24T20:27:50.037Z</lastmod>
+    <lastmod>2023-03-04T18:43:10.371Z</lastmod>
   </url>
   <url>
     <loc>https://coady.github.io/posts/accumulator.html</loc>
-    <lastmod>2023-02-24T20:27:50.393Z</lastmod>
+    <lastmod>2023-03-04T18:43:10.763Z</lastmod>
   </url>
   <url>
     <loc>https://coady.github.io/posts/cheryls-birthday.html</loc>
-    <lastmod>2023-02-24T20:27:50.761Z</lastmod>
+    <lastmod>2023-03-04T18:43:11.175Z</lastmod>
   </url>
   <url>
     <loc>https://coady.github.io/posts/closing-files.html</loc>
-    <lastmod>2023-02-24T20:27:51.153Z</lastmod>
+    <lastmod>2023-03-04T18:43:11.611Z</lastmod>
   </url>
   <url>
     <loc>https://coady.github.io/posts/graphql-nulls.html</loc>
-    <lastmod>2023-02-24T20:27:51.593Z</lastmod>
+    <lastmod>2023-03-04T18:43:12.099Z</lastmod>
   </url>
   <url>
     <loc>https://coady.github.io/posts/mutable-defaults.html</loc>
-    <lastmod>2023-02-24T20:27:51.933Z</lastmod>
+    <lastmod>2023-03-04T18:43:12.515Z</lastmod>
   </url>
   <url>
     <loc>https://coady.github.io/posts/coin-balance.html</loc>
-    <lastmod>2023-02-24T20:27:52.357Z</lastmod>
+    <lastmod>2023-03-04T18:43:12.991Z</lastmod>
   </url>
   <url>
     <loc>https://coady.github.io/posts/primes.html</loc>
-    <lastmod>2023-02-24T20:27:52.765Z</lastmod>
+    <lastmod>2023-03-04T18:43:13.451Z</lastmod>
   </url>
   <url>
     <loc>https://coady.github.io/posts/map-and-filter.html</loc>
-    <lastmod>2023-02-24T20:27:53.133Z</lastmod>
+    <lastmod>2023-03-04T18:43:13.855Z</lastmod>
+  </url>
+  <url>
+    <loc>https://coady.github.io/posts/decorator-overuse.html</loc>
+    <lastmod>2023-03-04T18:43:14.319Z</lastmod>
   </url>
   <url>
     <loc>https://coady.github.io/posts/hardest-logic-puzzle-ever.html</loc>
-    <lastmod>2023-02-24T20:27:53.529Z</lastmod>
+    <lastmod>2023-03-04T18:43:14.767Z</lastmod>
   </url>
   <url>
     <loc>https://coady.github.io/posts/graphql-coroutines.html</loc>
-    <lastmod>2023-02-24T20:27:53.925Z</lastmod>
+    <lastmod>2023-03-04T18:43:15.235Z</lastmod>
   </url>
   <url>
     <loc>https://coady.github.io/posts/fizz-buzz.html</loc>
-    <lastmod>2023-02-24T20:27:54.273Z</lastmod>
+    <lastmod>2023-03-04T18:43:15.627Z</lastmod>
   </url>
   <url>
     <loc>https://coady.github.io/index.html</loc>
-    <lastmod>2023-02-24T20:27:54.761Z</lastmod>
+    <lastmod>2023-03-04T18:43:16.275Z</lastmod>
   </url>
 </urlset>

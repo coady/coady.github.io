@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/decorator-overuse.html",
       "/posts/graphql-nulls.html",
       "/posts/graphql-coroutines.html",
       "/posts/random-selection.html",
