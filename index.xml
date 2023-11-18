@@ -10,7 +10,543 @@
 <atom:link href="https://coady.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>pythonicity | pīˈTHänisədē | noun the quality of being Pythonic</description>
 <generator>quarto-1.3.450</generator>
-<lastBuildDate>Sat, 04 Mar 2023 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 18 Nov 2023 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Composition vs. inheritance</title>
+  <dc:creator>A. Coady</dc:creator>
+  <link>https://coady.github.io/posts/composition-vs-inheritance.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="contrarian-view-on-composition-over-inheritance." class="level1">
+<h1>Contrarian view on composition over inheritance.</h1>
+<p>The conventional wisdom is to prefer <a href="https://en.wikipedia.org/wiki/Composition_over_inheritance">composition over inheritance</a>. More specifically to use <a href="https://en.wikipedia.org/wiki/Delegation_pattern">delegation</a> over single inheritance.</p>
+<p>Like the recommendation on <a href="closing-files.html">closing files</a>, the advice is well-intentioned but omits the fact that Python does not support it well. Python has no mechanism for embedding or forwarding methods. And the despite its famous <a href="https://docs.python.org/3/glossary.html#term-duck-typing">duck-typing</a>, there are many cases where a type must be subclassed to be <a href="https://en.wikipedia.org/wiki/Liskov_substitution_principle">substitutable</a> (particularly if implemented in CPython).</p>
+<p>The below example comes from a popular <a href="https://pycon.org">PyCon</a> talk called <a href="https://www.youtube.com/watch?v=wf-BqAjZb8M">Beyond PEP 8</a>. The goal is <a href="https://www.shawnxli.com/posts/beyond-pep-8/">adapt a Java-esque interface</a> into pythonic code.</p>
+<section id="original-implementation" class="level2">
+<h2 class="anchored" data-anchor-id="original-implementation">Original implementation</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> jnettool.tools.elements.NetworkElement</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> jnettool.tools.Routing</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> jnettool.tools.RouteInsector</span>
+<span id="cb1-4"></span>
+<span id="cb1-5">ne <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> jnettool.tools.elements.NetworkElement(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'171.0.2.45'</span>)</span>
+<span id="cb1-6"></span>
+<span id="cb1-7"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">try</span>:</span>
+<span id="cb1-8">    routing_table <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ne.getRoutingTable()</span>
+<span id="cb1-9"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">except</span> jnettool.tools.elements.MissingVar:</span>
+<span id="cb1-10">    logging.exception(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'No routing table found'</span>)</span>
+<span id="cb1-11">    ne.cleanup(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'rollback'</span>)</span>
+<span id="cb1-12"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">else</span>:</span>
+<span id="cb1-13">    num_routes <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> routing_table.getSize()</span>
+<span id="cb1-14">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> RToffset <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(num_routes):</span>
+<span id="cb1-15">        route <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> routing_table.getRouteByIndex(RToffset)</span>
+<span id="cb1-16">        name <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> route.getName()</span>
+<span id="cb1-17">        ipaddr <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> route.getIPAddr()</span>
+<span id="cb1-18">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%15s</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> -&gt; </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%s</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span> (name, ipaddr)</span>
+<span id="cb1-19"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">finally</span>:</span>
+<span id="cb1-20">    ne.cleanup(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'commit'</span>)</span>
+<span id="cb1-21">    ne.disconnect()</span></code></pre></div>
+</div>
+</section>
+<section id="proposed-interface" class="level2">
+<h2 class="anchored" data-anchor-id="proposed-interface">Proposed interface</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> nettools <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> NetworkElement</span>
+<span id="cb2-2"></span>
+<span id="cb2-3"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">with</span> NetworkElement(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'171.0.2.45'</span>) <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> ne:</span>
+<span id="cb2-4">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> route <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> ne.routing_table:</span>
+<span id="cb2-5">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%15s</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> -&gt; </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%s</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span> (route.name, route.ipaddr)</span></code></pre></div>
+</div>
+</section>
+<section id="proposed-solution" class="level2">
+<h2 class="anchored" data-anchor-id="proposed-solution">Proposed solution</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> jnetool.tools.elements.NetworkElement</span>
+<span id="cb3-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> jnetool.tools.Routing</span>
+<span id="cb3-3"></span>
+<span id="cb3-4"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> NetworkElementError(<span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">Exception</span>):</span>
+<span id="cb3-5">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">pass</span></span>
+<span id="cb3-6"></span>
+<span id="cb3-7"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> NetworkElement(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">object</span>):</span>
+<span id="cb3-8"></span>
+<span id="cb3-9">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, ipaddr):</span>
+<span id="cb3-10">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.ipaddr <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ipaddr</span>
+<span id="cb3-11">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.oldne <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> jnetool.tools.elements.NetworkElement(ipaddr)</span>
+<span id="cb3-12"></span>
+<span id="cb3-13">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@property</span></span>
+<span id="cb3-14">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> routing_table(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>):</span>
+<span id="cb3-15">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">try</span>:</span>
+<span id="cb3-16">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> RoutingTable(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.oldne.getRoutingTable())</span>
+<span id="cb3-17">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">except</span> jnetool.tools.elements.MissingVar:</span>
+<span id="cb3-18">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">raise</span> NetworkElementError(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'No routing table found'</span>)</span>
+<span id="cb3-19"></span>
+<span id="cb3-20">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__enter__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>):</span>
+<span id="cb3-21">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span></span>
+<span id="cb3-22"></span>
+<span id="cb3-23">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__exit__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, exctype, excinst, exctb):</span>
+<span id="cb3-24">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> exctype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> NetworkElementError:</span>
+<span id="cb3-25">            logging.exception(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'No routing table found'</span>)</span>
+<span id="cb3-26">            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.oldne.cleanup(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'rollback'</span>)</span>
+<span id="cb3-27">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">else</span>:</span>
+<span id="cb3-28">            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.oldne.cleanup(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'commit'</span>)</span>
+<span id="cb3-29">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.oldne.disconnect()</span>
+<span id="cb3-30"></span>
+<span id="cb3-31">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__repr__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>):</span>
+<span id="cb3-32">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%s</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">(</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%r</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">)'</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span> (<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.__class__.<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">__name__</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.ipaddr)</span>
+<span id="cb3-33"></span>
+<span id="cb3-34"></span>
+<span id="cb3-35"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> RoutingTable(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">object</span>):</span>
+<span id="cb3-36"></span>
+<span id="cb3-37">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, oldrt):</span>
+<span id="cb3-38">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.oldrt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> oldrt</span>
+<span id="cb3-39"></span>
+<span id="cb3-40">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__len__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>):</span>
+<span id="cb3-41">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.oldrt.getSize()</span>
+<span id="cb3-42"></span>
+<span id="cb3-43">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__getitem__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, index):</span>
+<span id="cb3-44">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> index <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>):</span>
+<span id="cb3-45">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">raise</span> <span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">IndexError</span></span>
+<span id="cb3-46">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> Route(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.oldrt.getRouteByIndex(index))</span>
+<span id="cb3-47"></span>
+<span id="cb3-48"></span>
+<span id="cb3-49"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> Route(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">object</span>):</span>
+<span id="cb3-50"></span>
+<span id="cb3-51">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, old_route):</span>
+<span id="cb3-52">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.old_route <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> old_route</span>
+<span id="cb3-53"></span>
+<span id="cb3-54">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@property</span></span>
+<span id="cb3-55">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> name(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>):</span>
+<span id="cb3-56">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.old_route.getName()</span>
+<span id="cb3-57"></span>
+<span id="cb3-58">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@property</span></span>
+<span id="cb3-59">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> ipaddr(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>):</span>
+<span id="cb3-60">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.old_route.getIPAddr()</span></code></pre></div>
+</div>
+<p>No dispute that the interface is superior, but the implementation is using delegation as if it is dogma. The usage pattern has to be extrapolated from one example, but here are the issues:</p>
+<ul>
+<li>Custom exceptions are not helpful if they do nothing. The consumer of this code <em>does not</em> use <code>NetworkElementError</code>, and has lost the traceback if it did. Error hiding is not error handling.</li>
+<li>Comparing classes with <code>==</code> is widely considered an anti-pattern, as opposed to <code>is</code> or <code>issubclass</code>.</li>
+<li>The <code>Route</code> object doesn’t need to delegate. There is no reason to assume that the underlying attribute access must be lazy, particularly since the iteration could be lazy instead. A named tuple or dataclass would suffice here.</li>
+<li>The <code>RoutingTable</code> object doesn’t need to delegate. There is no need to support random access or lazy evaluation. Its only addition to the interface is to be sequence-like, which could be trivially accomplished by a sequence.</li>
+<li>The <code>NetworkElement</code> doesn’t need to delegate. It has the same name, same constructor, a <code>repr</code> designed to appear as the original, and only extends behavior. If this doesn’t pass as an <code>is-a</code> relation, nothing does.</li>
+</ul>
+</section>
+<section id="simple-solution" class="level2">
+<h2 class="anchored" data-anchor-id="simple-solution">Simple solution</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> collections</span>
+<span id="cb4-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> jnettool.tools <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> elements</span>
+<span id="cb4-3"></span>
+<span id="cb4-4">Route <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> collections.namedtuple(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Route'</span>, [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'name'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'ipaddr'</span>])</span>
+<span id="cb4-5"></span>
+<span id="cb4-6"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> NetworkElement(elements.NetworkElement):</span>
+<span id="cb4-7">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@property</span></span>
+<span id="cb4-8">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> routing_table(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>):</span>
+<span id="cb4-9">        table <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.getRoutingTable()</span>
+<span id="cb4-10">        routes <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">map</span>(table.getRouteByIndex, <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(table.getSize()))</span>
+<span id="cb4-11">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> [Route(route.getName(), route.getIPAddr()) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> route <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> routes]</span>
+<span id="cb4-12"></span>
+<span id="cb4-13">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__enter__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>):</span>
+<span id="cb4-14">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span></span>
+<span id="cb4-15"></span>
+<span id="cb4-16">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__exit__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, exc_type, exc_val, exc_tb):</span>
+<span id="cb4-17">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">isinstance</span>(exc_val, elements.MissingVar):</span>
+<span id="cb4-18">            logging.exception(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"No routing table found"</span>)</span>
+<span id="cb4-19">            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.cleanup(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'rollback'</span>)</span>
+<span id="cb4-20">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">else</span>:</span>
+<span id="cb4-21">            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.cleanup(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'commit'</span>)</span>
+<span id="cb4-22">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.disconnect()</span></code></pre></div>
+</div>
+<p>Which version is more maintainable? Surely the simpler one.</p>
+<p>Which version is more extensible? Well, by whom? The implementor can extend either just as easily. The caller can use the inherited version without losing any functionality.</p>
+<p>So a better question might be which version is more flexible or reusable? Surely the inherited version, because the delegated version would need to access <code>oldne</code>. Even naming the delegate is a pain point, because one has to decide if it is a part of the public interface or not. Should it have 0, 1, or 2 leading underscores? Delegation is often touted as achieving both encapsulation and extensibility, despite being opposing goals.</p>
+<p>Finally, there is also a simpler interface, again with the caveat that there is only one usage example. An iterable of 2-field objects, one of which is called <code>name</code>, and “points to” the other field. Sounds like a mapping.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> NetworkElement(elements.NetworkElement):</span>
+<span id="cb5-2">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@property</span></span>
+<span id="cb5-3">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> routing_table(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>):</span>
+<span id="cb5-4">        table <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.getRoutingTable()</span>
+<span id="cb5-5">        routes <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">map</span>(table.getRouteByIndex, <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(table.getSize()))</span>
+<span id="cb5-6">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {route.getName(): route.getIPAddr() <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> route <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> routes}</span>
+<span id="cb5-7">    ...</span></code></pre></div>
+</div>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>style</category>
+  <guid>https://coady.github.io/posts/composition-vs-inheritance.html</guid>
+  <pubDate>Sat, 18 Nov 2023 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Decorator overuse</title>
   <dc:creator>A. Coady</dc:creator>
@@ -599,7 +1135,7 @@ font-style: inherit;">=</span> backoff.on_exception(backoff.expo, requests.excep
 <p>Whereas GraphQL resolvers can only provide context to child fields, with no visibility into the result. It would be like only allowing <code>super</code> as the last line in a method.</p>
 <section id="example" class="level2">
 <h2 class="anchored" data-anchor-id="example">Example</h2>
-<p>The effect is an entire class of common problems which should be trivial. Typically - but not limited too - lists of objects which have since been deleted or for which the user is not authorized. The problem can be seen in the best practices <a href="https://graphql.org/learn/authorization/">example on authorization</a>.</p>
+<p>The effect is an entire class of common problems which should be trivial. Typically - but not limited to - lists of objects which have since been deleted or for which the user is not authorized. The problem can be seen in the best practices <a href="https://graphql.org/learn/authorization/">example on authorization</a>.</p>
 <blockquote class="blockquote">
 <p>Authorization is a type of business logic that describes whether a given user/session/context has permission to perform an action or see a piece of data. For example:</p>
 <p>“Only authors can see their drafts”</p>
@@ -2843,7 +3379,12 @@ Wall time: 1.3 s</code></pre>
 
 <section id="graphql-is-the-new-orm." class="level1">
 <h1>GraphQL is the new ORM.</h1>
-<p><a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST</a> and <a href="https://en.wikipedia.org/wiki/Object-relational_mapping">ORMs</a> are both infamous for: * over-fetching: fetching more data than is needed per request * under-fetching: fetching less data than is needed, requiring multiple requests * select N+1 problem: under-fetching applied to multiple associated objects</p>
+<p><a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST</a> and <a href="https://en.wikipedia.org/wiki/Object-relational_mapping">ORMs</a> are both infamous for:</p>
+<ul>
+<li>over-fetching: fetching more data than is needed per request</li>
+<li>under-fetching: fetching less data than is needed, requiring multiple requests</li>
+<li>select N+1 problem: under-fetching applied to multiple associated objects</li>
+</ul>
 <p><a href="https://en.wikipedia.org/wiki/GraphQL">GraphQL</a> aims to overcome REST’s shortcomings through a flexible query language, and succeeds in doing so on the client side. But on the server side, GraphQL resolvers have effectively recreated the same over- and under- fetching problems that have long plagued ORMs. The fact that ORMs remain popular despite of their inefficiency is a testament to the benefits of having in-memory objects behave consistently. There is no such trade-off for server-side GraphQL, where the only point of the objects is to be immediately serialized.</p>
 <p>The so-called <a href="https://engineering.shopify.com/blogs/engineering/solving-the-n-1-problem-for-graphql-through-batching">N+1 problem</a> is generally acknowledged in the GraphQL community, but this article will argue only the symptoms are being addressed with workarounds like <a href="https://github.com/graphql/dataloader">dataloader</a>.</p>
 <section id="example" class="level2">

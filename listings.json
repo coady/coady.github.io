@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/composition-vs-inheritance.html",
       "/posts/decorator-overuse.html",
       "/posts/graphql-nulls.html",
       "/posts/graphql-coroutines.html",

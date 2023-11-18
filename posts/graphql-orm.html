@@ -178,7 +178,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="graphql-is-the-new-orm." class="level1">
 <h1>GraphQL is the new ORM.</h1>
-<p><a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST</a> and <a href="https://en.wikipedia.org/wiki/Object-relational_mapping">ORMs</a> are both infamous for: * over-fetching: fetching more data than is needed per request * under-fetching: fetching less data than is needed, requiring multiple requests * select N+1 problem: under-fetching applied to multiple associated objects</p>
+<p><a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST</a> and <a href="https://en.wikipedia.org/wiki/Object-relational_mapping">ORMs</a> are both infamous for:</p>
+<ul>
+<li>over-fetching: fetching more data than is needed per request</li>
+<li>under-fetching: fetching less data than is needed, requiring multiple requests</li>
+<li>select N+1 problem: under-fetching applied to multiple associated objects</li>
+</ul>
 <p><a href="https://en.wikipedia.org/wiki/GraphQL">GraphQL</a> aims to overcome REST’s shortcomings through a flexible query language, and succeeds in doing so on the client side. But on the server side, GraphQL resolvers have effectively recreated the same over- and under- fetching problems that have long plagued ORMs. The fact that ORMs remain popular despite of their inefficiency is a testament to the benefits of having in-memory objects behave consistently. There is no such trade-off for server-side GraphQL, where the only point of the objects is to be immediately serialized.</p>
 <p>The so-called <a href="https://engineering.shopify.com/blogs/engineering/solving-the-n-1-problem-for-graphql-through-batching">N+1 problem</a> is generally acknowledged in the GraphQL community, but this article will argue only the symptoms are being addressed with workarounds like <a href="https://github.com/graphql/dataloader">dataloader</a>.</p>
 <section id="example" class="level2">
