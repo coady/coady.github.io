@@ -27,6 +27,7 @@ noun</br>
 * [Mutable defaults](posts/mutable-defaults.ipynb)
 * [Closing files](posts/closing-files.ipynb)
 * [Decorator overuse](posts/decorator-overuse.ipynb)
+* [Composition vs. inheritance](posts/composition-vs-inheritance.ipynb)
 
 ### GraphQL
 * [GraphQL - ORM](posts/graphql-orm.ipynb)
