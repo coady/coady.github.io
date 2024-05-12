@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="A. Coady">
-<meta name="dcterms.date" content="2018-03-20">
+<meta name="dcterms.date" content="2024-05-12">
 
-<title>Pythonicity - Cheryl’s Birthday</title>
+<title>Pythonicity - Packaging rundown</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -144,10 +144,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Cheryl’s Birthday</h1>
-            <p class="subtitle lead">How to solve the Cheryl’s Birthday puzzle programmatically.</p>
+      <h1 class="title">Packaging rundown</h1>
+            <p class="subtitle lead">Companion guide to the Python packaging tutorial.</p>
                                 <div class="quarto-categories">
-                <div class="quarto-category">puzzles</div>
+                <div class="quarto-category">core</div>
               </div>
                   </div>
   </div>
@@ -165,7 +165,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">March 20, 2018</p>
+        <p class="date">May 12, 2024</p>
       </div>
     </div>
     
@@ -184,138 +184,113 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="how-to-solve-the-cheryls-birthday-puzzle-programmatically." class="level2">
-<h2 class="anchored" data-anchor-id="how-to-solve-the-cheryls-birthday-puzzle-programmatically.">How to solve the <a href="https://en.wikipedia.org/wiki/Cheryl's_Birthday">Cheryl’s Birthday</a> puzzle programmatically.</h2>
-<blockquote class="blockquote">
-<ol type="1">
-<li>Albert and Bernard just became friends with Cheryl, and they want to know when her birthday is. Cheryl gave them a list of 10 possible dates:</li>
-</ol>
-</blockquote>
-<pre><code>    May 15     May 16     May 19
-   June 17    June 18
-   July 14    July 16
- August 14  August 15  August 17</code></pre>
-<ol type="1">
-<li>Cheryl then tells Albert and Bernard separately the month and the day of the birthday respectively.</li>
-<li>Albert: I don’t know when Cheryl’s birthday is, but I know that Bernard does not know too.</li>
-<li>Bernard: At first I don’t know when Cheryl’s birthday is, but I know now.</li>
-<li>Albert: Then I also know when Cheryl’s birthday is.</li>
-<li>So when is Cheryl’s birthday?</li>
-</ol>
-<p>As with the <a href="https://github.com/norvig/pytudes/blob/master/ipynb/Cheryl.ipynb">pytudes solution</a>, the goal is to solve the puzzle in code. A different approach is taken here though, for simplicity and extensibility.</p>
-<p>The first step is to model the data. A <code>set</code> of <code>Date</code> objects is suitable to represent the current possible dates. Since <code>datetime.date</code> objects require a year, a minimal <code>collections.namedtuple</code> is used instead.</p>
-<div id="cell-2" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> NamedTuple</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>DATES <span class="op">=</span> [<span class="st">'May 15'</span>,    <span class="st">'May 16'</span>,    <span class="st">'May 19'</span>,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">'June 17'</span>,   <span class="st">'June 18'</span>,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">'July 14'</span>,   <span class="st">'July 16'</span>,</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">'August 14'</span>, <span class="st">'August 15'</span>, <span class="st">'August 17'</span>]</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Date(NamedTuple):</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    month: <span class="bu">str</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    day: <span class="bu">str</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__repr__</span>(<span class="va">self</span>):</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">' '</span>.join(<span class="va">self</span>)  <span class="co"># pretty printing</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>DATES <span class="op">=</span> {Date(<span class="op">*</span>date.split()) <span class="cf">for</span> date <span class="kw">in</span> DATES}</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>DATES</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="1">
-<pre><code>{August 14,
- August 15,
- August 17,
- July 14,
- July 16,
- June 17,
- June 18,
- May 15,
- May 16,
- May 19}</code></pre>
-</div>
-</div>
-<p>As is typical of these kinds of puzzles, it assumes all participants have perfect <a href="https://en.wikipedia.org/wiki/Theory_of_mind">Theory of Mind</a>. That is, each participant making a statement is applying their private knowledge to what is publicly known, and assuming everyone else will do the same. With that in mind, the claims made fall into 3 categories:</p>
+<section id="companion-guide-to-the-python-packaging-tutorial." class="level1">
+<h1>Companion guide to the Python <a href="https://packaging.python.org/en/latest/tutorials/packaging-projects/">packaging tutorial</a>.</h1>
+<p>This is not an <a href="https://drivendata.co/blog/python-packaging-2023">overview of packaging</a>, nor a <a href="https://pradyunsg.me/blog/2023/01/21/thoughts-on-python-packaging/">history of the tooling</a>. The intended audience is an author of a simple package who merely wants to publish it on the <a href="https://pypi.org">package index</a>, without being forced to make uninformed choices.</p>
+<section id="build-backends" class="level2">
+<h2 class="anchored" data-anchor-id="build-backends">Build backends</h2>
+<p>The crux of the <a href="https://pradyunsg.me/blog/2023/01/21/thoughts-on-python-packaging/#pick-from-n-equivalent-choices-is-really-bad-ux">poor user experience</a> is <a href="https://packaging.python.org/en/latest/tutorials/packaging-projects/#choosing-a-build-backend">choosing a build backend</a>. The reader at this stage does not know what a “build backend” is, and moreover does not care.</p>
+<p>The 4 backends in the tutorial are described here in their presented order. An example snippet of a <code>pyproject.toml</code> file is included, mostly assuming defaults, with a couple common options:</p>
 <ul>
-<li>I know …</li>
-<li>I don’t know …</li>
-<li>They don’t know …</li>
+<li><a href="https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#static-vs-dynamic-metadata">dynamic version</a></li>
+<li>package data for <a href="https://peps.python.org/pep-0561/#packaging-type-information">type information</a></li>
 </ul>
-<p>The temporal variations “now” and “at first” can be modeled by the current set of dates. Any claim then can be implemented functionally in this form:</p>
-<div id="cell-4" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> claim(field: <span class="bu">str</span>, dates: <span class="bu">set</span>) <span class="op">-&gt;</span> <span class="bu">set</span>:</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return subset of possible dates which would make the claim true.</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">    :param field: the field known by the claimant</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">    :param dates: the current set of dates publicly known</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>So what does it mean for Albert or Bernard to “know” the correct date? It would mean applying their knowledge of the month or day leaves only one possibility. The “I know …” function therefore groups and filters for uniqueness.</p>
-<div id="cell-6" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> collections</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> known(field, dates):</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return subset of possible dates which would make the claim "I know ..." true."""</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    counts <span class="op">=</span> collections.Counter(<span class="bu">getattr</span>(date, field) <span class="cf">for</span> date <span class="kw">in</span> dates)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {date <span class="cf">for</span> date <span class="kw">in</span> dates <span class="cf">if</span> counts[<span class="bu">getattr</span>(date, field)] <span class="op">==</span> <span class="dv">1</span>}</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># test what is already publicly known</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> known(<span class="st">'month'</span>, DATES) <span class="op">==</span> <span class="bu">set</span>()</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>known(<span class="st">'day'</span>, DATES)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="3">
-<pre><code>{June 18, May 19}</code></pre>
-</div>
-</div>
-<p>To implement “I don’t know …”, <code>known</code> could be parametrized with a different predicate (<code>&gt; 1</code>), or simply use <code>set.difference</code>. “I don’t know …” is so trivial it’s arguably not worth the abstraction.</p>
-<div id="cell-8" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> unknown(field, dates):</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return subset of possible dates which would make the claim "I don't know ..." true."""</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> dates <span class="op">-</span> known(field, dates)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>The challenging part is what does it mean for Albert to claim Bernard doesn’t know. All dates that would be knowable to Bernard must clearly be excluded, but Albert would have to exclude them based on his knowledge of the month. So “They don’t know …” is similar to <code>unknown</code>, but the exclusion is based on a different field.</p>
-<div id="cell-10" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> unknowable(field, dates):</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return subset of possible dates which would make the claim "They don't know ..." true."""</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    other, <span class="op">=</span> <span class="bu">set</span>(Date._fields) <span class="op">-</span> {field}</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    exclude <span class="op">=</span> {<span class="bu">getattr</span>(date, field) <span class="cf">for</span> date <span class="kw">in</span> known(other, dates)}</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {date <span class="cf">for</span> date <span class="kw">in</span> dates <span class="cf">if</span> <span class="bu">getattr</span>(date, field) <span class="kw">not</span> <span class="kw">in</span> exclude}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>This is sufficient to simply walk through the statements, one at a time.</p>
-<div id="cell-12" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Albert: I don't know when Cheryl's birthday is, but I know that Bernard does not know too.</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>dates <span class="op">=</span> unknown(<span class="st">'month'</span>, DATES)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> dates <span class="op">==</span> DATES  <span class="co"># already public known</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>dates <span class="op">=</span> unknowable(<span class="st">'month'</span>, dates)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>dates</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
-<pre><code>{August 14, August 15, August 17, July 14, July 16}</code></pre>
-</div>
-</div>
-<div id="cell-13" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bernard: At first I don't know when Cheryl's birthday is, but I know now.</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> dates.isdisjoint(known(<span class="st">'day'</span>, DATES))  <span class="co"># already claimed by Albert</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>dates <span class="op">=</span> known(<span class="st">'day'</span>, dates)</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>dates</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="7">
-<pre><code>{August 15, August 17, July 16}</code></pre>
-</div>
-</div>
-<div id="cell-14" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Albert: Then I also know when Cheryl's birthday is.</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>known(<span class="st">'month'</span>, dates)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="8">
-<pre><code>{July 16}</code></pre>
-</div>
-</div>
-<p>Exactly one date is left, indicating success. Now the succinct in-lined version, with no superfluous statements.</p>
-<div id="cell-16" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>known(<span class="st">'month'</span>,                        <span class="co"># Albert: I know</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    known(<span class="st">'day'</span>,                      <span class="co"># Bernard: I know</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>        unknowable(<span class="st">'month'</span>, DATES)))  <span class="co"># Albert: Bernard doesn't know</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
-<pre><code>{July 16}</code></pre>
-</div>
-</div>
+<section id="hatchling" class="level3">
+<h3 class="anchored" data-anchor-id="hatchling"><a href="https://pypi.org/project/hatchling/">hatchling</a></h3>
+<p><a href="https://pepy.tech/project/hatchling"><img src="https://img.shields.io/pypi/dm/hatchling.svg" class="img-fluid" alt="image"></a> - 83 kB with 4 dependencies</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">requires</span> <span class="op">=</span> <span class="op">[</span><span class="st">"hatchling"</span><span class="op">]</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">build-backend</span> <span class="op">=</span> <span class="st">"hatchling.build"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.hatch.build.targets.sdist]</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="dt">include</span> <span class="op">=</span> <span class="op">[</span><span class="st">"&lt;package&gt;/*"</span><span class="op">]</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.hatch.version]</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="dt">path</span> <span class="op">=</span> <span class="st">"&lt;package&gt;/__init__.py"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Part of - not to be confused with - the project manager <a href="https://hatch.pypa.io/latest/">Hatch</a>.</p>
+<p>The source distribution section is included because by default hatchling ostensibly includes <a href="https://hatch.pypa.io/latest/plugins/builder/sdist/#default-file-selection">all files that are not ignored</a>. However, it only <a href="https://hatch.pypa.io/latest/config/build/#vcs">abides by the root .gitignore</a>. It will include virtual environments, if not <a href="https://hatch.pypa.io/dev/history/hatchling/#hatchling-v1.24.2">named .venv</a>. For a project that advocates <a href="https://hatch.pypa.io/latest/why/#build-backend">sensible defaults</a>, this is surprising behavior and a security flaw. Even if <a href="https://github.com/pypa/hatch/issues/304">the issue</a> is fixed, it will presumably include untracked files and clearly omissible directories such as <code>.github</code>.</p>
+</section>
+<section id="setuptools" class="level3">
+<h3 class="anchored" data-anchor-id="setuptools"><a href="https://pypi.org/project/setuptools/">setuptools</a></h3>
+<p><a href="https://pepy.tech/project/setuptools"><img src="https://img.shields.io/pypi/dm/setuptools.svg" class="img-fluid" alt="image"></a> - 894 kB with 0 dependencies</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[build-system]</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dt">requires</span> <span class="op">=</span> <span class="op">[</span><span class="st">"setuptools&gt;=61.0"</span><span class="op">]</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="dt">build-backend</span> <span class="op">=</span> <span class="st">"setuptools.build_meta"</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.setuptools]</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="dt">packages</span> <span class="op">=</span> <span class="op">[</span><span class="st">"&lt;package&gt;"</span><span class="op">]</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.setuptools.dynamic]</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="dt">version</span> <span class="op">=</span> <span class="op">{</span><span class="dt">attr</span><span class="op"> =</span> <span class="st">"&lt;package&gt;.__version__"</span><span class="op">}</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.setuptools.package-data]</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="er">&lt;</span><span class="dt">package</span><span class="er">&gt;</span> <span class="op">=</span> <span class="op">[</span><span class="st">"py.typed"</span><span class="op">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The original build tool, and previously the de facto standard. It is no longer commonly included in Python distributions, so they are all on equal footing with respect to needing installation.</p>
+<p>Setuptools requires explicitly specifying the package, as well as any package data. It also includes legacy “.egg” and “setup.cfg” files, which a modern user will not be familiar with.</p>
+</section>
+<section id="flit-core" class="level3">
+<h3 class="anchored" data-anchor-id="flit-core"><a href="https://pypi.org/project/flit-core/">flit-core</a></h3>
+<p><a href="https://pepy.tech/project/flit_core"><img src="https://img.shields.io/pypi/dm/flit_core.svg" class="img-fluid" alt="image"></a> - 63 kB with 0 dependencies</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[build-system]</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="dt">requires</span> <span class="op">=</span> <span class="op">[</span><span class="st">"flit-core&gt;=3.4"</span><span class="op">]</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="dt">build-backend</span> <span class="op">=</span> <span class="st">"flit_core.buildapi"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Part of the <a href="https://flit.pypa.io/en/stable/">Flit</a> tool for publishing packages.</p>
+<p>Flit automatically supports dynamic versions (and descriptions), and includes the source directory with data files in the source distribution.</p>
+</section>
+<section id="pdm-backend" class="level3">
+<h3 class="anchored" data-anchor-id="pdm-backend"><a href="https://pypi.org/project/pdm-backend/">pdm-backend</a></h3>
+<p><a href="https://pepy.tech/project/pdm-backend"><img src="https://img.shields.io/pypi/dm/pdm-backend.svg" class="img-fluid" alt="image"></a> - 101 kB with 0 dependencies</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">requires</span> <span class="op">=</span> <span class="op">[</span><span class="st">"pdm-backend"</span><span class="op">]</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="dt">build-backend</span> <span class="op">=</span> <span class="st">"pdm.backend"</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.pdm]</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="dt">version</span> <span class="op">=</span> <span class="op">{</span><span class="dt">source</span><span class="op"> =</span> <span class="st">"file"</span><span class="op">, </span><span class="dt">path</span><span class="op"> =</span> <span class="st">"&lt;package&gt;/__init__.py"</span><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Part of - not to be confused with - the project manager <a href="https://pdm-project.org/">PDM</a>.</p>
+<p>PDM automatically includes the source and test directories, with data files, in the source distribution.</p>
+</section>
+</section>
+<section id="evaluations" class="level2">
+<h2 class="anchored" data-anchor-id="evaluations">Evaluations</h2>
+<section id="popularity-and-endorsements" class="level3">
+<h3 class="anchored" data-anchor-id="popularity-and-endorsements">Popularity and endorsements</h3>
+<p>The popularity of Setuptools should be discounted because of its history. The popularity of Hatchling and PDM-backend is clearly influenced by their respective parent projects. PDM has significantly less downloads than the others, but they are all popular enough to expect longevity.</p>
+<p>Setuptools, Hatch, and Flit are all under the <a href="https://github.com/pypa/">packaging authority umbrella</a>, though as the previously cited article points out, <a href="https://pradyunsg.me/blog/2023/01/21/thoughts-on-python-packaging/#not-a-pypa-project">PyPA affiliation does not indicate much</a>.</p>
+<p>The tutorial “defaults” to Hatchling, which presumably is not intended as an endorsement, but will no doubt be interpreted as such.</p>
+</section>
+<section id="size-and-dependencies" class="level3">
+<h3 class="anchored" data-anchor-id="size-and-dependencies">Size and dependencies</h3>
+<p>Setuptools is by far the largest; no surprise since it is much more than a build backend. Hatchling is the only one with dependencies, but the 3 modern ones seem appropriately lightweight.</p>
+</section>
+<section id="file-selection" class="level3">
+<h3 class="anchored" data-anchor-id="file-selection">File selection</h3>
+<p>Wheels have a standard layout, but source distributions do not. Whether <a href="https://discuss.python.org/t/should-sdists-include-docs-and-tests/14578">sdist should include docs and tests</a> is a matter of debate.</p>
+<p>There was a time when open source software meant “distributed with an open source license”, so the source distribution was the primary way to acquire the code. This all seems anachronistic in the age of distributed version control and public collaboration. Not to mention wheels are zip files which have the source code.</p>
+<p>One <a href="https://discuss.python.org/t/should-sdists-include-docs-and-tests/14578/4">piece of advice</a> is that the sdist should be buildable. Generated portable files could be included, thereby not needing the tools that generate them. But for a simple (read pure) Python project, that is not particularly relevant.</p>
+<p>There is another issue with backends creating different artifacts when using their own build commands. This rundown only evaluated <code>python -m build</code>.</p>
+</section>
+<section id="metadata" class="level3">
+<h3 class="anchored" data-anchor-id="metadata">Metadata</h3>
+<p>The modern 3 implicitly support data files. All 4 support dynamic versioning in some manner. Then again, maybe the <code>__version__</code> attribute is no longer the leading convention among the 7 options for <a href="https://packaging.python.org/en/latest/guides/single-sourcing-package-version/">single-sourcing the version</a>. Now that <a href="https://docs.python.org/3.10/library/importlib.metadata.html">importlib.metadata</a> is no longer provisional, is that preferred?</p>
+</section>
+</section>
+<section id="recommendations" class="level2">
+<h2 class="anchored" data-anchor-id="recommendations">Recommendations</h2>
+<p>It would be disingenuous to not end with recommendations, since the refusal to - in a document titled <a href="https://packaging.python.org/en/latest/guides/tool-recommendations/">tool recommendations</a> - is the problem. The PyPA endorses <code>pip</code>, <code>build</code>, and <code>twine</code> as standard tools, even though there are alternatives.</p>
+<p>Author’s disclosures: I am a long-time Python developer of several packages, and a couple with <a href="https://docs.python.org/3/extending/extending.html">extension modules</a>. I use no project management tools, and am not affiliated with any of these projects.</p>
+<ol type="1">
+<li><em>flit-core</em> - No criticisms. The dynamic version and description feature are a plus; not having any flit-specific sections feels like less coupling.</li>
+<li><em>pdm-backend</em> - No criticisms. A natural choice if one wants tests in the source distribution.</li>
+<li><em>hatchling</em> - The file selection issue is significant. Users need a warning that they should include an sdist section and check their tarballs. Many are going to have unnecessarily large distributions, and someone with a local secrets directory - whether ignored or untracked - is going to have a seriously bad day.</li>
+<li><em>setuptools</em> - Requires the most customization and is perpetually handicapped by backwards compatibility. The only advantage setuptools had was being already installed. It may be time to disavow it for new projects without extension modules.</li>
+</ol>
+<p>My projects currently use <code>setuptools</code> for purely historically reasons. For new projects, I would likely use <code>flit-core</code>. I may switch-over existing projects, though there is really no incentive to.</p>
+<p>Unless a standard emerges, of course.</p>
+</section>
+<section id="epilogue" class="level2">
+<h2 class="anchored" data-anchor-id="epilogue">Epilogue</h2>
+<p>A meta case could be made for Flit(-core) as well: that its limited scope and independence from a project manager is itself an asset. Whereas choosing Hatch(ling) or PDM(-backend) feels like picking a side. Flit <a href="https://flit.pypa.io/en/latest/rationale.html">can position itself</a> as the minimalist choice for those who resent having to choose.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
