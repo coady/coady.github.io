@@ -34,3 +34,6 @@ noun</br>
 * [GraphQL coroutines](posts/graphql-coroutines.ipynb)
 * [GraphQL nulls](posts/graphql-nulls.ipynb)
 * [GraphQL root fields](posts/graphql-root-fields.ipynb)
+
+### Core
+* [Packaging rundown](posts/packaging-rundown.ipynb)
