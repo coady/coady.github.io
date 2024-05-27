@@ -220,12 +220,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="dt">packages</span> <span class="op">=</span> <span class="op">[</span><span class="st">"&lt;package&gt;"</span><span class="op">]</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.setuptools.dynamic]</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="dt">version</span> <span class="op">=</span> <span class="op">{</span><span class="dt">attr</span><span class="op"> =</span> <span class="st">"&lt;package&gt;.__version__"</span><span class="op">}</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.setuptools.package-data]</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="er">&lt;</span><span class="dt">package</span><span class="er">&gt;</span> <span class="op">=</span> <span class="op">[</span><span class="st">"py.typed"</span><span class="op">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="dt">version</span> <span class="op">=</span> <span class="op">{</span><span class="dt">attr</span><span class="op"> =</span> <span class="st">"&lt;package&gt;.__version__"</span><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The original build tool, and previously the de facto standard. It is no longer commonly included in Python distributions, so they are all on equal footing with respect to needing installation.</p>
-<p>Setuptools requires explicitly specifying the package, as well as any package data. It also includes legacy “.egg” and “setup.cfg” files, which a modern user will not be familiar with.</p>
+<p>Setuptools may require explicitly specifying the package, depending on what directories are present. It also includes legacy “.egg” and “setup.cfg” files, which a modern user will not be familiar with.</p>
 </section>
 <section id="flit-core" class="level3">
 <h3 class="anchored" data-anchor-id="flit-core"><a href="https://pypi.org/project/flit-core/">flit-core</a></h3>
@@ -280,14 +277,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><em>flit-core</em> - No criticisms. The dynamic version and description feature are a plus; not having any flit-specific sections feels like less coupling.</li>
 <li><em>pdm-backend</em> - No criticisms. A natural choice if one wants tests in the source distribution.</li>
 <li><em>hatchling</em> - The file selection issue is significant. Users need a warning that they should include an sdist section and check their tarballs. Many are going to have unnecessarily large distributions, and someone with a local secrets directory - whether ignored or untracked - is going to have a seriously bad day.</li>
-<li><em>setuptools</em> - Requires the most customization and is perpetually handicapped by backwards compatibility. The only advantage setuptools had was being already installed. It may be time to disavow it for new projects without extension modules.</li>
+<li><em>setuptools</em> - Perpetually handicapped by backwards compatibility. The only advantage setuptools had was being already installed. It may be time to disavow it for new projects without extension modules.</li>
 </ol>
 <p>My projects currently use <code>setuptools</code> for purely historically reasons. For new projects, I would likely use <code>flit-core</code>. I may switch-over existing projects, though there is really no incentive to.</p>
 <p>Unless a standard emerges, of course.</p>
 </section>
-<section id="epilogue" class="level2">
-<h2 class="anchored" data-anchor-id="epilogue">Epilogue</h2>
+<section id="addendum" class="level2">
+<h2 class="anchored" data-anchor-id="addendum">Addendum</h2>
 <p>A meta case could be made for Flit(-core) as well: that its limited scope and independence from a project manager is itself an asset. Whereas choosing Hatch(ling) or PDM(-backend) feels like picking a side. Flit <a href="https://flit.pypa.io/en/latest/rationale.html">can position itself</a> as the minimalist choice for those who resent having to choose.</p>
+<p>And yet the situation is even more absurd. There has been an <a href="https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/#fallback-behaviour">under-documented default</a> the entire time. The default is the legacy mode of setuptools, which differs only in its path setup. If one forgoes a dynamic <code>__version__</code> attribute - which perhaps <code>importlib.metadata</code> was intended to do - then one can have a <code>pyproject.toml</code> with no references to build backends.</p>
 
 
 </section>
