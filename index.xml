@@ -9,8 +9,93 @@
 <link>https://coady.github.io/</link>
 <atom:link href="https://coady.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>pythonicity | pīˈTHänisədē | noun the quality of being Pythonic</description>
-<generator>quarto-1.4.554</generator>
-<lastBuildDate>Sun, 12 May 2024 00:00:00 GMT</lastBuildDate>
+<generator>quarto-1.4.555</generator>
+<lastBuildDate>Sun, 09 Jun 2024 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>GraphQL cursors</title>
+  <dc:creator>A. Coady</dc:creator>
+  <link>https://coady.github.io/posts/graphql-cursors.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="contrarian-view-on-cursor-based-pagination." class="level1">
+<h1>Contrarian view on cursor-based pagination.</h1>
+<p><a href="https://graphql.org">GraphQL</a> documentation recommends <a href="https://graphql.org/learn/pagination/#pagination-and-edges">cursor-based pagination</a>, and it has subsequently become a popular standard.</p>
+<blockquote class="blockquote">
+<p>In general, we’ve found that cursor-based pagination is the most powerful of those designed. Especially if the cursors are opaque, either offset or ID-based pagination can be implemented using cursor-based pagination (by making the cursor the offset or the ID), and using cursors gives additional flexibility if the pagination model changes in the future. As a reminder that the cursors are opaque and that their format should not be relied upon, we suggest base64 encoding them. …</p>
+</blockquote>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode graphql code-with-copy"><code class="sourceCode graphql"><span id="cb1-1">{</span>
+<span id="cb1-2">  hero {</span>
+<span id="cb1-3">    name</span>
+<span id="cb1-4">    friends(first: <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) {</span>
+<span id="cb1-5">      totalCount</span>
+<span id="cb1-6">      edges {</span>
+<span id="cb1-7">        node {</span>
+<span id="cb1-8">          name</span>
+<span id="cb1-9">        }</span>
+<span id="cb1-10">        cursor</span>
+<span id="cb1-11">      }</span>
+<span id="cb1-12">      pageInfo {</span>
+<span id="cb1-13">        endCursor</span>
+<span id="cb1-14">        hasNextPage</span>
+<span id="cb1-15">      }</span>
+<span id="cb1-16">    }</span>
+<span id="cb1-17">  }</span>
+<span id="cb1-18">}</span></code></pre></div>
+<p>There are several oversights with this well-intentioned advice.</p>
+<section id="cursors-and-state" class="level2">
+<h2 class="anchored" data-anchor-id="cursors-and-state">Cursors and state</h2>
+<p>Cursors imply state, at least they used to. A <a href="https://en.wikipedia.org/wiki/Cursor_(databases)">database cursor</a> is used for iterating over <em>a result set</em>. Meaning it has transactional integrity to pick up where it left off.</p>
+<p><strong><em>The vast majority of GraphQL APIs are inherently stateless.</em></strong> The “cursor” is being decoded as input to a new request, and offers no guarantees. From this observation, the advice falls apart.</p>
+<p>The problem with stateless pagination is inconsistency; items may shift, appear, or disappear. Which gives the client the perception of missing or duplicate items. This happens regardless of whether the pagination is offset or ID based. Arguably worse in the case of IDs, since the reference can move arbitrarily or be gone.</p>
+<p>Cursors don’t solve the consistency problem; they give the client the false impression of solving the problem.</p>
+</section>
+</section>
+<section id="opaqueness-and-compatibility" class="level1">
+<h1>Opaqueness and compatibility</h1>
+<p>The claim is that an opaque cursor is compatible across changes. Changed to do what exactly, would be the more relevant question.</p>
+<p>Taking a step back, what is the problem being solved here? We assume there is a list of items, with an inherent ordering, and too many to return to the client with acceptable performance.</p>
+<p>Given those assumptions, the first obvious step is an optional size limit. That is not in dispute; the disagreement if over the “offset”. A simple and versatile solution is a range filter over whatever field(s) is relevant to ordering. This is not even remotely controversial when the field in question has a name like <code>date</code>. In other words, “pagination” is not necessarily the problem that needs solving.</p>
+<p>Range filters with a size limit are sufficient to implement pagination, and new optional filters are always backwards compatible. They also offer the flexibility of search, whereas cursors can only be used iteratively. And what if the client does not want visibility into the range filters? That is exactly what <code>offset</code> is for; offset is a range filter over an implied <code>index</code> field.</p>
+<p>There is a reason why the recommendation does not offer a useful example of this supposed compatibility; there isn’t one. The advice is equivocating on the ambiguity of an <code>after: $ID</code> filter. Is the ID field relevant to the ordering?</p>
+<ul>
+<li>If yes, then it is just another range filter</li>
+<li>If no, then it is just another placeholder for index</li>
+</ul>
+<p>There is no third case. There is no future secret field that relates to ordering, is relevant to the client, but somehow still opaque to the client.</p>
+<p><strong><em>Stateless pagination is a combination of range filters and size limits</em></strong>. No matter what the input fields are called. A true stateful is cursor is opaque precisely because it does not represent any known field.</p>
+<section id="next-optimization" class="level2">
+<h2 class="anchored" data-anchor-id="next-optimization">Next optimization</h2>
+<p>The “next” piece of advice is that the cursor implementation should indicate whether another request is worthwhile. Again, in a stateless API, the server can make no such guarantee.</p>
+<p>If the server can provide a total count, by all means do so. It solves the “next” problem, and is more generally useful.</p>
+<p>If it is not feasible for the server to provide a total count, how is it going to implement whether there are more items? At the data layer, it is going to stop processing at <em>N + 1</em> items instead of the requested <em>N</em>. The client could do that too. Instead of requesting the next 10, it could <a href="https://en.wikipedia.org/wiki/Up_to_eleven">go to 11</a>.</p>
+<p>Better yet, why stop at the server optimizing for <em>N + 0</em>? If it knows there is just 1 more item, why not go ahead and include that last one too. <em>N + 2</em> anyone? Obsessing over the last “next” is a pointless micro-optimization, all the more so because it is irrelevant whenever the total count is not coincidentally a multiple of <em>N</em>. If <em>N</em> is arbitrary, then optimizing for a particular residue <em>mod N</em> is clearly arbitrary.</p>
+</section>
+<section id="api-design" class="level2">
+<h2 class="anchored" data-anchor-id="api-design">API design</h2>
+<p>Not only is there no good reason to blindly add opaque cursors, there is also no reason to add range filters before needed. A size limit alone solves the first order of magnitude of performance issues. If a client requests the first 10 items, then needs the next 10, actually pressure test whether it is unreasonable to request the first 20. The advantage is the client then has a consistent snapshot of the first 20 regardless of changes, which could provide a better user experience.</p>
+<p>A simple strategy for pagination: start with none. Then proceed to next steps as performance warrants.</p>
+<ol type="1">
+<li>size limit</li>
+<li>range filter on known field(s)</li>
+<li>offset</li>
+</ol>
+<p>In the unlikely event your API is stateful, you didn’t need this advice because you already had a cursor. Otherwise, cursors are an overly-complicated useless abstraction.</p>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>graphql</category>
+  <guid>https://coady.github.io/posts/graphql-cursors.html</guid>
+  <pubDate>Sun, 09 Jun 2024 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Packaging rundown</title>
   <dc:creator>A. Coady</dc:creator>
@@ -7258,353 +7343,6 @@ font-style: inherit;">16</span>))</span></code></pre></div>
   <category>interviews</category>
   <guid>https://coady.github.io/posts/fizz-buzz.html</guid>
   <pubDate>Sun, 25 Mar 2018 00:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Cheryl’s Birthday</title>
-  <dc:creator>A. Coady</dc:creator>
-  <link>https://coady.github.io/posts/cheryls-birthday.html</link>
-  <description><![CDATA[ 
-
-
-
-
-
-<section id="how-to-solve-the-cheryls-birthday-puzzle-programmatically." class="level2">
-<h2 class="anchored" data-anchor-id="how-to-solve-the-cheryls-birthday-puzzle-programmatically.">How to solve the <a href="https://en.wikipedia.org/wiki/Cheryl's_Birthday">Cheryl’s Birthday</a> puzzle programmatically.</h2>
-<blockquote class="blockquote">
-<ol type="1">
-<li>Albert and Bernard just became friends with Cheryl, and they want to know when her birthday is. Cheryl gave them a list of 10 possible dates:</li>
-</ol>
-</blockquote>
-<pre><code>    May 15     May 16     May 19
-   June 17    June 18
-   July 14    July 16
- August 14  August 15  August 17</code></pre>
-<ol type="1">
-<li>Cheryl then tells Albert and Bernard separately the month and the day of the birthday respectively.</li>
-<li>Albert: I don’t know when Cheryl’s birthday is, but I know that Bernard does not know too.</li>
-<li>Bernard: At first I don’t know when Cheryl’s birthday is, but I know now.</li>
-<li>Albert: Then I also know when Cheryl’s birthday is.</li>
-<li>So when is Cheryl’s birthday?</li>
-</ol>
-<p>As with the <a href="https://github.com/norvig/pytudes/blob/master/ipynb/Cheryl.ipynb">pytudes solution</a>, the goal is to solve the puzzle in code. A different approach is taken here though, for simplicity and extensibility.</p>
-<p>The first step is to model the data. A <code>set</code> of <code>Date</code> objects is suitable to represent the current possible dates. Since <code>datetime.date</code> objects require a year, a minimal <code>collections.namedtuple</code> is used instead.</p>
-<div id="cell-2" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">from</span> typing <span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> NamedTuple</span>
-<span id="cb2-2"></span>
-<span id="cb2-3">DATES <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'May 15'</span>,    <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'May 16'</span>,    <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'May 19'</span>,</span>
-<span id="cb2-4">        <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'June 17'</span>,   <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'June 18'</span>,</span>
-<span id="cb2-5">        <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'July 14'</span>,   <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'July 16'</span>,</span>
-<span id="cb2-6">      <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'August 14'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'August 15'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'August 17'</span>]</span>
-<span id="cb2-7"></span>
-<span id="cb2-8"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">class</span> Date(NamedTuple):</span>
-<span id="cb2-9">    month: <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">str</span></span>
-<span id="cb2-10">    day: <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">str</span></span>
-<span id="cb2-11"></span>
-<span id="cb2-12">    <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">__repr__</span>(<span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">self</span>):</span>
-<span id="cb2-13">        <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">return</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">' '</span>.join(<span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">self</span>)  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># pretty printing</span></span>
-<span id="cb2-14">DATES <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> {Date(<span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">*</span>date.split()) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span> date <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> DATES}</span>
-<span id="cb2-15">DATES</span></code></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="1">
-<pre><code>{August 14,
- August 15,
- August 17,
- July 14,
- July 16,
- June 17,
- June 18,
- May 15,
- May 16,
- May 19}</code></pre>
-</div>
-</div>
-<p>As is typical of these kinds of puzzles, it assumes all participants have perfect <a href="https://en.wikipedia.org/wiki/Theory_of_mind">Theory of Mind</a>. That is, each participant making a statement is applying their private knowledge to what is publicly known, and assuming everyone else will do the same. With that in mind, the claims made fall into 3 categories:</p>
-<ul>
-<li>I know …</li>
-<li>I don’t know …</li>
-<li>They don’t know …</li>
-</ul>
-<p>The temporal variations “now” and “at first” can be modeled by the current set of dates. Any claim then can be implemented functionally in this form:</p>
-<div id="cell-4" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">def</span> claim(field: <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">str</span>, dates: <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">set</span>) <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">set</span>:</span>
-<span id="cb4-2">    <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">"""Return subset of possible dates which would make the claim true.</span></span>
-<span id="cb4-3"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">    </span></span>
-<span id="cb4-4"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">    :param field: the field known by the claimant</span></span>
-<span id="cb4-5"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">    :param dates: the current set of dates publicly known</span></span>
-<span id="cb4-6"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">    """</span></span></code></pre></div>
-</div>
-<p>So what does it mean for Albert or Bernard to “know” the correct date? It would mean applying their knowledge of the month or day leaves only one possibility. The “I know …” function therefore groups and filters for uniqueness.</p>
-<div id="cell-6" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> collections</span>
-<span id="cb5-2"></span>
-<span id="cb5-3"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">def</span> known(field, dates):</span>
-<span id="cb5-4">    <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">"""Return subset of possible dates which would make the claim "I know ..." true."""</span></span>
-<span id="cb5-5">    counts <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> collections.Counter(<span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">getattr</span>(date, field) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span> date <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> dates)</span>
-<span id="cb5-6">    <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">return</span> {date <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span> date <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> dates <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">if</span> counts[<span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">getattr</span>(date, field)] <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>}</span>
-<span id="cb5-7"></span>
-<span id="cb5-8"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># test what is already publicly known</span></span>
-<span id="cb5-9"><span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">assert</span> known(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'month'</span>, DATES) <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">set</span>()</span>
-<span id="cb5-10">known(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'day'</span>, DATES)</span></code></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="3">
-<pre><code>{June 18, May 19}</code></pre>
-</div>
-</div>
-<p>To implement “I don’t know …”, <code>known</code> could be parametrized with a different predicate (<code>&gt; 1</code>), or simply use <code>set.difference</code>. “I don’t know …” is so trivial it’s arguably not worth the abstraction.</p>
-<div id="cell-8" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">def</span> unknown(field, dates):</span>
-<span id="cb7-2">    <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">"""Return subset of possible dates which would make the claim "I don't know ..." true."""</span></span>
-<span id="cb7-3">    <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">return</span> dates <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span> known(field, dates)</span></code></pre></div>
-</div>
-<p>The challenging part is what does it mean for Albert to claim Bernard doesn’t know. All dates that would be knowable to Bernard must clearly be excluded, but Albert would have to exclude them based on his knowledge of the month. So “They don’t know …” is similar to <code>unknown</code>, but the exclusion is based on a different field.</p>
-<div id="cell-10" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">def</span> unknowable(field, dates):</span>
-<span id="cb8-2">    <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">"""Return subset of possible dates which would make the claim "They don't know ..." true."""</span></span>
-<span id="cb8-3">    other, <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">set</span>(Date._fields) <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span> {field}</span>
-<span id="cb8-4">    exclude <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> {<span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">getattr</span>(date, field) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span> date <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> known(other, dates)}</span>
-<span id="cb8-5">    <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">return</span> {date <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span> date <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> dates <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">if</span> <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">getattr</span>(date, field) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">not</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> exclude}</span></code></pre></div>
-</div>
-<p>This is sufficient to simply walk through the statements, one at a time.</p>
-<div id="cell-12" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># Albert: I don't know when Cheryl's birthday is, but I know that Bernard does not know too.</span></span>
-<span id="cb9-2">dates <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> unknown(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'month'</span>, DATES)</span>
-<span id="cb9-3"><span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">assert</span> dates <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> DATES  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># already public known</span></span>
-<span id="cb9-4">dates <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> unknowable(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'month'</span>, dates)</span>
-<span id="cb9-5">dates</span></code></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
-<pre><code>{August 14, August 15, August 17, July 14, July 16}</code></pre>
-</div>
-</div>
-<div id="cell-13" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># Bernard: At first I don't know when Cheryl's birthday is, but I know now.</span></span>
-<span id="cb11-2"><span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">assert</span> dates.isdisjoint(known(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'day'</span>, DATES))  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># already claimed by Albert</span></span>
-<span id="cb11-3">dates <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> known(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'day'</span>, dates)</span>
-<span id="cb11-4">dates</span></code></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="7">
-<pre><code>{August 15, August 17, July 16}</code></pre>
-</div>
-</div>
-<div id="cell-14" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># Albert: Then I also know when Cheryl's birthday is.</span></span>
-<span id="cb13-2">known(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'month'</span>, dates)</span></code></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="8">
-<pre><code>{July 16}</code></pre>
-</div>
-</div>
-<p>Exactly one date is left, indicating success. Now the succinct in-lined version, with no superfluous statements.</p>
-<div id="cell-16" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">known(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'month'</span>,                        <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># Albert: I know</span></span>
-<span id="cb15-2">    known(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'day'</span>,                      <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># Bernard: I know</span></span>
-<span id="cb15-3">        unknowable(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'month'</span>, DATES)))  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># Albert: Bernard doesn't know</span></span></code></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
-<pre><code>{July 16}</code></pre>
-</div>
-</div>
-
-
-</section>
-
- ]]></description>
-  <category>puzzles</category>
-  <guid>https://coady.github.io/posts/cheryls-birthday.html</guid>
-  <pubDate>Tue, 20 Mar 2018 00:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>

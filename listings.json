@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/graphql-cursors.html",
       "/posts/packaging-rundown.html",
       "/posts/graphql-root-fields.html",
       "/posts/composition-vs-inheritance.html",
