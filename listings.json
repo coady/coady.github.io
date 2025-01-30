@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/go-iterators.html",
       "/posts/graphql-cursors.html",
       "/posts/packaging-rundown.html",
       "/posts/graphql-root-fields.html",

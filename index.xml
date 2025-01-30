@@ -9,8 +9,127 @@
 <link>https://coady.github.io/</link>
 <atom:link href="https://coady.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>pythonicity | pīˈTHänisədē | noun the quality of being Pythonic</description>
-<generator>quarto-1.4.555</generator>
-<lastBuildDate>Sun, 09 Jun 2024 00:00:00 GMT</lastBuildDate>
+<generator>quarto-1.6.40</generator>
+<lastBuildDate>Thu, 30 Jan 2025 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Go iterators</title>
+  <dc:creator>A. Coady</dc:creator>
+  <link>https://coady.github.io/posts/go-iterators.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="pythonic-go-code." class="level1">
+<h1>Pythonic Go code.</h1>
+<p>The long arc of language convergence continues. With generics and iterators, Go is significantly closer to Python’s reusability and expressiveness.</p>
+<p>Take the built-in function <code>sum</code>. Prior to generics, a Go version would have needed a separate implementations for <code>int</code> and <code>float64</code>. But that was the least of the problems. Even with a <code>Number</code> interface, it also would have been restricted to a <code>slice</code> of numbers. Realistically, one never has a slice of numbers. One has a slice of objects with a numeric field, or perhaps a <code>map</code> with numeric values.</p>
+<p>Enter <a href="https://go.dev/doc/go1.23#iterators">iterators</a>. The <a href="https://go.dev/blog/range-functions">range over function</a> types are clunkier than Python generators, but to the caller the <code>range</code> interface is the same.</p>
+<div id="cell-2" class="cell" data-vscode="{&quot;languageId&quot;:&quot;shellscript&quot;}">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span> Number interface {</span>
+<span id="cb1-2">    constraints.Integer <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span> constraints.Float <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span> constraints.Complex</span>
+<span id="cb1-3">}</span>
+<span id="cb1-4"></span>
+<span id="cb1-5">func Sum[N Number](seq <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">iter</span>.Seq[N]) N {</span>
+<span id="cb1-6">    var total N</span>
+<span id="cb1-7">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> value <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span> seq {</span>
+<span id="cb1-8">        total <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> value</span>
+<span id="cb1-9">    }</span>
+<span id="cb1-10">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> total</span>
+<span id="cb1-11">}</span></code></pre></div>
+</div>
+<p>The standard library includes helpers <code>slices.Values</code>, <code>maps.Keys</code>, and <code>maps.Values</code>. So there is no barrier to making <code>iter.Seq</code> the standard input for iterables.</p>
+<p>The Go equivalent of <a href="https://github.com/golang/go/issues/61898">itertools</a> is now inevitable. With one key difference: the lack of generator expressions will make Go more function oriented. <code>slices.ContainsFunc</code> is the equivalent of <code>any</code>; similarly the equivalent of <code>all</code> would likely embed the predicate.</p>
+<div id="cell-4" class="cell" data-vscode="{&quot;languageId&quot;:&quot;shellscript&quot;}">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">func AllFunc[E <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">any</span>](seq <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">iter</span>.Seq[E], f func(E) <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">bool</span>) <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">bool</span> {</span>
+<span id="cb2-2">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> value <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span> seq {</span>
+<span id="cb2-3">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span>f(value) {</span>
+<span id="cb2-4">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> false</span>
+<span id="cb2-5">        }</span>
+<span id="cb2-6">    }</span>
+<span id="cb2-7">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> true</span>
+<span id="cb2-8">}</span></code></pre></div>
+</div>
+<p>The big question is whether <code>MapFunc</code> and <code>FilterFunc</code> become standard. They have not been added to the <code>slices</code> package - presumably because iterators were coming - though <code>DeleteFunc</code> already managed to sneak in. Just imagine Python without comprehensions; <code>map</code> and <code>filter</code> would be ubiquitous.</p>
+<section id="sort-keys" class="level2">
+<h2 class="anchored" data-anchor-id="sort-keys">Sort keys</h2>
+<p>A related area of convergence is comparison functions. Go uses ternary <a href="https://pkg.go.dev/cmp">cmp</a> functions, and Python <a href="https://docs.python.org/3/library/functools.html#functools.cmp_to_key">used to</a>. Collective Python experience has shown that while more general, a ternary comparison is rarely needed. Even more so with the ability to reverse and stably sort.</p>
+<p>Go does not have the equivalent of Python’s orderable tuples, so a ternary <code>cmp</code> will always have its place. Still, sorting by scalars is extremely common, and Go could add <a href="https://github.com/golang/go/issues/71238">key-based</a> ordering, with iterator support.</p>
+<p>Note bound and unbound methods are also first class functions. So models with a standard ordering or identifier could add methods for each. Then pass <code>(*Type).Compare</code> as a <code>cmp</code> function, and <code>(*Type).Key</code> as a key function. The readability of function parameters is even better when referenced by name instead of a <code>lambda</code>.</p>
+<p>The key function approach is also simpler and more efficient for <code>comparable</code> use cases. Utilities like <code>slices.CompareFunc</code> could be <code>iter.CompareBy</code> and not repeat logic.</p>
+</section>
+<section id="sets" class="level2">
+<h2 class="anchored" data-anchor-id="sets">Sets</h2>
+<p>Go does not have a built-in <code>set</code> type. The options are to use a <code>map</code> explicitly, or via a library which wraps a <code>map</code> and ignores the values. The author’s <a href="https://pkg.go.dev/github.com/coady/iterset">iterset</a> package demonstrates that a Pythonic approach is now possible. Set operations require either O(1) lookup - which maps already support - or mere iteration. So a custom <code>map</code> type is useful for efficiency, but its methods can support <code>iter.Seq</code> instead, just as Python methods do. This is both more flexible and efficient in most cases.</p>
+<p>Take <code>IsSubset</code> as an example. The four interface choices have usage and performance trade-offs.</p>
+<ol type="1">
+<li><code>IsSubset(iter.Seq[K], iter.Seq[K])</code>: most flexible, has to convert right argument to #2</li>
+<li><code>IsSubset(iter.Seq[K], map[K]V))</code>: fast, zero-copy, and flexible</li>
+<li><code>IsSubset(map[K]V), iter.Seq[K]</code>: similar to #1, but converting the right argument may exit early and use less space</li>
+<li><code>IsSubset(map[K]V1), map[K]V2)</code>: similar to #2, but could exit early with a size check</li>
+</ol>
+<p>Without function overloads, designing the interface for all use cases is a challenge. But in no case is forcing the caller to convert both arguments to <code>map[K]struct{}</code> first an improvement.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Go has just started to include iterator utilities like <code>slices.Sorted{Func}</code>. Iterators are going to have a transformative effect on readability.</p>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>go</category>
+  <guid>https://coady.github.io/posts/go-iterators.html</guid>
+  <pubDate>Thu, 30 Jan 2025 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>GraphQL cursors</title>
   <dc:creator>A. Coady</dc:creator>
@@ -141,6 +260,7 @@ font-style: inherit;">"hatchling.build"</span></span>
 <span id="cb1-3"></span>
 <span id="cb1-4"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">[tool.hatch.build.targets.sdist]</span></span>
 <span id="cb1-5"><span class="dt" style="color: #AD0000;
 background-color: null;
@@ -156,6 +276,7 @@ font-style: inherit;">]</span></span>
 <span id="cb1-6"></span>
 <span id="cb1-7"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">[tool.hatch.version]</span></span>
 <span id="cb1-8"><span class="dt" style="color: #AD0000;
 background-color: null;
@@ -172,6 +293,7 @@ font-style: inherit;">"&lt;package&gt;/__init__.py"</span></span></code></pre></
 <p><a href="https://pepy.tech/project/setuptools"><img src="https://img.shields.io/pypi/dm/setuptools.svg" class="img-fluid" alt="image"></a> - 894 kB with 0 dependencies</p>
 <div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb2-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">[build-system]</span></span>
 <span id="cb2-2"><span class="dt" style="color: #AD0000;
 background-color: null;
@@ -194,6 +316,7 @@ font-style: inherit;">"setuptools.build_meta"</span></span>
 <span id="cb2-4"></span>
 <span id="cb2-5"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">[tool.setuptools]</span></span>
 <span id="cb2-6"><span class="dt" style="color: #AD0000;
 background-color: null;
@@ -209,6 +332,7 @@ font-style: inherit;">]</span></span>
 <span id="cb2-7"></span>
 <span id="cb2-8"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">[tool.setuptools.dynamic]</span></span>
 <span id="cb2-9"><span class="dt" style="color: #AD0000;
 background-color: null;
@@ -233,6 +357,7 @@ font-style: inherit;">}</span></span></code></pre></div>
 <p><a href="https://pepy.tech/project/flit_core"><img src="https://img.shields.io/pypi/dm/flit_core.svg" class="img-fluid" alt="image"></a> - 63 kB with 0 dependencies</p>
 <div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">[build-system]</span></span>
 <span id="cb3-2"><span class="dt" style="color: #AD0000;
 background-color: null;
@@ -279,6 +404,7 @@ font-style: inherit;">"pdm.backend"</span></span>
 <span id="cb4-3"></span>
 <span id="cb4-4"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">[tool.pdm]</span></span>
 <span id="cb4-5"><span class="dt" style="color: #AD0000;
 background-color: null;
@@ -341,7 +467,7 @@ font-style: inherit;">}</span></span></code></pre></div>
 <li><em>hatchling</em> - The file selection issue is significant. Users need a warning that they should include an sdist section and check their tarballs. Many are going to have unnecessarily large distributions, and someone with a local secrets directory - whether ignored or untracked - is going to have a seriously bad day.</li>
 <li><em>setuptools</em> - Perpetually handicapped by backwards compatibility. The only advantage setuptools had was being already installed. It may be time to disavow it for new projects without extension modules.</li>
 </ol>
-<p>My projects currently use <code>setuptools</code> for purely historically reasons. For new projects, I would likely use <code>flit-core</code>. I may switch-over existing projects, though there is really no incentive to.</p>
+<p>My projects currently use <code>setuptools</code> for purely historical reasons. For new projects, I would likely use <code>flit-core</code>. I may switch-over existing projects, though there is really no incentive to.</p>
 <p>Unless a standard emerges, of course.</p>
 </section>
 <section id="addendum" class="level2">
@@ -386,6 +512,7 @@ font-style: inherit;">}</span></span></code></pre></div>
 <p>Top-level mutation fields are special in one aspect: they are <a href="https://graphql.org/learn/queries/#multiple-fields-in-mutations">executed in order</a>. This has resulted in even flatter namespaces for mutations,</p>
 <div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode graphql code-with-copy"><code class="sourceCode graphql"><span id="cb1-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">mutation</span> {</span>
 <span id="cb1-2">    createUser <span class="co" style="color: #5E5E5E;
 background-color: null;
@@ -395,6 +522,7 @@ font-style: inherit;"># executed first</span></span>
 <p>This is not necessary, but seems widely believed that it is. Nested mutations work just fine.</p>
 <div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode graphql code-with-copy"><code class="sourceCode graphql"><span id="cb2-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">mutation</span> {</span>
 <span id="cb2-2">    user {</span>
 <span id="cb2-3">        create <span class="co" style="color: #5E5E5E;
@@ -406,6 +534,7 @@ font-style: inherit;"># executed in arbitrary order</span></span>
 <p>If the underlying reason is truly execution order, the client could be explicit instead.</p>
 <div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode graphql code-with-copy"><code class="sourceCode graphql"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">mutation</span> {</span>
 <span id="cb3-2">    created: user { <span class="co" style="color: #5E5E5E;
 background-color: null;
@@ -437,12 +566,14 @@ background-color: null;
 font-style: inherit;">@strawberry.type</span></span>
 <span id="cb4-5"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> Query:</span>
 <span id="cb4-6">    <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">@strawberry.field</span></span>
 <span id="cb4-7">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> instance(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>) <span class="op" style="color: #5E5E5E;
@@ -456,18 +587,22 @@ background-color: null;
 font-style: inherit;">None</span>:</span>
 <span id="cb4-8">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">None</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">is</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">None</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">else</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">isinstance</span>(<span class="va" style="color: #111111;
@@ -529,9 +664,11 @@ font-style: inherit;">import</span> strawberry.asgi</span>
 <span id="cb12-3"></span>
 <span id="cb12-4"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> GraphQL(strawberry.asgi.GraphQL):</span>
 <span id="cb12-5">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
@@ -552,13 +689,16 @@ font-style: inherit;">=</span> root</span>
 <span id="cb12-8"></span>
 <span id="cb12-9">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">async</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> get_root_value(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>, request):</span>
 <span id="cb12-10">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.root_value</span></code></pre></div>
@@ -573,9 +713,11 @@ background-color: null;
 font-style: inherit;">@strawberry.type</span></span>
 <span id="cb13-2"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> Dictionary:</span>
 <span id="cb13-3">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
@@ -591,8 +733,10 @@ font-style: inherit;">self</span>.words <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> {line.strip() <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> line <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">open</span>(source)}</span>
@@ -602,6 +746,7 @@ background-color: null;
 font-style: inherit;">@strawberry.field</span></span>
 <span id="cb13-7">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> is_word(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>, text: <span class="bu" style="color: null;
@@ -613,8 +758,10 @@ background-color: null;
 font-style: inherit;">bool</span>:</span>
 <span id="cb13-8">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> text <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.words</span></code></pre></div>
@@ -626,11 +773,13 @@ background-color: null;
 font-style: inherit;">@strawberry.type</span></span>
 <span id="cb14-2"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> Query:</span>
 <span id="cb14-3">    dictionary: Dictionary</span>
 <span id="cb14-4"></span>
 <span id="cb14-5">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
@@ -690,12 +839,14 @@ font-style: inherit;">'171.0.2.45'</span>)</span>
 <span id="cb1-6"></span>
 <span id="cb1-7"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">try</span>:</span>
 <span id="cb1-8">    routing_table <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> ne.getRoutingTable()</span>
 <span id="cb1-9"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">except</span> jnettool.tools.elements.MissingVar:</span>
 <span id="cb1-10">    logging.exception(<span class="st" style="color: #20794D;
 background-color: null;
@@ -705,14 +856,17 @@ background-color: null;
 font-style: inherit;">'rollback'</span>)</span>
 <span id="cb1-12"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">else</span>:</span>
 <span id="cb1-13">    num_routes <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> routing_table.getSize()</span>
 <span id="cb1-14">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> RToffset <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(num_routes):</span>
@@ -742,6 +896,7 @@ background-color: null;
 font-style: inherit;">%</span> (name, ipaddr)</span>
 <span id="cb1-19"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">finally</span>:</span>
 <span id="cb1-20">    ne.cleanup(<span class="st" style="color: #20794D;
 background-color: null;
@@ -760,6 +915,7 @@ font-style: inherit;">import</span> NetworkElement</span>
 <span id="cb2-2"></span>
 <span id="cb2-3"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">with</span> NetworkElement(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'171.0.2.45'</span>) <span class="im" style="color: #00769E;
@@ -767,8 +923,10 @@ background-color: null;
 font-style: inherit;">as</span> ne:</span>
 <span id="cb2-4">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> route <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> ne.routing_table:</span>
 <span id="cb2-5">        <span class="bu" style="color: null;
 background-color: null;
@@ -799,21 +957,25 @@ font-style: inherit;">import</span> jnetool.tools.Routing</span>
 <span id="cb3-3"></span>
 <span id="cb3-4"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> NetworkElementError(<span class="pp" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">Exception</span>):</span>
 <span id="cb3-5">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">pass</span></span>
 <span id="cb3-6"></span>
 <span id="cb3-7"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> NetworkElement(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">object</span>):</span>
 <span id="cb3-8"></span>
 <span id="cb3-9">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
@@ -835,28 +997,34 @@ background-color: null;
 font-style: inherit;">@property</span></span>
 <span id="cb3-14">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> routing_table(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>):</span>
 <span id="cb3-15">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">try</span>:</span>
 <span id="cb3-16">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> RoutingTable(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.oldne.getRoutingTable())</span>
 <span id="cb3-17">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">except</span> jnetool.tools.elements.MissingVar:</span>
 <span id="cb3-18">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">raise</span> NetworkElementError(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'No routing table found'</span>)</span>
 <span id="cb3-19"></span>
 <span id="cb3-20">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__enter__</span>(<span class="va" style="color: #111111;
@@ -864,12 +1032,14 @@ background-color: null;
 font-style: inherit;">self</span>):</span>
 <span id="cb3-21">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span></span>
 <span id="cb3-22"></span>
 <span id="cb3-23">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__exit__</span>(<span class="va" style="color: #111111;
@@ -877,6 +1047,7 @@ background-color: null;
 font-style: inherit;">self</span>, exctype, excinst, exctb):</span>
 <span id="cb3-24">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> exctype <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">==</span> NetworkElementError:</span>
@@ -890,6 +1061,7 @@ background-color: null;
 font-style: inherit;">'rollback'</span>)</span>
 <span id="cb3-27">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">else</span>:</span>
 <span id="cb3-28">            <span class="va" style="color: #111111;
 background-color: null;
@@ -902,6 +1074,7 @@ font-style: inherit;">self</span>.oldne.disconnect()</span>
 <span id="cb3-30"></span>
 <span id="cb3-31">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__repr__</span>(<span class="va" style="color: #111111;
@@ -909,6 +1082,7 @@ background-color: null;
 font-style: inherit;">self</span>):</span>
 <span id="cb3-32">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'</span><span class="sc" style="color: #5E5E5E;
@@ -932,12 +1106,14 @@ font-style: inherit;">self</span>.ipaddr)</span>
 <span id="cb3-34"></span>
 <span id="cb3-35"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> RoutingTable(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">object</span>):</span>
 <span id="cb3-36"></span>
 <span id="cb3-37">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
@@ -951,6 +1127,7 @@ font-style: inherit;">=</span> oldrt</span>
 <span id="cb3-39"></span>
 <span id="cb3-40">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__len__</span>(<span class="va" style="color: #111111;
@@ -958,12 +1135,14 @@ background-color: null;
 font-style: inherit;">self</span>):</span>
 <span id="cb3-41">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.oldrt.getSize()</span>
 <span id="cb3-42"></span>
 <span id="cb3-43">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__getitem__</span>(<span class="va" style="color: #111111;
@@ -971,6 +1150,7 @@ background-color: null;
 font-style: inherit;">self</span>, index):</span>
 <span id="cb3-44">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> index <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">&gt;=</span> <span class="bu" style="color: null;
@@ -980,11 +1160,13 @@ background-color: null;
 font-style: inherit;">self</span>):</span>
 <span id="cb3-45">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">raise</span> <span class="pp" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">IndexError</span></span>
 <span id="cb3-46">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> Route(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.oldrt.getRouteByIndex(index))</span>
@@ -992,12 +1174,14 @@ font-style: inherit;">self</span>.oldrt.getRouteByIndex(index))</span>
 <span id="cb3-48"></span>
 <span id="cb3-49"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> Route(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">object</span>):</span>
 <span id="cb3-50"></span>
 <span id="cb3-51">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
@@ -1014,11 +1198,13 @@ background-color: null;
 font-style: inherit;">@property</span></span>
 <span id="cb3-55">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> name(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>):</span>
 <span id="cb3-56">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.old_route.getName()</span>
@@ -1028,11 +1214,13 @@ background-color: null;
 font-style: inherit;">@property</span></span>
 <span id="cb3-59">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> ipaddr(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>):</span>
 <span id="cb3-60">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.old_route.getIPAddr()</span></code></pre></div>
@@ -1070,12 +1258,14 @@ font-style: inherit;">'ipaddr'</span>])</span>
 <span id="cb4-5"></span>
 <span id="cb4-6"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> NetworkElement(elements.NetworkElement):</span>
 <span id="cb4-7">    <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">@property</span></span>
 <span id="cb4-8">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> routing_table(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>):</span>
@@ -1093,14 +1283,18 @@ background-color: null;
 font-style: inherit;">range</span>(table.getSize()))</span>
 <span id="cb4-11">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> [Route(route.getName(), route.getIPAddr()) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> route <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> routes]</span>
 <span id="cb4-12"></span>
 <span id="cb4-13">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__enter__</span>(<span class="va" style="color: #111111;
@@ -1108,12 +1302,14 @@ background-color: null;
 font-style: inherit;">self</span>):</span>
 <span id="cb4-14">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span></span>
 <span id="cb4-15"></span>
 <span id="cb4-16">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__exit__</span>(<span class="va" style="color: #111111;
@@ -1121,6 +1317,7 @@ background-color: null;
 font-style: inherit;">self</span>, exc_type, exc_val, exc_tb):</span>
 <span id="cb4-17">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">isinstance</span>(exc_val, elements.MissingVar):</span>
@@ -1134,6 +1331,7 @@ background-color: null;
 font-style: inherit;">'rollback'</span>)</span>
 <span id="cb4-20">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">else</span>:</span>
 <span id="cb4-21">            <span class="va" style="color: #111111;
 background-color: null;
@@ -1151,12 +1349,14 @@ font-style: inherit;">self</span>.disconnect()</span></code></pre></div>
 <div id="cell-10" class="cell">
 <div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> NetworkElement(elements.NetworkElement):</span>
 <span id="cb5-2">    <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">@property</span></span>
 <span id="cb5-3">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> routing_table(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>):</span>
@@ -1174,10 +1374,13 @@ background-color: null;
 font-style: inherit;">range</span>(table.getSize()))</span>
 <span id="cb5-6">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> {route.getName(): route.getIPAddr() <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> route <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> routes}</span>
 <span id="cb5-7">    ...</span></code></pre></div>
 </div>
@@ -1209,6 +1412,7 @@ font-style: inherit;">in</span> routes}</span>
 <p>The decorator syntax is merely syntactic sugar, the following two function definitions are semantically equivalent:</p>
 <div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> f(arg):</span>
 <span id="cb1-2">   ...</span>
 <span id="cb1-3">f <span class="op" style="color: #5E5E5E;
@@ -1222,6 +1426,7 @@ background-color: null;
 font-style: inherit;">@staticmethod</span></span>
 <span id="cb1-6"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> f(arg):</span>
 <span id="cb1-7">   ...</span></code></pre></div>
 </blockquote>
@@ -1231,9 +1436,11 @@ font-style: inherit;">def</span> f(arg):</span>
 <div id="cell-2" class="cell">
 <div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> Response:</span>
 <span id="cb2-2">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__bool__</span>(<span class="va" style="color: #111111;
@@ -1241,6 +1448,7 @@ background-color: null;
 font-style: inherit;">self</span>):</span>
 <span id="cb2-3">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.ok</span>
@@ -1250,6 +1458,7 @@ background-color: null;
 font-style: inherit;">@property</span></span>
 <span id="cb2-6">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> ok(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>):</span>
@@ -1259,9 +1468,11 @@ font-style: inherit;">self</span>):</span>
 <div id="cell-4" class="cell">
 <div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> Response:</span>
 <span id="cb3-2">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__bool__</span>(<span class="va" style="color: #111111;
@@ -1292,12 +1503,14 @@ font-style: inherit;">import</span> wraps</span>
 background-color: null;
 font-style: inherit;">&gt;&gt;&gt;</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> my_decorator(f):</span>
 <span id="cb4-3">...     <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">@</span>wraps(f)</span>
 <span id="cb4-4">...     <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> wrapper(<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>args, <span class="op" style="color: #5E5E5E;
@@ -1310,6 +1523,7 @@ background-color: null;
 font-style: inherit;">'Calling decorated function'</span>)</span>
 <span id="cb4-6">...         <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> f(<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>args, <span class="op" style="color: #5E5E5E;
@@ -1317,15 +1531,18 @@ background-color: null;
 font-style: inherit;">**</span>kwds)</span>
 <span id="cb4-7">...     <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> wrapper</span></code></pre></div>
 </blockquote>
 <p>The “convenience function” is useless indirection when the wrapper is immediately returned. Even the documentation points out that <code>wraps</code> is just a <code>partial</code> function. The example could be simply:</p>
 <div id="cell-6" class="cell">
 <div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> my_decorator(f):</span>
 <span id="cb5-2">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> wrapper(<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>args, <span class="op" style="color: #5E5E5E;
@@ -1338,6 +1555,7 @@ background-color: null;
 font-style: inherit;">'Calling decorated function'</span>)</span>
 <span id="cb5-4">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> f(<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>args, <span class="op" style="color: #5E5E5E;
@@ -1345,6 +1563,7 @@ background-color: null;
 font-style: inherit;">**</span>kwds)</span>
 <span id="cb5-5">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> update_wrapper(wrapper, f)</span></code></pre></div>
 </div>
 <p>Giving <code>partial(update_wrapper, wrapped=f)</code> a short name does not make it any clearer conceptually.</p>
@@ -1366,6 +1585,7 @@ background-color: null;
 font-style: inherit;">@transaction.atomic</span></span>
 <span id="cb6-4"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> viewfunc(request):</span>
 <span id="cb6-5">    <span class="co" style="color: #5E5E5E;
 background-color: null;
@@ -1380,6 +1600,7 @@ font-style: inherit;">import</span> transaction</span>
 <span id="cb7-2"></span>
 <span id="cb7-3"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> viewfunc(request):</span>
 <span id="cb7-4">    <span class="co" style="color: #5E5E5E;
 background-color: null;
@@ -1388,6 +1609,7 @@ font-style: inherit;"># This code executes in autocommit mode (Django's default)
 <span id="cb7-6"></span>
 <span id="cb7-7">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">with</span> transaction.atomic():</span>
 <span id="cb7-8">        <span class="co" style="color: #5E5E5E;
 background-color: null;
@@ -1407,15 +1629,18 @@ font-style: inherit;">import</span> functools</span>
 <span id="cb8-2"></span>
 <span id="cb8-3"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> repeat(num_times):</span>
 <span id="cb8-4">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> decorator_repeat(func):</span>
 <span id="cb8-5">        <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">@functools.wraps</span>(func)</span>
 <span id="cb8-6">        <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> wrapper_repeat(<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>args, <span class="op" style="color: #5E5E5E;
@@ -1423,8 +1648,10 @@ background-color: null;
 font-style: inherit;">**</span>kwargs):</span>
 <span id="cb8-7">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> _ <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(num_times):</span>
@@ -1437,12 +1664,15 @@ background-color: null;
 font-style: inherit;">**</span>kwargs)</span>
 <span id="cb8-9">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> value</span>
 <span id="cb8-10">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> wrapper_repeat</span>
 <span id="cb8-11">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> decorator_repeat</span>
 <span id="cb8-12"></span>
 <span id="cb8-13"><span class="at" style="color: #657422;
@@ -1454,6 +1684,7 @@ background-color: null;
 font-style: inherit;">4</span>)</span>
 <span id="cb8-14"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> greet(name):</span>
 <span id="cb8-15">    <span class="bu" style="color: null;
 background-color: null;
@@ -1481,6 +1712,7 @@ Hello World</code></pre>
 <div id="cell-10" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> repeat(num_times, func, <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>args, <span class="op" style="color: #5E5E5E;
@@ -1488,8 +1720,10 @@ background-color: null;
 font-style: inherit;">**</span>kwargs):</span>
 <span id="cb10-2">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> _ <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(num_times):</span>
@@ -1502,10 +1736,12 @@ background-color: null;
 font-style: inherit;">**</span>kwargs)</span>
 <span id="cb10-4">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> value</span>
 <span id="cb10-5"></span>
 <span id="cb10-6"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> greet(name):</span>
 <span id="cb10-7">    <span class="bu" style="color: null;
 background-color: null;
@@ -1567,6 +1803,7 @@ background-color: null;
 font-style: inherit;">@repeats</span></span>
 <span id="cb14-4"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> greet(name):</span>
 <span id="cb14-5">    <span class="bu" style="color: null;
 background-color: null;
@@ -1601,9 +1838,11 @@ background-color: null;
 font-style: inherit;">@backoff.on_exception</span>(backoff.expo, requests.exceptions.RequestException)</span>
 <span id="cb16-2"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> get_url(url):</span>
 <span id="cb16-3">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> requests.get(url)</span></code></pre></div>
 </div>
 <p>The same pattern (ahem) repeats. The decorated function is a trivial wrapper around the “real” function. Why not:</p>
@@ -1814,6 +2053,7 @@ background-color: null;
 font-style: inherit;">=&gt;</span> {</span>
 <span id="cb1-10">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> postRepository.getBody(context.user, post)<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">;</span></span>
@@ -1873,6 +2113,7 @@ font-style: inherit;">8</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">@@</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> ExecutionContext:</span>
 <span id="cb2-4">             completed <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -1885,10 +2126,13 @@ font-style: inherit;">self</span>.complete_value(</span>
 background-color: null;
 font-style: inherit;">+</span>            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> field_def.finalize <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">is</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">None</span>:</span>
@@ -1901,6 +2145,7 @@ background-color: null;
 font-style: inherit;">*</span>args)</span>
 <span id="cb2-9">             <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.is_awaitable(completed):</span>
@@ -1909,8 +2154,10 @@ background-color: null;
 font-style: inherit;"># noinspection PyShadowingNames</span></span>
 <span id="cb2-11">                 <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">async</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> await_completed() <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-&gt;</span> Any:</span>
@@ -1982,6 +2229,7 @@ font-style: inherit;">7</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">@@</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> GraphQLField:</span>
 <span id="cb2-17">     deprecation_reason: Optional[<span class="bu" style="color: null;
 background-color: null;
@@ -1996,6 +2244,7 @@ font-style: inherit;">+</span>    finalize: Optional[GraphQLFieldResolver]</span
 <span id="cb2-21"> </span>
 <span id="cb2-22">     <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__init__</span>(</span>
@@ -2020,6 +2269,7 @@ font-style: inherit;">7</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">@@</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> GraphQLField:</span>
 <span id="cb2-25">         deprecation_reason: Optional[<span class="bu" style="color: null;
 background-color: null;
@@ -2054,6 +2304,7 @@ background-color: null;
 font-style: inherit;">None</span>:</span>
 <span id="cb2-30">         <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> args:</span>
 <span id="cb2-31">             args <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -2076,6 +2327,7 @@ font-style: inherit;">7</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">@@</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> GraphQLField:</span>
 <span id="cb2-33">         <span class="va" style="color: #111111;
 background-color: null;
@@ -2088,6 +2340,7 @@ font-style: inherit;">self</span>.extensions <span class="op" style="color: #5E5
 background-color: null;
 font-style: inherit;">=</span> extensions <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">or</span> {}</span>
 <span id="cb2-35">         <span class="va" style="color: #111111;
 background-color: null;
@@ -2104,6 +2357,7 @@ font-style: inherit;">=</span> finalize</span>
 <span id="cb2-37"> </span>
 <span id="cb2-38">     <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__repr__</span>(<span class="va" style="color: #111111;
@@ -2115,6 +2369,7 @@ background-color: null;
 font-style: inherit;">str</span>:</span>
 <span id="cb2-39">         <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">f"&lt;</span><span class="sc" style="color: #5E5E5E;
@@ -2182,6 +2437,7 @@ background-color: null;
 font-style: inherit;">@dataclass</span></span>
 <span id="cb3-18"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> Post:</span>
 <span id="cb3-19">    <span class="bu" style="color: null;
 background-color: null;
@@ -2191,6 +2447,7 @@ font-style: inherit;">int</span></span>
 <span id="cb3-20"></span>
 <span id="cb3-21">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> body(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>, info) <span class="op" style="color: #5E5E5E;
@@ -2200,6 +2457,7 @@ background-color: null;
 font-style: inherit;">str</span>:</span>
 <span id="cb3-22">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> post_data.get(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.<span class="bu" style="color: null;
@@ -2237,6 +2495,7 @@ font-style: inherit;">=</span> GraphQLField(</span>
 background-color: null;
 font-style: inherit;">=</span><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>_: [Post(<span class="dv" style="color: #AD0000;
@@ -2248,18 +2507,24 @@ font-style: inherit;">2</span>)],</span>
 background-color: null;
 font-style: inherit;">=</span><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> objs, _: [obj <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> obj <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> objs <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> obj[<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"body"</span>] <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">is</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">None</span>],</span>
@@ -2312,6 +2577,7 @@ font-style: inherit;">"{ posts { id body } }"</span></span>
 <div id="cell-9" class="cell">
 <div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> resolve(<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>_):</span>
@@ -2319,6 +2585,7 @@ font-style: inherit;">*</span>_):</span>
 background-color: null;
 font-style: inherit;">=</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> [Post(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>), Post(<span class="dv" style="color: #AD0000;
@@ -2326,18 +2593,24 @@ background-color: null;
 font-style: inherit;">2</span>)]</span>
 <span id="cb7-3">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> [obj <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> obj <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> objs <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> obj[<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"body"</span>] <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">is</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">None</span>]</span></code></pre></div>
@@ -2350,6 +2623,7 @@ background-color: null;
 font-style: inherit;">@strawberry.type</span></span>
 <span id="cb8-2"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> Post:</span>
 <span id="cb8-3">    <span class="bu" style="color: null;
 background-color: null;
@@ -2362,6 +2636,7 @@ background-color: null;
 font-style: inherit;">@strawberry.field</span></span>
 <span id="cb8-6">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> body(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>) <span class="op" style="color: #5E5E5E;
@@ -2371,6 +2646,7 @@ background-color: null;
 font-style: inherit;">str</span>:</span>
 <span id="cb8-7">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> post_data.get(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.<span class="bu" style="color: null;
@@ -2408,6 +2684,7 @@ font-style: inherit;">import</span> random</span>
 <span id="cb1-3"></span>
 <span id="cb1-4"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> shuffled(iterable):</span>
 <span id="cb1-5">    <span class="co" style="color: #5E5E5E;
 background-color: null;
@@ -2431,6 +2708,7 @@ background-color: null;
 font-style: inherit;">list</span>(iterable)</span>
 <span id="cb1-11">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">while</span> values:</span>
 <span id="cb1-12">        index <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -2452,6 +2730,7 @@ background-color: null;
 font-style: inherit;">1</span>], values[index]</span>
 <span id="cb1-14">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> values.pop()</span>
 <span id="cb1-15"></span>
 <span id="cb1-16"><span class="bu" style="color: null;
@@ -2475,6 +2754,7 @@ font-style: inherit;">5</span>))</span></code></pre></div>
 <div id="cell-4" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> sample(iterable, k):</span>
 <span id="cb3-2">    <span class="co" style="color: #5E5E5E;
 background-color: null;
@@ -2503,8 +2783,10 @@ background-color: null;
 font-style: inherit;"># error handling and shuffling are consistent with random.sample</span></span>
 <span id="cb3-9">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span> <span class="op" style="color: #5E5E5E;
@@ -2516,6 +2798,7 @@ background-color: null;
 font-style: inherit;">len</span>(selection):</span>
 <span id="cb3-10">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">raise</span> <span class="pp" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">ValueError</span>(<span class="st" style="color: #20794D;
@@ -2524,8 +2807,10 @@ font-style: inherit;">"sample larger than population"</span>)</span>
 <span id="cb3-11">    random.shuffle(selection)</span>
 <span id="cb3-12">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> count, value <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">enumerate</span>(it, k <span class="op" style="color: #5E5E5E;
@@ -2540,6 +2825,7 @@ background-color: null;
 font-style: inherit;">0</span>, count)</span>
 <span id="cb3-14">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> index <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">&lt;</span> <span class="bu" style="color: null;
@@ -2550,6 +2836,7 @@ background-color: null;
 font-style: inherit;">=</span> value</span>
 <span id="cb3-16">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> selection</span>
 <span id="cb3-17"></span>
 <span id="cb3-18">sample(<span class="bu" style="color: null;
@@ -2587,6 +2874,7 @@ font-style: inherit;">5</span>)</span></code></pre></div>
 <div id="cell-2" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> isprime(n):</span>
 <span id="cb1-2">    divs <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -2607,14 +2895,17 @@ background-color: null;
 font-style: inherit;">1</span>)</span>
 <span id="cb1-3">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">all</span>(n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%</span> d <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> d <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> divs)</span>
 <span id="cb1-4"></span>
 <span id="cb1-5"><span class="op" style="color: #5E5E5E;
@@ -2634,6 +2925,7 @@ Wall time: 85.1 µs</code></pre>
 <div id="cell-4" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> isprime(n):</span>
 <span id="cb4-2">    divs <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -2656,20 +2948,24 @@ background-color: null;
 font-style: inherit;">2</span>)</span>
 <span id="cb4-3">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">or</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">all</span>(n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%</span> d <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> d <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> divs)</span>
 <span id="cb4-4"></span>
 <span id="cb4-5"><span class="op" style="color: #5E5E5E;
@@ -2694,6 +2990,7 @@ font-style: inherit;">import</span> itertools</span>
 <span id="cb7-2"></span>
 <span id="cb7-3"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> isprime(n):</span>
 <span id="cb7-4">    divs <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -2716,22 +3013,27 @@ background-color: null;
 font-style: inherit;">2</span>)</span>
 <span id="cb7-5">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> n <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> (<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">3</span>) <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">or</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">all</span>(n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%</span> d <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> d <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> itertools.chain(divs[::<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">3</span>], divs[<span class="dv" style="color: #AD0000;
@@ -2758,9 +3060,11 @@ Wall time: 44.1 µs</code></pre>
 <div id="cell-8" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> primes():</span>
 <span id="cb10-2">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span></span>
@@ -2773,6 +3077,7 @@ background-color: null;
 font-style: inherit;">2</span>)</span>
 <span id="cb10-4">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">while</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">True</span>:</span>
@@ -2783,15 +3088,19 @@ background-color: null;
 font-style: inherit;">next</span>(ints)</span>
 <span id="cb10-6">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> prime</span>
 <span id="cb10-7">        ints <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> (n <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> n <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> ints <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%</span> prime)</span>
@@ -2809,9 +3118,11 @@ font-style: inherit;">10</span>))</span></code></pre></div>
 <div id="cell-10" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> primes():</span>
 <span id="cb12-2">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span></span>
@@ -2824,6 +3135,7 @@ background-color: null;
 font-style: inherit;">2</span>)</span>
 <span id="cb12-4">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">while</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">True</span>:</span>
@@ -2834,6 +3146,7 @@ background-color: null;
 font-style: inherit;">next</span>(ints)</span>
 <span id="cb12-6">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> prime</span>
 <span id="cb12-7">        ints <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -2864,9 +3177,11 @@ Wall time: 32 ms</code></pre>
 <div id="cell-12" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> primes():</span>
 <span id="cb15-2">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span></span>
@@ -2875,8 +3190,10 @@ background-color: null;
 font-style: inherit;">=</span> []</span>
 <span id="cb15-4">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> n <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> itertools.count(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">3</span>, <span class="dv" style="color: #AD0000;
@@ -2884,14 +3201,17 @@ background-color: null;
 font-style: inherit;">2</span>):</span>
 <span id="cb15-5">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">all</span>(n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%</span> p <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> p <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> itertools.takewhile(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">int</span>(n <span class="op" style="color: #5E5E5E;
@@ -2904,6 +3224,7 @@ font-style: inherit;">__ge__</span>, primes)):</span>
 <span id="cb15-6">            primes.append(n)</span>
 <span id="cb15-7">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> n</span>
 <span id="cb15-8"></span>
 <span id="cb15-9"><span class="op" style="color: #5E5E5E;
@@ -2927,9 +3248,11 @@ Wall time: 5.8 ms</code></pre>
 <div id="cell-14" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> Primes:</span>
 <span id="cb18-2">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
@@ -2954,6 +3277,7 @@ font-style: inherit;">2</span>]</span>
 <span id="cb18-5">    </span>
 <span id="cb18-6">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__iter__</span>(<span class="va" style="color: #111111;
@@ -2961,22 +3285,28 @@ background-color: null;
 font-style: inherit;">self</span>):</span>
 <span id="cb18-7">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.cache</span>
 <span id="cb18-8">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> n <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.ints:</span>
 <span id="cb18-9">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> n <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>:</span>
@@ -2985,10 +3315,12 @@ background-color: null;
 font-style: inherit;">self</span>.cache.append(n)</span>
 <span id="cb18-11">                <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> n</span>
 <span id="cb18-12"></span>
 <span id="cb18-13">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__contains__</span>(<span class="va" style="color: #111111;
@@ -2996,14 +3328,17 @@ background-color: null;
 font-style: inherit;">self</span>, n):</span>
 <span id="cb18-14">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">all</span>(n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%</span> p <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> p <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> itertools.takewhile(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">int</span>(n <span class="op" style="color: #5E5E5E;
@@ -3043,6 +3378,7 @@ font-style: inherit;">%</span>time <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1_000_003</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> primes</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 34 µs, sys: 0 ns, total: 34 µs
@@ -3056,14 +3392,17 @@ Wall time: 37 µs</code></pre>
 <div id="cell-17" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> primes():</span>
 <span id="cb24-2">    multiples <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> {}</span>
 <span id="cb24-3">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> n <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> itertools.count(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span>):</span>
@@ -3074,14 +3413,17 @@ background-color: null;
 font-style: inherit;">0</span>)</span>
 <span id="cb24-5">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> prime:</span>
 <span id="cb24-6">            prime <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> n</span>
 <span id="cb24-7">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> n</span>
 <span id="cb24-8">        key <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -3090,8 +3432,10 @@ background-color: null;
 font-style: inherit;">+</span> prime</span>
 <span id="cb24-9">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">while</span> key <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> multiples:</span>
 <span id="cb24-10">            key <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -3121,9 +3465,11 @@ Wall time: 2.7 ms</code></pre>
 <div id="cell-19" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> primes():</span>
 <span id="cb27-2">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span></span>
@@ -3132,8 +3478,10 @@ background-color: null;
 font-style: inherit;">=</span> {}</span>
 <span id="cb27-4">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> n <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> itertools.count(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">3</span>, <span class="dv" style="color: #AD0000;
@@ -3146,6 +3494,7 @@ background-color: null;
 font-style: inherit;">0</span>)</span>
 <span id="cb27-6">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> step:  <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># composite</span></span>
@@ -3156,8 +3505,10 @@ background-color: null;
 font-style: inherit;">+</span> step</span>
 <span id="cb27-8">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">while</span> key <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> multiples:</span>
 <span id="cb27-9">                key <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -3167,6 +3518,7 @@ background-color: null;
 font-style: inherit;">=</span> step</span>
 <span id="cb27-11">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">else</span>:  <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># prime</span></span>
@@ -3183,6 +3535,7 @@ background-color: null;
 font-style: inherit;">2</span></span>
 <span id="cb27-13">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> n</span>
 <span id="cb27-14"></span>
 <span id="cb27-15"><span class="op" style="color: #5E5E5E;
@@ -3206,9 +3559,11 @@ Wall time: 1.38 ms</code></pre>
 <div id="cell-21" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb30" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> Primes:</span>
 <span id="cb30-2">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
@@ -3238,6 +3593,7 @@ font-style: inherit;">=</span> {}</span>
 <span id="cb30-6">    </span>
 <span id="cb30-7">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__iter__</span>(<span class="va" style="color: #111111;
@@ -3245,15 +3601,19 @@ background-color: null;
 font-style: inherit;">self</span>):</span>
 <span id="cb30-8">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.cache</span>
 <span id="cb30-9">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> n <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.ints:</span>
@@ -3266,6 +3626,7 @@ background-color: null;
 font-style: inherit;">0</span>)</span>
 <span id="cb30-11">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> step:  <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># composite</span></span>
@@ -3276,8 +3637,10 @@ background-color: null;
 font-style: inherit;">+</span> step</span>
 <span id="cb30-13">                <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">while</span> key <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.multiples:</span>
@@ -3291,6 +3654,7 @@ background-color: null;
 font-style: inherit;">=</span> step</span>
 <span id="cb30-16">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">else</span>:  <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># prime</span></span>
@@ -3312,10 +3676,12 @@ background-color: null;
 font-style: inherit;">self</span>.cache.append(n)</span>
 <span id="cb30-19">                <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> n</span>
 <span id="cb30-20"></span>
 <span id="cb30-21">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__contains__</span>(<span class="va" style="color: #111111;
@@ -3323,14 +3689,17 @@ background-color: null;
 font-style: inherit;">self</span>, n):</span>
 <span id="cb30-22">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">all</span>(n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%</span> p <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> p <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> itertools.takewhile(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">int</span>(n <span class="op" style="color: #5E5E5E;
@@ -3352,6 +3721,7 @@ font-style: inherit;">%</span>time <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1_000_003</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> primes</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 242 µs, sys: 0 ns, total: 242 µs
@@ -3368,6 +3738,7 @@ font-style: inherit;">%</span>time <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1_000_003</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> primes</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 40 µs, sys: 0 ns, total: 40 µs
@@ -3436,6 +3807,7 @@ font-style: inherit;">'ja'</span>)</span>
 <span id="cb1-7"></span>
 <span id="cb1-8"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> State(NamedTuple):</span>
 <span id="cb1-9">    names: <span class="bu" style="color: null;
 background-color: null;
@@ -3475,6 +3847,7 @@ font-style: inherit;">''</span>.join, itertools.permutations(NAMES)), WORDS)))</
 <div id="cell-4" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> ask(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>: State, name: <span class="bu" style="color: null;
@@ -3494,6 +3867,7 @@ font-style: inherit;">"""Ask `name`: are you `id`?"""</span></span></code></pre>
 <div id="cell-6" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> ask(name: <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">str</span>, <span class="bu" style="color: null;
@@ -3514,13 +3888,17 @@ font-style: inherit;">=</span> {word: <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">set</span>() <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> word <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> WORDS}</span>
 <span id="cb4-4">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> state <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> states:</span>
 <span id="cb4-5">        identity <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -3543,8 +3921,10 @@ background-color: null;
 font-style: inherit;">__eq__</span>)</span>
 <span id="cb4-8">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> identity <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> (<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">True</span>, <span class="va" style="color: #111111;
@@ -3553,8 +3933,10 @@ font-style: inherit;">None</span>):</span>
 <span id="cb4-9">            groups[words[truth]].add(state)</span>
 <span id="cb4-10">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> identity <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> (<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">False</span>, <span class="va" style="color: #111111;
@@ -3562,9 +3944,11 @@ background-color: null;
 font-style: inherit;">None</span>):</span>
 <span id="cb4-11">            groups[words[<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> truth]].add(state)</span>
 <span id="cb4-12">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> groups</span>
 <span id="cb4-13"></span>
 <span id="cb4-14">ask(<span class="st" style="color: #20794D;
@@ -3595,10 +3979,12 @@ font-style: inherit;">None</span>, STATES)</span></code></pre></div>
 <div id="cell-8" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">id</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> IDS:</span>
 <span id="cb6-2">    groups <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -3611,12 +3997,16 @@ font-style: inherit;">id</span>, STATES)</span>
 background-color: null;
 font-style: inherit;">=</span> [{names <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> names, _ <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> group} <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> group <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> groups.values()]</span>
 <span id="cb6-4">    <span class="bu" style="color: null;
 background-color: null;
@@ -3636,6 +4026,7 @@ None {'BAC', 'CBA', 'CAB', 'ABC', 'ACB', 'BCA'} {'CAB', 'CBA', 'BAC', 'ABC', 'AC
 <div id="cell-10" class="cell" data-tags="[]" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> ask(name: <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">str</span>, include: <span class="bu" style="color: null;
@@ -3652,6 +4043,7 @@ background-color: null;
 font-style: inherit;">"""Ask `name`: are we in any of `include` states? and return mapping of answers to possible states."""</span></span>
 <span id="cb8-3">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">assert</span> include.isdisjoint(exclude)</span>
 <span id="cb8-4">    groups <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -3659,13 +4051,17 @@ font-style: inherit;">=</span> {word: <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">set</span>() <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> word <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> WORDS}</span>
 <span id="cb8-5">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> state <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> include <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">|</span> exclude:</span>
@@ -3676,6 +4072,7 @@ font-style: inherit;">=</span> IDS[state.names.index(name)]</span>
 background-color: null;
 font-style: inherit;">=</span> state <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> include</span>
 <span id="cb8-8">        words <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -3688,8 +4085,10 @@ background-color: null;
 font-style: inherit;">__eq__</span>)</span>
 <span id="cb8-9">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> identity <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> (<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">True</span>, <span class="va" style="color: #111111;
@@ -3698,8 +4097,10 @@ font-style: inherit;">None</span>):</span>
 <span id="cb8-10">            groups[words[truth]].add(state)</span>
 <span id="cb8-11">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> identity <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> (<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">False</span>, <span class="va" style="color: #111111;
@@ -3707,9 +4108,11 @@ background-color: null;
 font-style: inherit;">None</span>):</span>
 <span id="cb8-12">            groups[words[<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> truth]].add(state)</span>
 <span id="cb8-13">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> groups</span>
 <span id="cb8-14"></span>
 <span id="cb8-15">include <span class="op" style="color: #5E5E5E;
@@ -3753,6 +4156,7 @@ font-style: inherit;">-</span> include)        </span></code></pre></div>
 <div id="cell-12" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> powerset(states: <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">set</span>):</span>
@@ -3761,8 +4165,10 @@ background-color: null;
 font-style: inherit;">"""Generate all possible subsets."""</span></span>
 <span id="cb10-3">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> r <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(<span class="bu" style="color: null;
@@ -3774,8 +4180,10 @@ background-color: null;
 font-style: inherit;">1</span>):</span>
 <span id="cb10-4">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">map</span>(<span class="bu" style="color: null;
@@ -3789,8 +4197,10 @@ background-color: null;
 font-style: inherit;">0</span></span>
 <span id="cb10-7"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> states <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> powerset(STATES):</span>
 <span id="cb10-8">    groups <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -3805,12 +4215,16 @@ font-style: inherit;">-</span> states)</span>
 background-color: null;
 font-style: inherit;">=</span> [{names <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> names, _ <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> group} <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> group <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> groups.values()]</span>
 <span id="cb10-10">    count <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -3834,6 +4248,7 @@ font-style: inherit;">4</span></span>
 <div id="cell-14" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> search(states: <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">set</span>, count: <span class="bu" style="color: null;
@@ -3850,11 +4265,14 @@ font-style: inherit;">"""Recursively ask all possible questions until a solution
 background-color: null;
 font-style: inherit;">=</span> {names <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> names, _ <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> states}</span>
 <span id="cb12-4">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">len</span>(identities) <span class="op" style="color: #5E5E5E;
@@ -3866,13 +4284,17 @@ background-color: null;
 font-style: inherit;"># solved</span></span>
 <span id="cb12-5">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> identities.pop()</span>
 <span id="cb12-6">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> count <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">or</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">len</span>(identities) <span class="op" style="color: #5E5E5E;
@@ -3886,13 +4308,16 @@ background-color: null;
 font-style: inherit;"># impossible</span></span>
 <span id="cb12-7">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">None</span></span>
 <span id="cb12-8">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> name, subset <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> itertools.product(NAMES, powerset(states)):</span>
 <span id="cb12-9">        groups <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -3907,16 +4332,20 @@ font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> group <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> groups.values()]</span>
 <span id="cb12-11">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">all</span>(solutions):</span>
 <span id="cb12-12">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> name, subset, solutions</span>
 <span id="cb12-13"></span>
 <span id="cb12-14">search(<span class="bu" style="color: null;
@@ -4055,6 +4484,7 @@ background-color: null;
 font-style: inherit;">,</span> info) {</span>
 <span id="cb1-3">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> context<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">.</span><span class="at" style="color: #657422;
@@ -4074,8 +4504,10 @@ background-color: null;
 font-style: inherit;">then</span>(</span>
 <span id="cb1-4">      userData <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">=&gt;</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">new</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">Human</span>(userData)</span>
@@ -4097,6 +4529,7 @@ background-color: null;
 font-style: inherit;">,</span> info) {</span>
 <span id="cb1-11">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> obj<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">.</span><span class="at" style="color: #657422;
@@ -4123,6 +4556,7 @@ background-color: null;
 font-style: inherit;">appearsIn</span>(obj) {</span>
 <span id="cb2-3">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> obj<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">.</span><span class="at" style="color: #657422;
@@ -4147,6 +4581,7 @@ background-color: null;
 font-style: inherit;">,</span> info) {</span>
 <span id="cb2-9">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> obj<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">.</span><span class="at" style="color: #657422;
@@ -4158,6 +4593,7 @@ background-color: null;
 font-style: inherit;">map</span>(</span>
 <span id="cb2-10">      id <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">=&gt;</span> context<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">.</span><span class="at" style="color: #657422;
@@ -4173,8 +4609,10 @@ background-color: null;
 font-style: inherit;">then</span>(</span>
 <span id="cb2-11">        shipData <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">=&gt;</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">new</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">Starship</span>(shipData)</span>
@@ -4231,6 +4669,7 @@ font-style: inherit;">Starship</span>(shipData)</span>
 <div id="cell-7" class="cell">
 <div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> selections(node):</span>
 <span id="cb3-2">    <span class="co" style="color: #5E5E5E;
 background-color: null;
@@ -4244,10 +4683,13 @@ background-color: null;
 font-style: inherit;">'selections'</span>, [])</span>
 <span id="cb3-4">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> {node.name.value: selections(node) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> node <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> nodes}</span></code></pre></div>
 </div>
 <p>Those fields would be checked or passed to a data layer as needed. For example, in <a href="https://www.djangoproject.com">Django’s</a> ORM, it could be as simple as appending a query set with <code>.values(*selections(*info.nodes))</code>.</p>
@@ -4300,6 +4742,7 @@ font-style: inherit;">in</span> nodes}</span></code></pre></div>
 <div id="cell-2" class="cell">
 <div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">with</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">open</span>(<span class="st" style="color: #20794D;
@@ -4322,24 +4765,28 @@ font-style: inherit;">import</span> json</span>
 <span id="cb3-3"></span>
 <span id="cb3-4"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> load(filepath):</span>
 <span id="cb3-5">    <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">"""the supposedly bad way"""</span></span>
 <span id="cb3-6">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> json.load(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">open</span>(filepath))</span>
 <span id="cb3-7"></span>
 <span id="cb3-8"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> load(filepath):</span>
 <span id="cb3-9">    <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">"""the supposedly good way"""</span></span>
 <span id="cb3-10">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">with</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">open</span>(filepath) <span class="im" style="color: #00769E;
@@ -4349,18 +4796,21 @@ background-color: null;
 font-style: inherit;">file</span>:</span>
 <span id="cb3-11">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> json.load(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">file</span>)</span>
 <span id="cb3-12"></span>
 <span id="cb3-13"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> load(filepath):</span>
 <span id="cb3-14">    <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">"""with a different file format"""</span></span>
 <span id="cb3-15">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">with</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">open</span>(filepath) <span class="im" style="color: #00769E;
@@ -4370,6 +4820,7 @@ background-color: null;
 font-style: inherit;">file</span>:</span>
 <span id="cb3-16">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> csv.reader(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">file</span>)</span></code></pre></div>
@@ -4381,9 +4832,11 @@ font-style: inherit;">file</span>)</span></code></pre></div>
 <div id="cell-6" class="cell">
 <div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> load(filepath):</span>
 <span id="cb4-2">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">with</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">open</span>(filepath) <span class="im" style="color: #00769E;
@@ -4393,8 +4846,10 @@ background-color: null;
 font-style: inherit;">file</span>:</span>
 <span id="cb4-3">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> csv.reader(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">file</span>)</span></code></pre></div>
@@ -4407,9 +4862,11 @@ font-style: inherit;">file</span>)</span></code></pre></div>
 <div id="cell-8" class="cell">
 <div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> load(filepath):</span>
 <span id="cb5-2">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">with</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">open</span>(filepath) <span class="im" style="color: #00769E;
@@ -4424,6 +4881,7 @@ background-color: null;
 font-style: inherit;">file</span>.read()</span>
 <span id="cb5-4">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> json.loads(contents)</span></code></pre></div>
 </div>
 <p>This line of reasoning reduces to the absurd: a file should never be passed or stored anywhere. Next an example where the practice has caused real-world damage.</p>
@@ -4438,6 +4896,7 @@ font-style: inherit;">=</span> requests.get(...)</span>
 <span id="cb6-2"></span>
 <span id="cb6-3"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">with</span> requests.Session() <span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">as</span> session:</span>
@@ -4480,12 +4939,14 @@ font-style: inherit;">=</span> session.get(...)</span></code></pre></div>
 <div id="cell-2" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> append_to(element, to<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>[]):</span>
 <span id="cb1-2">    to.append(element)</span>
 <span id="cb1-3">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> to</span>
 <span id="cb1-4"></span>
 <span id="cb1-5">append_to(<span class="dv" style="color: #AD0000;
@@ -4507,6 +4968,7 @@ font-style: inherit;">1</span>)</span></code></pre></div>
 <div id="cell-5" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> append_to(element, to<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span><span class="va" style="color: #111111;
@@ -4514,8 +4976,10 @@ background-color: null;
 font-style: inherit;">None</span>):</span>
 <span id="cb5-2">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> to <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">is</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">None</span>:</span>
@@ -4525,6 +4989,7 @@ font-style: inherit;">=</span> []</span>
 <span id="cb5-4">    to.append(element)</span>
 <span id="cb5-5">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> to</span></code></pre></div>
 </div>
 <p>There is another solution to the problem of mutating a default value: don’t do that. More specifically, the problem isn’t using mutables as defaults; the problem is actually mutating them.</p>
@@ -4533,10 +4998,12 @@ font-style: inherit;">return</span> to</span></code></pre></div>
 <div id="cell-7" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> append_to(element, to):</span>
 <span id="cb6-2">    to.append(element)</span>
 <span id="cb6-3">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> to</span></code></pre></div>
 </div>
 <p>Sure, there are rare occassions where a parameter is mutable but optional, such as a recursive algorithm that’s implicitly passing around its own cache. But this author would wager that given any real-world code that’s been bitten by this gotcha there is:</p>
@@ -4555,6 +5022,7 @@ font-style: inherit;">import</span> List</span>
 <span id="cb7-2"></span>
 <span id="cb7-3"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
@@ -4570,12 +5038,15 @@ font-style: inherit;">self</span>.alist <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> [] <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> alist <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">is</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">None</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">else</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">list</span>(alist)</span></code></pre></div>
@@ -4584,6 +5055,7 @@ font-style: inherit;">list</span>(alist)</span></code></pre></div>
 <div id="cell-11" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
@@ -4609,6 +5081,7 @@ font-style: inherit;">import</span> Iterable</span>
 <span id="cb9-2"></span>
 <span id="cb9-3"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
@@ -4665,11 +5138,13 @@ font-style: inherit;">list</span>(alist)</span></code></pre></div>
 <div id="cell-2" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> Jugs(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">dict</span>):</span>
 <span id="cb1-2">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> fill(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>, size):</span>
@@ -4681,6 +5156,7 @@ font-style: inherit;">=</span> size</span>
 <span id="cb1-4"></span>
 <span id="cb1-5">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> empty(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>, size):</span>
@@ -4694,6 +5170,7 @@ font-style: inherit;">0</span></span>
 <span id="cb1-7">    </span>
 <span id="cb1-8">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> pour(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>, src, dest):</span>
@@ -4752,15 +5229,19 @@ font-style: inherit;">list</span>(itertools.chain(</span>
 background-color: null;
 font-style: inherit;">=</span>size) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> size <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> sizes),</span>
 <span id="cb2-7">    (partial(Jugs.empty, size<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>size) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> size <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> sizes),</span>
 <span id="cb2-8">    (partial(Jugs.pour, src<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -4769,8 +5250,10 @@ background-color: null;
 font-style: inherit;">=</span>dest)</span>
 <span id="cb2-9">         <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> src, dest <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> itertools.permutations(sizes, <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span>)),</span>
@@ -4778,18 +5261,23 @@ font-style: inherit;">2</span>)),</span>
 <span id="cb2-11"></span>
 <span id="cb2-12"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> search(target):</span>
 <span id="cb2-13">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> n <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> itertools.count(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>):</span>
 <span id="cb2-14">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> ops <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> itertools.product(operations, repeat<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>n):</span>
@@ -4802,26 +5290,34 @@ font-style: inherit;">0</span>)</span>
 background-color: null;
 font-style: inherit;">=</span> [op(jugs) <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">or</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">tuple</span>(jugs.values()) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> op <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> ops]</span>
 <span id="cb2-17">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">any</span>(target <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> state <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> state <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> states):</span>
 <span id="cb2-18">                <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> states</span>
 <span id="cb2-19"></span>
 <span id="cb2-20"><span class="op" style="color: #5E5E5E;
@@ -4841,17 +5337,21 @@ Wall time: 144 ms</code></pre>
 <div id="cell-6" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> pour(jugs, src, dest):</span>
 <span id="cb5-2">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> jugs[src]:</span>
 <span id="cb5-3">        jugs[src] <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> src</span>
 <span id="cb5-4">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> jugs[dest] <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">&gt;=</span> dest:</span>
@@ -4889,8 +5389,10 @@ background-color: null;
 font-style: inherit;">=</span>dest) </span>
 <span id="cb5-11">               <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> src, dest <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> itertools.permutations(sizes, <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span>)]</span>
@@ -4913,6 +5415,7 @@ Wall time: 88.7 µs</code></pre>
 <div id="cell-8" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> search(target, src, dest):</span>
 <span id="cb8-2">    jugs <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -4923,22 +5426,27 @@ background-color: null;
 font-style: inherit;">0</span>)</span>
 <span id="cb8-3">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">while</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">True</span>:</span>
 <span id="cb8-4">        pour(jugs, src, dest)</span>
 <span id="cb8-5">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">tuple</span>(jugs.values())</span>
 <span id="cb8-6">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> target <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> jugs.values():</span>
 <span id="cb8-7">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span></span>
 <span id="cb8-8"></span>
 <span id="cb8-9"><span class="bu" style="color: null;
@@ -4973,11 +5481,14 @@ font-style: inherit;">5</span>))</span></code></pre></div>
 <div id="cell-11" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> search(target, src, dest):</span>
 <span id="cb12-2">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> n <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> itertools.count(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>):</span>
@@ -4992,11 +5503,14 @@ background-color: null;
 font-style: inherit;">-</span> target, dest)</span>
 <span id="cb12-4">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> rem:</span>
 <span id="cb12-5">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> n, <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-</span>quot</span>
@@ -5027,6 +5541,7 @@ font-style: inherit;">5</span>)</span></code></pre></div>
 <div id="cell-13" class="cell" data-jupyter="{&quot;outputs_hidden&quot;:true}" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">assert</span> (<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">5</span> <span class="op" style="color: #5E5E5E;
@@ -5105,6 +5620,7 @@ font-style: inherit;">import</span> enum</span>
 <span id="cb1-2"></span>
 <span id="cb1-3"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> Weight(enum.IntEnum):</span>
 <span id="cb1-4">    LIGHT <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -5126,9 +5642,11 @@ font-style: inherit;">1</span></span>
 <span id="cb1-7"></span>
 <span id="cb1-8"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> Balance:</span>
 <span id="cb1-9">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
@@ -5147,6 +5665,7 @@ font-style: inherit;">=</span> weight</span>
 <span id="cb1-12"></span>
 <span id="cb1-13">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> weigh(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>, left: <span class="bu" style="color: null;
@@ -5159,6 +5678,7 @@ background-color: null;
 font-style: inherit;">"""Return relative Weight of left side to right side."""</span></span>
 <span id="cb1-15">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">assert</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">len</span>(left) <span class="op" style="color: #5E5E5E;
@@ -5168,25 +5688,31 @@ background-color: null;
 font-style: inherit;">len</span>(right)</span>
 <span id="cb1-16">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.coin <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> left:</span>
 <span id="cb1-17">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.weight</span>
 <span id="cb1-18">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.coin <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> right:</span>
 <span id="cb1-19">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> Weight(<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-</span><span class="va" style="color: #111111;
@@ -5194,6 +5720,7 @@ background-color: null;
 font-style: inherit;">self</span>.weight)</span>
 <span id="cb1-20">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> Weight.EVEN</span>
 <span id="cb1-21"></span>
 <span id="cb1-22">coins <span class="op" style="color: #5E5E5E;
@@ -5203,6 +5730,7 @@ background-color: null;
 font-style: inherit;">'abcdefghijkl'</span></span>
 <span id="cb1-23"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">assert</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">len</span>(coins) <span class="op" style="color: #5E5E5E;
@@ -5217,6 +5745,7 @@ background-color: null;
 font-style: inherit;">'a'</span>, Weight.LIGHT)</span>
 <span id="cb1-25"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">assert</span> balance.weigh(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'a'</span>, <span class="st" style="color: #20794D;
@@ -5226,6 +5755,7 @@ background-color: null;
 font-style: inherit;">==</span> Weight.LIGHT</span>
 <span id="cb1-26"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">assert</span> balance.weigh(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'b'</span>, <span class="st" style="color: #20794D;
@@ -5235,6 +5765,7 @@ background-color: null;
 font-style: inherit;">==</span> Weight.EVEN</span>
 <span id="cb1-27"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">assert</span> balance.weigh(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'b'</span>, <span class="st" style="color: #20794D;
@@ -5255,9 +5786,11 @@ font-style: inherit;">import</span> itertools</span>
 <span id="cb2-2"></span>
 <span id="cb2-3"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> Balance:</span>
 <span id="cb2-4">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
@@ -5283,6 +5816,7 @@ font-style: inherit;">set</span>()</span>
 <span id="cb2-8"></span>
 <span id="cb2-9">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> weigh(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>, left: <span class="bu" style="color: null;
@@ -5295,6 +5829,7 @@ background-color: null;
 font-style: inherit;">"""Return relative Weight of left side to right side."""</span></span>
 <span id="cb2-11">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">assert</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">abs</span>(<span class="bu" style="color: null;
@@ -5312,25 +5847,31 @@ background-color: null;
 font-style: inherit;">self</span>.filler)</span>
 <span id="cb2-12">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.coin <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> left:</span>
 <span id="cb2-13">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.weight</span>
 <span id="cb2-14">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.coin <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> right:</span>
 <span id="cb2-15">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> Weight(<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-</span><span class="va" style="color: #111111;
@@ -5338,10 +5879,12 @@ background-color: null;
 font-style: inherit;">self</span>.weight)</span>
 <span id="cb2-16">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> Weight.EVEN</span>
 <span id="cb2-17"></span>
 <span id="cb2-18">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> find(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>, light: <span class="bu" style="color: null;
@@ -5354,6 +5897,7 @@ background-color: null;
 font-style: inherit;">"""Recursively find target coin from sets of potentially light and heavy coins."""</span></span>
 <span id="cb2-20">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> light, heavy</span>
 <span id="cb2-21">        union <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -5362,6 +5906,7 @@ background-color: null;
 font-style: inherit;">|</span> heavy</span>
 <span id="cb2-22">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">len</span>(union) <span class="op" style="color: #5E5E5E;
@@ -5371,6 +5916,7 @@ background-color: null;
 font-style: inherit;">1</span>:</span>
 <span id="cb2-23">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span></span>
 <span id="cb2-24">        left, right <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -5384,15 +5930,19 @@ background-color: null;
 font-style: inherit;"># split into 3 groups</span></span>
 <span id="cb2-26">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> start, third <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">enumerate</span>([left, right]):</span>
 <span id="cb2-27">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> group <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> (light, heavy):</span>
 <span id="cb2-28">                third.update(itertools.islice(group, start, <span class="va" style="color: #111111;
 background-color: null;
@@ -5406,6 +5956,7 @@ background-color: null;
 font-style: inherit;">self</span>.weigh(left, right)</span>
 <span id="cb2-30">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> weight <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">&lt;</span> <span class="dv" style="color: #AD0000;
@@ -5420,6 +5971,7 @@ background-color: null;
 font-style: inherit;">&amp;</span> right)</span>
 <span id="cb2-32">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">elif</span> weight <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
@@ -5434,6 +5986,7 @@ background-color: null;
 font-style: inherit;">&amp;</span> left)</span>
 <span id="cb2-34">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">else</span>:</span>
 <span id="cb2-35">            light, heavy <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -5455,8 +6008,10 @@ background-color: null;
 font-style: inherit;">-</span> heavy)</span>
 <span id="cb2-37">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.find(light, heavy)</span>
@@ -5468,8 +6023,10 @@ background-color: null;
 font-style: inherit;">'a'</span>, Weight.LIGHT)</span>
 <span id="cb2-40"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> light, heavy <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> balance.find(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">set</span>(<span class="st" style="color: #20794D;
@@ -5496,9 +6053,11 @@ a </code></pre>
 <div id="cell-6" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> Balance(Balance):</span>
 <span id="cb4-2">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> solve(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>, count: <span class="bu" style="color: null;
@@ -5509,6 +6068,7 @@ background-color: null;
 font-style: inherit;">"""Recursively find target coin."""</span></span>
 <span id="cb4-4">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> count <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">&lt;=</span> <span class="dv" style="color: #AD0000;
@@ -5516,6 +6076,7 @@ background-color: null;
 font-style: inherit;">0</span>:</span>
 <span id="cb4-5">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span></span>
 <span id="cb4-6">        weigh <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -5533,6 +6094,7 @@ font-style: inherit;">1</span>) <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-</span> (<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.filler)))</span>
@@ -5553,8 +6115,10 @@ font-style: inherit;">None</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span>)) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> start <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
@@ -5569,11 +6133,14 @@ font-style: inherit;">self</span>.weigh(left, right)</span>
 background-color: null;
 font-style: inherit;">self</span>.filler.update(exclude <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> weight <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">else</span> weigh)</span>
 <span id="cb4-11">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> weight <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">&lt;</span> <span class="dv" style="color: #AD0000;
@@ -5581,13 +6148,16 @@ background-color: null;
 font-style: inherit;">0</span>:</span>
 <span id="cb4-12">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.find(left, right)</span>
 <span id="cb4-13">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">elif</span> weight <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
@@ -5595,18 +6165,23 @@ background-color: null;
 font-style: inherit;">0</span>:</span>
 <span id="cb4-14">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.find(right, left)</span>
 <span id="cb4-15">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">else</span>:</span>
 <span id="cb4-16">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.solve(count <span class="op" style="color: #5E5E5E;
@@ -5622,8 +6197,10 @@ background-color: null;
 font-style: inherit;">'a'</span>, Weight.LIGHT)</span>
 <span id="cb4-19"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> light, heavy <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> balance.solve(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">3</span>, coins):</span>
@@ -5637,8 +6214,10 @@ font-style: inherit;">''</span>.join(heavy))</span>
 <span id="cb4-21"></span>
 <span id="cb4-22"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> coin <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> coins:</span>
 <span id="cb4-23">    light, heavy <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -5653,12 +6232,15 @@ background-color: null;
 font-style: inherit;">1</span>]</span>
 <span id="cb4-24">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">assert</span> light <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">==</span> {coin} <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">and</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> heavy</span>
 <span id="cb4-25">    light, heavy <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -5673,10 +6255,13 @@ background-color: null;
 font-style: inherit;">1</span>]</span>
 <span id="cb4-26">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">assert</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> light <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">and</span> heavy <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">==</span> {coin}</span></code></pre></div>
@@ -5695,19 +6280,24 @@ font-style: inherit;">import</span> math</span>
 <span id="cb6-2"></span>
 <span id="cb6-3"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">class</span> Balance(Balance):</span>
 <span id="cb6-4">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> solve(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>, coins):</span>
 <span id="cb6-5">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> coins:</span>
 <span id="cb6-6">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span></span>
 <span id="cb6-7">        count <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -5740,6 +6330,7 @@ font-style: inherit;">1</span>) <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-</span> (<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.filler)))</span>
@@ -5760,8 +6351,10 @@ font-style: inherit;">None</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span>)) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> start <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
@@ -5776,11 +6369,14 @@ font-style: inherit;">self</span>.weigh(left, right)</span>
 background-color: null;
 font-style: inherit;">self</span>.filler.update(exclude <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> weight <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">else</span> weigh)</span>
 <span id="cb6-13">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> weight <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">&lt;</span> <span class="dv" style="color: #AD0000;
@@ -5788,13 +6384,16 @@ background-color: null;
 font-style: inherit;">0</span>:</span>
 <span id="cb6-14">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.find(left, right)</span>
 <span id="cb6-15">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">elif</span> weight <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
@@ -5802,18 +6401,23 @@ background-color: null;
 font-style: inherit;">0</span>:</span>
 <span id="cb6-16">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.find(right, left)</span>
 <span id="cb6-17">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">else</span>:</span>
 <span id="cb6-18">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.solve(exclude)</span>
@@ -5825,8 +6429,10 @@ background-color: null;
 font-style: inherit;">'a'</span>, Weight.LIGHT)</span>
 <span id="cb6-21"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> light, heavy <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> balance.solve(coins):</span>
 <span id="cb6-22">    <span class="bu" style="color: null;
 background-color: null;
@@ -5924,12 +6530,15 @@ font-style: inherit;">+</span> colors[:<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>] <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> row <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> table] <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span> [(<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> row[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>],) <span class="op" style="color: #5E5E5E;
@@ -5942,8 +6551,10 @@ font-style: inherit;">+</span> colors[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>:] <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> row <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> table]</span>
 <span id="cb5-2">table</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
@@ -5961,6 +6572,7 @@ font-style: inherit;">import</span> collections</span>
 <span id="cb7-2"></span>
 <span id="cb7-3"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> test(table):</span>
 <span id="cb7-4">    <span class="co" style="color: #5E5E5E;
 background-color: null;
@@ -5976,8 +6588,10 @@ background-color: null;
 font-style: inherit;">len</span>, table))</span>
 <span id="cb7-6">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> index <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(size):</span>
@@ -5991,11 +6605,14 @@ font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>:] <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> row <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> table)</span>
 <span id="cb7-8">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">assert</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">set</span>(counts.values()) <span class="op" style="color: #5E5E5E;
@@ -6010,6 +6627,7 @@ font-style: inherit;">1</span>}</span>
 <div id="cell-10" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> solve(count: <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">int</span>):</span>
@@ -6018,6 +6636,7 @@ background-color: null;
 font-style: inherit;">"""Generate a flat table of all spoken possibilities."""</span></span>
 <span id="cb8-3">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> count <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">&lt;=</span> <span class="dv" style="color: #AD0000;
@@ -6025,16 +6644,20 @@ background-color: null;
 font-style: inherit;">1</span>:</span>
 <span id="cb8-4">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">False</span>,</span>
 <span id="cb8-5">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span></span>
 <span id="cb8-6">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> row <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> solve(count <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
@@ -6042,6 +6665,7 @@ background-color: null;
 font-style: inherit;">1</span>):</span>
 <span id="cb8-7">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> row <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span> colors[:<span class="dv" style="color: #AD0000;
@@ -6049,8 +6673,10 @@ background-color: null;
 font-style: inherit;">1</span>]</span>
 <span id="cb8-8">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> (<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> row[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>],) <span class="op" style="color: #5E5E5E;
@@ -6112,8 +6738,10 @@ background-color: null;
 font-style: inherit;">set</span>)</span>
 <span id="cb14-2"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> row <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> table:</span>
 <span id="cb14-3">    groups[row[<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -6130,6 +6758,7 @@ font-style: inherit;">True</span>]</span>
 <span id="cb14-5"></span>
 <span id="cb14-6"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> summarize(func, groups):</span>
 <span id="cb14-7">    <span class="co" style="color: #5E5E5E;
 background-color: null;
@@ -6144,11 +6773,14 @@ font-style: inherit;">set</span>(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">map</span>(func, group)) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> group <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> groups)</span>
 <span id="cb14-9">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">assert</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">set</span>.isdisjoint(<span class="op" style="color: #5E5E5E;
@@ -6156,12 +6788,15 @@ background-color: null;
 font-style: inherit;">*</span>groups)</span>
 <span id="cb14-10">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> groups</span>
 <span id="cb14-11"></span>
 <span id="cb14-12"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">assert</span> summarize(<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> g: g, groups) <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">==</span> groups</span>
@@ -6180,6 +6815,7 @@ font-style: inherit;">len</span>, groups))</span></code></pre></div>
 <div id="cell-17" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1">summarize(<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> g: <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">tuple</span>(<span class="bu" style="color: null;
@@ -6202,6 +6838,7 @@ font-style: inherit;">sorted</span>(g)), groups)</span></code></pre></div>
 <div id="cell-19" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1">summarize(<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> g: <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">frozenset</span>(collections.Counter(g).items()), groups)</span></code></pre></div>
@@ -6222,6 +6859,7 @@ font-style: inherit;">frozenset</span>(collections.Counter(g).items()), groups)<
 <div id="cell-21" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1">summarize(<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> g: g.count(colors[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>]), groups)</span></code></pre></div>
@@ -6265,6 +6903,7 @@ font-style: inherit;">import</span> itertools</span>
 <span id="cb1-2"></span>
 <span id="cb1-3"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> window(iterable, size<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
@@ -6278,6 +6917,7 @@ background-color: null;
 font-style: inherit;">=</span> itertools.tee(iterable, size)</span>
 <span id="cb1-6">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">zip</span>(<span class="op" style="color: #5E5E5E;
@@ -6286,8 +6926,10 @@ font-style: inherit;">*</span>(itertools.islice(it, index, <span class="va" styl
 background-color: null;
 font-style: inherit;">None</span>) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> index, it <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">enumerate</span>(its)))</span>
@@ -6309,6 +6951,7 @@ font-style: inherit;">import</span> collections</span>
 <span id="cb3-2"></span>
 <span id="cb3-3"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> window(iterable, size<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
@@ -6322,8 +6965,10 @@ background-color: null;
 font-style: inherit;">=</span> itertools.tee(iterable, size)</span>
 <span id="cb3-6">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> index, it <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">enumerate</span>(its):</span>
@@ -6334,6 +6979,7 @@ background-color: null;
 font-style: inherit;"># exhaust iterator</span></span>
 <span id="cb3-8">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">zip</span>(<span class="op" style="color: #5E5E5E;
@@ -6356,6 +7002,7 @@ font-style: inherit;">'abcde'</span>))</span></code></pre></div>
 <div id="cell-6" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> chunks(iterable, size):</span>
 <span id="cb5-2">    <span class="co" style="color: #5E5E5E;
 background-color: null;
@@ -6367,10 +7014,12 @@ background-color: null;
 font-style: inherit;">iter</span>(iterable)</span>
 <span id="cb5-4">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">iter</span>(<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span>: <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">tuple</span>(itertools.islice(it, size)), ())</span>
@@ -6410,6 +7059,7 @@ background-color: null;
 font-style: inherit;">@window.register</span></span>
 <span id="cb7-7"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> _(seq: Sequence, size<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
@@ -6417,8 +7067,10 @@ background-color: null;
 font-style: inherit;">2</span>):</span>
 <span id="cb7-8">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> index <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(<span class="bu" style="color: null;
@@ -6432,6 +7084,7 @@ background-color: null;
 font-style: inherit;">1</span>):</span>
 <span id="cb7-9">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> seq[index:index <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span> size]</span>
@@ -6467,11 +7120,14 @@ background-color: null;
 font-style: inherit;">@chunks.register</span></span>
 <span id="cb11-4"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> _(seq: Sequence, size):</span>
 <span id="cb11-5">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> index <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
@@ -6481,6 +7137,7 @@ background-color: null;
 font-style: inherit;">len</span>(seq), size):</span>
 <span id="cb11-6">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> seq[index:index <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span> size]</span>
@@ -6572,21 +7229,26 @@ font-style: inherit;">3</span>))</span></code></pre></div>
 <div id="cell-2" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> foo(n):</span>
 <span id="cb1-2">    <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> inc(x):</span>
 <span id="cb1-3">        <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">nonlocal</span> n</span>
 <span id="cb1-4">        n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+=</span> x</span>
 <span id="cb1-5">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> n</span>
 <span id="cb1-6">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> inc</span>
 <span id="cb1-7"></span>
 <span id="cb1-8">acc <span class="op" style="color: #5E5E5E;
@@ -6608,9 +7270,11 @@ font-style: inherit;">2</span>)</span></code></pre></div>
 <div id="cell-4" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> foo(n):</span>
 <span id="cb3-2">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">while</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">True</span>:</span>
@@ -6618,6 +7282,7 @@ font-style: inherit;">True</span>:</span>
 background-color: null;
 font-style: inherit;">+=</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> n</span>
 <span id="cb3-4"></span>
 <span id="cb3-5">acc <span class="op" style="color: #5E5E5E;
@@ -6651,6 +7316,7 @@ background-color: null;
 font-style: inherit;">@partial</span>(partial, partial)</span>
 <span id="cb5-4"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> coroutine(func, <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>args, <span class="op" style="color: #5E5E5E;
@@ -6668,6 +7334,7 @@ background-color: null;
 font-style: inherit;">next</span>(gen)</span>
 <span id="cb5-7">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> gen.send</span>
 <span id="cb5-8"></span>
 <span id="cb5-9">coroutine</span></code></pre></div>
@@ -6681,9 +7348,11 @@ background-color: null;
 font-style: inherit;">@coroutine</span></span>
 <span id="cb7-2"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> foo(n):</span>
 <span id="cb7-3">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">while</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">True</span>:</span>
@@ -6691,6 +7360,7 @@ font-style: inherit;">True</span>:</span>
 background-color: null;
 font-style: inherit;">+=</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> n</span>
 <span id="cb7-5"></span>
 <span id="cb7-6">foo</span></code></pre></div>
@@ -6779,6 +7449,7 @@ font-style: inherit;">2</span></span>
 background-color: null;
 font-style: inherit;">map</span>(<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> y: y <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span> x, <span class="bu" style="color: null;
@@ -6803,6 +7474,7 @@ font-style: inherit;">list</span>(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">map</span>(<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> y, x<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>x: y <span class="op" style="color: #5E5E5E;
@@ -6831,8 +7503,10 @@ font-style: inherit;">2</span></span>
 background-color: null;
 font-style: inherit;">*</span> x <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> y <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
@@ -6877,14 +7551,19 @@ font-style: inherit;">str</span>.strip, values)))</span></code></pre></div>
 <div id="cell-10" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">[value <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> value <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> (value.strip() <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> value <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> values) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> value]</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>['sample']</code></pre>
@@ -6949,400 +7628,6 @@ font-style: inherit;">1</span>])</span></code></pre></div>
   <category>style</category>
   <guid>https://coady.github.io/posts/map-and-filter.html</guid>
   <pubDate>Sat, 31 Mar 2018 00:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Fizz Buzz</title>
-  <dc:creator>A. Coady</dc:creator>
-  <link>https://coady.github.io/posts/fizz-buzz.html</link>
-  <description><![CDATA[ 
-
-
-
-
-
-<section id="the-infamously-simple-fizzbuzz-problem." class="level1">
-<h1>The infamously simple <a href="https://en.wikipedia.org/wiki/Fizz_buzz#Programming_interviews">FizzBuzz</a> problem.</h1>
-<p>Reportedly a high percentage of programmer applicants can’t solve this quickly.</p>
-<blockquote class="blockquote">
-<p>Write a program that prints the numbers from 1 to 100. But for multiples of three print “Fizz” instead of the number and for the multiples of five print “Buzz”. For numbers which are multiples of both three and five print “FizzBuzz”.</p>
-</blockquote>
-<p>A deep dive on this problem has been done in jest many times, e.g., deliberate over-engineering or <a href="https://en.wikipedia.org/wiki/Code_golf">code golf</a>. But in all seriousness, let’s consider what’s the most Pythonic solution. A truncated version of the common solution:</p>
-<div id="cell-2" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span> num <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">16</span>):</span>
-<span id="cb1-2">    <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">if</span> num <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">and</span> num <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>:</span>
-<span id="cb1-3">        <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'FizzBuzz'</span>)</span>
-<span id="cb1-4">    <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">elif</span> num <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>:</span>
-<span id="cb1-5">        <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Fizz'</span>)</span>
-<span id="cb1-6">    <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">elif</span> num <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>:</span>
-<span id="cb1-7">        <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Buzz'</span>)</span>
-<span id="cb1-8">    <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">else</span>:</span>
-<span id="cb1-9">        <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">print</span>(num)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>1
-2
-Fizz
-4
-Buzz
-Fizz
-7
-8
-Fizz
-Buzz
-11
-Fizz
-13
-14
-FizzBuzz</code></pre>
-</div>
-</div>
-<p>Naturally interview questions tend to focus on output, e.g.&nbsp;<code>print</code>, but that’s no reason to skip over basic abstractions or data structures. First, this could be written as a generator, to decouple the <code>print</code> operation and parametrize the numeric range. Alternatively, Python has such strong iterator support that it could also be just a function, ready to be mapped. So let’s reframe the basic solution as:</p>
-<div id="cell-4" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">def</span> fizzbuzz(stop):</span>
-<span id="cb3-2">    <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span> num <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, stop):</span>
-<span id="cb3-3">        <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">if</span> num <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">and</span> num <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>:</span>
-<span id="cb3-4">            <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">yield</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'FizzBuzz'</span></span>
-<span id="cb3-5">        <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">elif</span> num <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>:</span>
-<span id="cb3-6">            <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">yield</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Fizz'</span></span>
-<span id="cb3-7">        <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">elif</span> num <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>:</span>
-<span id="cb3-8">            <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">yield</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Buzz'</span></span>
-<span id="cb3-9">        <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">else</span>: </span>
-<span id="cb3-10">            <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">yield</span> <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">str</span>(num)</span>
-<span id="cb3-11"></span>
-<span id="cb3-12"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">' '</span>.join(fizzbuzz(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">16</span>))</span></code></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="2">
-<pre><code>'1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz'</code></pre>
-</div>
-</div>
-<p>Even at this size, it’s already violating <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a>, or the <a href="https://en.wikipedia.org/wiki/Rule_of_three_%28computer_programming%29">Rule of 3</a>. Clearly the same logic is being repeated with different data.</p>
-<div id="cell-6" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">def</span> fizzbuzz(stop):</span>
-<span id="cb5-2">    items <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> (<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">15</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'FizzBuzz'</span>), (<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Fizz'</span>), (<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Buzz'</span>)</span>
-<span id="cb5-3">    <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span> num <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, stop):</span>
-<span id="cb5-4">        <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">yield</span> <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">next</span>((text <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span> div, text <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> items <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">if</span> num <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%</span> div <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>), <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">str</span>(num))</span>
-<span id="cb5-5"></span>
-<span id="cb5-6"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">' '</span>.join(fizzbuzz(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">16</span>))</span></code></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="3">
-<pre><code>'1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz'</code></pre>
-</div>
-</div>
-<p>However, that variation had to introduce the concept of the <a href="https://en.wikipedia.org/wiki/Least_common_multiple">least common multiple</a>. Even in such a trivial problem, there’s a subtlety in how one interprets requirements. The final directive to output “FizzBuzz” can be seen as a mere clarification of the previous directives; certainly not a coincidence. Making this the more obvious solution:</p>
-<div id="cell-8" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">def</span> fizzbuzz(stop):</span>
-<span id="cb7-2">    <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span> num <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, stop):</span>
-<span id="cb7-3">        text <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">''</span></span>
-<span id="cb7-4">        <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">if</span> num <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>:</span>
-<span id="cb7-5">            text <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Fizz'</span></span>
-<span id="cb7-6">        <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">if</span> num <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>:</span>
-<span id="cb7-7">            text <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Buzz'</span></span>
-<span id="cb7-8">        <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">yield</span> text <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">or</span> <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">str</span>(num)</span>
-<span id="cb7-9"></span>
-<span id="cb7-10"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">' '</span>.join(fizzbuzz(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">16</span>))</span></code></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="4">
-<pre><code>'1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz'</code></pre>
-</div>
-</div>
-<p>Arguably that insight is more important, because its duplication grows exponentially, not linearly. There’s a <code>2**N</code> sized case statement to handle <code>N</code> cases, luckily <code>N == 2</code>. Adding just one more directive for the number 7 would make the basic solution unwieldy.</p>
-<p>And of course both approaches can be combined.</p>
-<div id="cell-10" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">def</span> fizzbuzz(stop):</span>
-<span id="cb9-2">    items <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> (<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Fizz'</span>), (<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Buzz'</span>)</span>
-<span id="cb9-3">    <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span> num <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, stop):</span>
-<span id="cb9-4">        <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">yield</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">''</span>.join(text <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span> div, text <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> items <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">if</span> num <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%</span> div <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">or</span> <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">str</span>(num)</span>
-<span id="cb9-5"></span>
-<span id="cb9-6"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">' '</span>.join(fizzbuzz(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">16</span>))</span></code></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="5">
-<pre><code>'1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz'</code></pre>
-</div>
-</div>
-<p>So is that over-engineered? This author would argue that both deduplication and decoupling logic from data are worth observing. So maybe at this size the final version isn’t necessary, but surely the basic version is not the most Pythonic.</p>
-
-
-</section>
-
- ]]></description>
-  <category>interviews</category>
-  <guid>https://coady.github.io/posts/fizz-buzz.html</guid>
-  <pubDate>Sun, 25 Mar 2018 00:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>
