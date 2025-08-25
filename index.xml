@@ -9,7 +9,7 @@
 <link>https://coady.github.io/</link>
 <atom:link href="https://coady.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>pythonicity | pīˈTHänisədē | noun the quality of being Pythonic</description>
-<generator>quarto-1.6.40</generator>
+<generator>quarto-1.7.33</generator>
 <lastBuildDate>Thu, 30 Jan 2025 00:00:00 GMT</lastBuildDate>
 <item>
   <title>Go iterators</title>
@@ -21,12 +21,13 @@
 
 
 
+
 <section id="pythonic-go-code." class="level1">
 <h1>Pythonic Go code.</h1>
 <p>The long arc of language convergence continues. With generics and iterators, Go is significantly closer to Python’s reusability and expressiveness.</p>
 <p>Take the built-in function <code>sum</code>. Prior to generics, a Go version would have needed a separate implementations for <code>int</code> and <code>float64</code>. But that was the least of the problems. Even with a <code>Number</code> interface, it also would have been restricted to a <code>slice</code> of numbers. Realistically, one never has a slice of numbers. One has a slice of objects with a numeric field, or perhaps a <code>map</code> with numeric values.</p>
 <p>Enter <a href="https://go.dev/doc/go1.23#iterators">iterators</a>. The <a href="https://go.dev/blog/range-functions">range over function</a> types are clunkier than Python generators, but to the caller the <code>range</code> interface is the same.</p>
-<div id="cell-2" class="cell" data-vscode="{&quot;languageId&quot;:&quot;shellscript&quot;}">
+<div id="cell-2" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;shellscript&quot;}}">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">type</span> Number interface {</span>
@@ -61,7 +62,7 @@ font-style: inherit;">return</span> total</span>
 </div>
 <p>The standard library includes helpers <code>slices.Values</code>, <code>maps.Keys</code>, and <code>maps.Values</code>. So there is no barrier to making <code>iter.Seq</code> the standard input for iterables.</p>
 <p>The Go equivalent of <a href="https://github.com/golang/go/issues/61898">itertools</a> is now inevitable. With one key difference: the lack of generator expressions will make Go more function oriented. <code>slices.ContainsFunc</code> is the equivalent of <code>any</code>; similarly the equivalent of <code>all</code> would likely embed the predicate.</p>
-<div id="cell-4" class="cell" data-vscode="{&quot;languageId&quot;:&quot;shellscript&quot;}">
+<div id="cell-4" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;shellscript&quot;}}">
 <div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">func AllFunc[E <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">any</span>](seq <span class="bu" style="color: null;
@@ -135,6 +136,7 @@ font-style: inherit;">return</span> true</span>
   <dc:creator>A. Coady</dc:creator>
   <link>https://coady.github.io/posts/graphql-cursors.html</link>
   <description><![CDATA[ 
+
 
 
 
@@ -220,6 +222,7 @@ font-style: inherit;">2</span>) {</span>
   <dc:creator>A. Coady</dc:creator>
   <link>https://coady.github.io/posts/packaging-rundown.html</link>
   <description><![CDATA[ 
+
 
 
 
@@ -489,6 +492,7 @@ font-style: inherit;">}</span></span></code></pre></div>
   <dc:creator>A. Coady</dc:creator>
   <link>https://coady.github.io/posts/graphql-root-fields.html</link>
   <description><![CDATA[ 
+
 
 
 
@@ -813,6 +817,7 @@ font-style: inherit;">=</span> Dictionary()</span></code></pre></div>
 
 
 
+
 <section id="contrarian-view-on-composition-over-inheritance." class="level1">
 <h1>Contrarian view on composition over inheritance.</h1>
 <p>The conventional wisdom is to prefer <a href="https://en.wikipedia.org/wiki/Composition_over_inheritance">composition over inheritance</a>. More specifically to use <a href="https://en.wikipedia.org/wiki/Delegation_pattern">delegation</a> over single inheritance.</p>
@@ -1097,7 +1102,9 @@ font-style: inherit;">)'</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%</span> (<span class="va" style="color: #111111;
 background-color: null;
-font-style: inherit;">self</span>.__class__.<span class="va" style="color: #111111;
+font-style: inherit;">self</span>.<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">__class__</span>.<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">__name__</span>, <span class="va" style="color: #111111;
 background-color: null;
@@ -1399,6 +1406,7 @@ font-style: inherit;">in</span> routes}</span>
   <dc:creator>A. Coady</dc:creator>
   <link>https://coady.github.io/posts/decorator-overuse.html</link>
   <description><![CDATA[ 
+
 
 
 
@@ -1882,6 +1890,7 @@ font-style: inherit;">=</span> backoff.on_exception(backoff.expo, requests.excep
 
 
 
+
 <section id="litany-against-nulls." class="level1">
 <h1>Litany against nulls.</h1>
 <p>The myths and misconceptions regarding null behavior in GraphQL are epic. Even <a href="http://spec.graphql.org/October2021/#sec-Non-Null.Nullable-vs-Optional">the spec</a> is wrong.</p>
@@ -2004,6 +2013,7 @@ font-style: inherit;">=</span> backoff.on_exception(backoff.expo, requests.excep
 
 
 
+
 <section id="graphql-resolvers-should-have-been-coroutines." class="level1">
 <h1>GraphQL resolvers should have been coroutines.</h1>
 <p>This is how the GraphQL documentation <a href="https://graphql.org/learn/execution/">introduces execution</a>, as a hierarchy of resolvers:</p>
@@ -2027,7 +2037,7 @@ font-style: inherit;">=</span> backoff.on_exception(backoff.expo, requests.excep
 <p>“Only authors can see their drafts”</p>
 </blockquote>
 <p>…</p>
-<div id="cell-2" class="cell" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+<div id="cell-2" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;javascript&quot;}}">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">//</span>Authorization logic lives inside postRepository</span>
@@ -2378,7 +2388,9 @@ font-style: inherit;">{</span><span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span><span class="sc" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">.</span>__class__<span class="sc" style="color: #5E5E5E;
+font-style: inherit;">.</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">__class__</span><span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">.</span><span class="va" style="color: #111111;
 background-color: null;
@@ -2673,6 +2685,7 @@ font-style: inherit;">id</span>)</span></code></pre></div>
 
 
 
+
 <p>Random selection utilities used to be common in interviews. Less so in Python circles because of the builtin <code>random</code> module. Still advanced examples may come up. First is a generalization of <code>shuffle</code> and <code>sample</code>.</p>
 <div id="cell-2" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
@@ -2865,6 +2878,7 @@ font-style: inherit;">5</span>)</span></code></pre></div>
   <dc:creator>A. Coady</dc:creator>
   <link>https://coady.github.io/posts/primes.html</link>
   <description><![CDATA[ 
+
 
 
 
@@ -3766,6 +3780,7 @@ Wall time: 43.2 µs</code></pre>
 
 
 
+
 <section id="how-to-solve-the-hardest-logic-puzzle-ever-programmatically." class="level1">
 <h1>How to solve the <a href="https://en.wikipedia.org/wiki/The_Hardest_Logic_Puzzle_Ever">Hardest Logic Puzzle Ever</a> programmatically.</h1>
 <blockquote class="blockquote">
@@ -4457,6 +4472,7 @@ Wall time: 1.3 s</code></pre>
 
 
 
+
 <section id="graphql-is-the-new-orm." class="level1">
 <h1>GraphQL is the new ORM.</h1>
 <p><a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST</a> and <a href="https://en.wikipedia.org/wiki/Object-relational_mapping">ORMs</a> are both infamous for:</p>
@@ -4717,6 +4733,7 @@ font-style: inherit;">in</span> nodes}</span></code></pre></div>
 
 
 
+
 <section id="contrarian-view-on-closing-files." class="level1">
 <h1>Contrarian view on closing files.</h1>
 <p>It has become conventional wisdom to always explicitly close file-like objects, via context managers. The <a href="https://google.github.io/styleguide/pyguide.html#311-files-and-sockets">google style guide</a> is representative:</p>
@@ -4933,6 +4950,7 @@ font-style: inherit;">=</span> session.get(...)</span></code></pre></div>
 
 
 
+
 <section id="contrarian-view-on-mutable-default-arguments." class="level1">
 <h1>Contrarian view on mutable default arguments.</h1>
 <p>The use of <a href="https://docs.python-guide.org/writing/gotchas/#mutable-default-arguments">mutable defaults</a> is probably the most infamous Python gotcha. Default values are evaluated at definition time, which means mutating them will be persistent across multiple calls. Many articles on this topic even use the same <code>append</code> example.</p>
@@ -5121,6 +5139,7 @@ font-style: inherit;">list</span>(alist)</span></code></pre></div>
   <dc:creator>A. Coady</dc:creator>
   <link>https://coady.github.io/posts/water-pouring.html</link>
   <description><![CDATA[ 
+
 
 
 
@@ -5538,7 +5557,7 @@ font-style: inherit;">5</span>)</span></code></pre></div>
 <pre><code>(3, -1)</code></pre>
 </div>
 </div>
-<div id="cell-13" class="cell" data-jupyter="{&quot;outputs_hidden&quot;:true}" data-execution_count="8">
+<div id="cell-13" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;jupyter&quot;,&quot;value&quot;:{&quot;outputs_hidden&quot;:true}}" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -5593,6 +5612,7 @@ font-style: inherit;">4</span></span></code></pre></div>
   <dc:creator>A. Coady</dc:creator>
   <link>https://coady.github.io/posts/coin-balance.html</link>
   <description><![CDATA[ 
+
 
 
 
@@ -6467,6 +6487,7 @@ a </code></pre>
 
 
 
+
 <section id="how-to-solve-the-hat-puzzle-programmatically." class="level1">
 <h1>How to solve the <a href="https://en.wikipedia.org/wiki/Hat_puzzle#Ten-Hat_Variant">Hat puzzle</a> programmatically.</h1>
 <blockquote class="blockquote">
@@ -6887,6 +6908,7 @@ font-style: inherit;">0</span>]), groups)</span></code></pre></div>
 
 
 
+
 <section id="split-an-iterable-into-equal-sized-chunks." class="level1">
 <h1>Split an iterable into equal sized chunks.</h1>
 <p>A common task and interview question, with many variants. It’s frequently <a href="http://stackoverflow.com/questions/312443/">asked and answered</a> in a way that’s suboptimal and only handles <a href="http://stackoverflow.com/questions/6822725/">one specific case</a>. The goal here is to present definitive, general, and efficient solutions.</p>
@@ -7187,6 +7209,7 @@ font-style: inherit;">3</span>))</span></code></pre></div>
 
 
 
+
 <section id="a-paul-graham-classic-the-accumulator-function." class="level1">
 <h1>A <a href="http://www.paulgraham.com/icad.html">Paul Graham classic</a>, the accumulator function.</h1>
 <blockquote class="blockquote">
@@ -7423,6 +7446,7 @@ font-style: inherit;">10</span>)))</span></code></pre></div>
   <dc:creator>A. Coady</dc:creator>
   <link>https://coady.github.io/posts/map-and-filter.html</link>
   <description><![CDATA[ 
+
 
 
 
