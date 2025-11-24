@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.33">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -35,18 +35,19 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-bc185b5c5bdbcb35c2eb49d8a876ef70.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-9eaa63da62bd3cc8cd82b1ba02bb4b13.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-1e29b334434bd4bd554973126cb6a02c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-9eaa63da62bd3cc8cd82b1ba02bb4b13.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-934c60d7e3dd3893e85c941673a26128.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-982a86aa5a09e231d69aa4aae9ff35ca.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-934c60d7e3dd3893e85c941673a26128.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -118,7 +119,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -400,7 +401,7 @@ window.Quarto = {
     </div>
 </div>
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="Z28=" data-listing-date-sort="1738195200000" data-listing-file-modified-sort="1756134802575" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="559">
+<div class="quarto-post image-right" data-index="0" data-categories="Z28=" data-listing-date-sort="1738224000000" data-listing-file-modified-sort="1756134823078" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="559">
 <div class="thumbnail"><a href="./posts/go-iterators.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -433,7 +434,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-categories="Z3JhcGhxbA==" data-listing-date-sort="1717891200000" data-listing-file-modified-sort="1756134802575" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="955">
+<div class="quarto-post image-right" data-index="1" data-categories="Z3JhcGhxbA==" data-listing-date-sort="1717916400000" data-listing-file-modified-sort="1717971434180" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="955">
 <div class="thumbnail"><a href="./posts/graphql-cursors.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -466,7 +467,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="2" data-categories="Y29yZQ==" data-listing-date-sort="1715472000000" data-listing-file-modified-sort="1756134802576" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="989">
+<div class="quarto-post image-right" data-index="2" data-categories="Y29yZQ==" data-listing-date-sort="1715497200000" data-listing-file-modified-sort="1734903465753" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="989">
 <div class="thumbnail"><a href="./posts/packaging-rundown.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -499,7 +500,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="3" data-categories="Z3JhcGhxbA==" data-listing-date-sort="1712880000000" data-listing-file-modified-sort="1756134802575" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="667">
+<div class="quarto-post image-right" data-index="3" data-categories="Z3JhcGhxbA==" data-listing-date-sort="1712905200000" data-listing-file-modified-sort="1712952622281" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="667">
 <div class="thumbnail"><a href="./posts/graphql-root-fields.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -532,7 +533,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="4" data-categories="c3R5bGU=" data-listing-date-sort="1700265600000" data-listing-file-modified-sort="1756134802575" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="433">
+<div class="quarto-post image-right" data-index="4" data-categories="c3R5bGU=" data-listing-date-sort="1700294400000" data-listing-file-modified-sort="1712947906446" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="433">
 <div class="thumbnail"><a href="./posts/composition-vs-inheritance.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -565,7 +566,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="5" data-categories="c3R5bGU=" data-listing-date-sort="1677888000000" data-listing-file-modified-sort="1756134802575" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="963">
+<div class="quarto-post image-right" data-index="5" data-categories="c3R5bGU=" data-listing-date-sort="1677916800000" data-listing-file-modified-sort="1740249871672" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="963">
 <div class="thumbnail"><a href="./posts/decorator-overuse.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -598,7 +599,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="6" data-categories="Z3JhcGhxbA==" data-listing-date-sort="1677196800000" data-listing-file-modified-sort="1756134802575" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1725">
+<div class="quarto-post image-right" data-index="6" data-categories="Z3JhcGhxbA==" data-listing-date-sort="1677225600000" data-listing-file-modified-sort="1677267116361" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1725">
 <div class="thumbnail"><a href="./posts/graphql-nulls.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -631,7 +632,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="7" data-categories="Z3JhcGhxbA==" data-listing-date-sort="1676851200000" data-listing-file-modified-sort="1756134802575" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="755">
+<div class="quarto-post image-right" data-index="7" data-categories="Z3JhcGhxbA==" data-listing-date-sort="1676880000000" data-listing-file-modified-sort="1700349374174" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="755">
 <div class="thumbnail"><a href="./posts/graphql-coroutines.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -664,7 +665,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="8" data-categories="aW50ZXJ2aWV3cw==" data-listing-date-sort="1672617600000" data-listing-file-modified-sort="1756134802576" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="80">
+<div class="quarto-post image-right" data-index="8" data-categories="aW50ZXJ2aWV3cw==" data-listing-date-sort="1672646400000" data-listing-file-modified-sort="1673583281135" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="80">
 <div class="thumbnail"><a href="./posts/random-selection.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -697,7 +698,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="9" data-categories="aW50ZXJ2aWV3cw==" data-listing-date-sort="1625875200000" data-listing-file-modified-sort="1756134802576" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="396">
+<div class="quarto-post image-right" data-index="9" data-categories="aW50ZXJ2aWV3cw==" data-listing-date-sort="1625900400000" data-listing-file-modified-sort="1734916745539" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="396">
 <div class="thumbnail"><a href="./posts/primes.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -730,7 +731,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="10" data-categories="cHV6emxlcw==" data-listing-date-sort="1609459200000" data-listing-file-modified-sort="1756134802576" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="612">
+<div class="quarto-post image-right" data-index="10" data-categories="cHV6emxlcw==" data-listing-date-sort="1609488000000" data-listing-file-modified-sort="1673582480736" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="612">
 <div class="thumbnail"><a href="./posts/hardest-logic-puzzle-ever.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -763,7 +764,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="11" data-categories="Z3JhcGhxbA==" data-listing-date-sort="1593993600000" data-listing-file-modified-sort="1756134802575" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1261">
+<div class="quarto-post image-right" data-index="11" data-categories="Z3JhcGhxbA==" data-listing-date-sort="1594018800000" data-listing-file-modified-sort="1700349374174" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1261">
 <div class="thumbnail"><a href="./posts/graphql-orm.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -796,7 +797,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="12" data-categories="c3R5bGU=" data-listing-date-sort="1593907200000" data-listing-file-modified-sort="1756134802574" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1227">
+<div class="quarto-post image-right" data-index="12" data-categories="c3R5bGU=" data-listing-date-sort="1593932400000" data-listing-file-modified-sort="1673227171551" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1227">
 <div class="thumbnail"><a href="./posts/closing-files.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -829,7 +830,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="13" data-categories="c3R5bGU=" data-listing-date-sort="1593302400000" data-listing-file-modified-sort="1756134802576" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="569">
+<div class="quarto-post image-right" data-index="13" data-categories="c3R5bGU=" data-listing-date-sort="1593327600000" data-listing-file-modified-sort="1673583237044" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="569">
 <div class="thumbnail"><a href="./posts/mutable-defaults.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -862,7 +863,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="14" data-categories="cHV6emxlcw==" data-listing-date-sort="1592092800000" data-listing-file-modified-sort="1756134802576" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="305">
+<div class="quarto-post image-right" data-index="14" data-categories="cHV6emxlcw==" data-listing-date-sort="1592118000000" data-listing-file-modified-sort="1673583305673" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="305">
 <div class="thumbnail"><a href="./posts/water-pouring.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -895,7 +896,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="15" data-categories="cHV6emxlcw==" data-listing-date-sort="1591488000000" data-listing-file-modified-sort="1756134802574" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="775">
+<div class="quarto-post image-right" data-index="15" data-categories="cHV6emxlcw==" data-listing-date-sort="1591513200000" data-listing-file-modified-sort="1673582397947" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="775">
 <div class="thumbnail"><a href="./posts/coin-balance.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -928,7 +929,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="16" data-categories="cHV6emxlcw==" data-listing-date-sort="1578700800000" data-listing-file-modified-sort="1756134802576" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="746">
+<div class="quarto-post image-right" data-index="16" data-categories="cHV6emxlcw==" data-listing-date-sort="1578729600000" data-listing-file-modified-sort="1673583160654" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="746">
 <div class="thumbnail"><a href="./posts/hat-puzzle.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -961,7 +962,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="17" data-categories="aW50ZXJ2aWV3cw==" data-listing-date-sort="1577491200000" data-listing-file-modified-sort="1756134802576" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="294">
+<div class="quarto-post image-right" data-index="17" data-categories="aW50ZXJ2aWV3cw==" data-listing-date-sort="1577520000000" data-listing-file-modified-sort="1673227266633" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="294">
 <div class="thumbnail"><a href="./posts/split-an-iterable.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -994,7 +995,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="18" data-categories="c3R5bGU=" data-listing-date-sort="1527465600000" data-listing-file-modified-sort="1756134802574" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="474">
+<div class="quarto-post image-right" data-index="18" data-categories="c3R5bGU=" data-listing-date-sort="1527490800000" data-listing-file-modified-sort="1673218967378" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="474">
 <div class="thumbnail"><a href="./posts/accumulator.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -1027,7 +1028,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="19" data-categories="c3R5bGU=" data-listing-date-sort="1522454400000" data-listing-file-modified-sort="1756134802576" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="595">
+<div class="quarto-post image-right" data-index="19" data-categories="c3R5bGU=" data-listing-date-sort="1522479600000" data-listing-file-modified-sort="1673227233344" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="595">
 <div class="thumbnail"><a href="./posts/map-and-filter.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -1060,7 +1061,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="20" data-categories="aW50ZXJ2aWV3cw==" data-listing-date-sort="1521936000000" data-listing-file-modified-sort="1756134802575" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="329">
+<div class="quarto-post image-right" data-index="20" data-categories="aW50ZXJ2aWV3cw==" data-listing-date-sort="1521961200000" data-listing-file-modified-sort="1673221572076" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="329">
 <div class="thumbnail"><a href="./posts/fizz-buzz.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -1093,7 +1094,7 @@ A. Coady
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="21" data-categories="cHV6emxlcw==" data-listing-date-sort="1521504000000" data-listing-file-modified-sort="1756134802574" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="446">
+<div class="quarto-post image-right" data-index="21" data-categories="cHV6emxlcw==" data-listing-date-sort="1521529200000" data-listing-file-modified-sort="1673582276892" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="446">
 <div class="thumbnail"><a href="./posts/cheryls-birthday.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -1193,13 +1194,14 @@ A. Coady
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

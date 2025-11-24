@@ -9,8 +9,8 @@
 <link>https://coady.github.io/</link>
 <atom:link href="https://coady.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>pythonicity | pīˈTHänisədē | noun the quality of being Pythonic</description>
-<generator>quarto-1.7.33</generator>
-<lastBuildDate>Thu, 30 Jan 2025 00:00:00 GMT</lastBuildDate>
+<generator>quarto-1.8.26</generator>
+<lastBuildDate>Thu, 30 Jan 2025 08:00:00 GMT</lastBuildDate>
 <item>
   <title>Go iterators</title>
   <dc:creator>A. Coady</dc:creator>
@@ -28,7 +28,7 @@
 <p>Take the built-in function <code>sum</code>. Prior to generics, a Go version would have needed a separate implementations for <code>int</code> and <code>float64</code>. But that was the least of the problems. Even with a <code>Number</code> interface, it also would have been restricted to a <code>slice</code> of numbers. Realistically, one never has a slice of numbers. One has a slice of objects with a numeric field, or perhaps a <code>map</code> with numeric values.</p>
 <p>Enter <a href="https://go.dev/doc/go1.23#iterators">iterators</a>. The <a href="https://go.dev/blog/range-functions">range over function</a> types are clunkier than Python generators, but to the caller the <code>range</code> interface is the same.</p>
 <div id="cell-2" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;shellscript&quot;}}">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="bu" style="color: null;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">type</span> Number interface {</span>
 <span id="cb1-2">    constraints.Integer <span class="op" style="color: #5E5E5E;
@@ -58,12 +58,12 @@ font-style: inherit;">+=</span> value</span>
 background-color: null;
 font-weight: bold;
 font-style: inherit;">return</span> total</span>
-<span id="cb1-11">}</span></code></pre></div>
+<span id="cb1-11">}</span></code></pre></div></div>
 </div>
 <p>The standard library includes helpers <code>slices.Values</code>, <code>maps.Keys</code>, and <code>maps.Values</code>. So there is no barrier to making <code>iter.Seq</code> the standard input for iterables.</p>
 <p>The Go equivalent of <a href="https://github.com/golang/go/issues/61898">itertools</a> is now inevitable. With one key difference: the lack of generator expressions will make Go more function oriented. <code>slices.ContainsFunc</code> is the equivalent of <code>any</code>; similarly the equivalent of <code>all</code> would likely embed the predicate.</p>
 <div id="cell-4" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;shellscript&quot;}}">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">func AllFunc[E <span class="bu" style="color: null;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">func AllFunc[E <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">any</span>](seq <span class="bu" style="color: null;
 background-color: null;
@@ -96,7 +96,7 @@ font-style: inherit;">return</span> false</span>
 background-color: null;
 font-weight: bold;
 font-style: inherit;">return</span> true</span>
-<span id="cb2-8">}</span></code></pre></div>
+<span id="cb2-8">}</span></code></pre></div></div>
 </div>
 <p>The big question is whether <code>MapFunc</code> and <code>FilterFunc</code> become standard. They have not been added to the <code>slices</code> package - presumably because iterators were coming - though <code>DeleteFunc</code> already managed to sneak in. Just imagine Python without comprehensions; <code>map</code> and <code>filter</code> would be ubiquitous.</p>
 <section id="sort-keys" class="level2">
@@ -129,7 +129,7 @@ font-style: inherit;">return</span> true</span>
  ]]></description>
   <category>go</category>
   <guid>https://coady.github.io/posts/go-iterators.html</guid>
-  <pubDate>Thu, 30 Jan 2025 00:00:00 GMT</pubDate>
+  <pubDate>Thu, 30 Jan 2025 08:00:00 GMT</pubDate>
 </item>
 <item>
   <title>GraphQL cursors</title>
@@ -148,7 +148,7 @@ font-style: inherit;">return</span> true</span>
 <blockquote class="blockquote">
 <p>In general, we’ve found that cursor-based pagination is the most powerful of those designed. Especially if the cursors are opaque, either offset or ID-based pagination can be implemented using cursor-based pagination (by making the cursor the offset or the ID), and using cursors gives additional flexibility if the pagination model changes in the future. As a reminder that the cursors are opaque and that their format should not be relied upon, we suggest base64 encoding them. …</p>
 </blockquote>
-<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode graphql code-with-copy"><code class="sourceCode graphql"><span id="cb1-1">{</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode graphql code-with-copy"><code class="sourceCode graphql"><span id="cb1-1">{</span>
 <span id="cb1-2">  hero {</span>
 <span id="cb1-3">    name</span>
 <span id="cb1-4">    friends(first: <span class="dv" style="color: #AD0000;
@@ -167,7 +167,7 @@ font-style: inherit;">2</span>) {</span>
 <span id="cb1-15">      }</span>
 <span id="cb1-16">    }</span>
 <span id="cb1-17">  }</span>
-<span id="cb1-18">}</span></code></pre></div>
+<span id="cb1-18">}</span></code></pre></div></div>
 <p>There are several oversights with this well-intentioned advice.</p>
 <section id="cursors-and-state" class="level2">
 <h2 class="anchored" data-anchor-id="cursors-and-state">Cursors and state</h2>
@@ -215,7 +215,7 @@ font-style: inherit;">2</span>) {</span>
  ]]></description>
   <category>graphql</category>
   <guid>https://coady.github.io/posts/graphql-cursors.html</guid>
-  <pubDate>Sun, 09 Jun 2024 00:00:00 GMT</pubDate>
+  <pubDate>Sun, 09 Jun 2024 07:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Packaging rundown</title>
@@ -242,7 +242,7 @@ font-style: inherit;">2</span>) {</span>
 <section id="hatchling" class="level3">
 <h3 class="anchored" data-anchor-id="hatchling"><a href="https://pypi.org/project/hatchling/">hatchling</a></h3>
 <p><a href="https://pepy.tech/project/hatchling"><img src="https://img.shields.io/pypi/dm/hatchling.svg" class="img-fluid" alt="image"></a> - 83 kB with 4 dependencies</p>
-<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb1-1"><span class="dt" style="color: #AD0000;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb1-1"><span class="dt" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">requires</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -287,14 +287,14 @@ font-style: inherit;">path</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"&lt;package&gt;/__init__.py"</span></span></code></pre></div>
+font-style: inherit;">"&lt;package&gt;/__init__.py"</span></span></code></pre></div></div>
 <p>Part of - not to be confused with - the project manager <a href="https://hatch.pypa.io/latest/">Hatch</a>.</p>
 <p>The source distribution section is included because by default hatchling ostensibly includes <a href="https://hatch.pypa.io/latest/plugins/builder/sdist/#default-file-selection">all files that are not ignored</a>. However, it only <a href="https://hatch.pypa.io/latest/config/build/#vcs">abides by the root .gitignore</a>. It will include virtual environments, if not <a href="https://hatch.pypa.io/dev/history/hatchling/#hatchling-v1.24.2">named .venv</a>. For a project that advocates <a href="https://hatch.pypa.io/latest/why/#build-backend">sensible defaults</a>, this is surprising behavior and a security flaw. Even if <a href="https://github.com/pypa/hatch/issues/304">the issue</a> is fixed, it will presumably include untracked files and clearly omissible directories such as <code>.github</code>.</p>
 </section>
 <section id="setuptools" class="level3">
 <h3 class="anchored" data-anchor-id="setuptools"><a href="https://pypi.org/project/setuptools/">setuptools</a></h3>
 <p><a href="https://pepy.tech/project/setuptools"><img src="https://img.shields.io/pypi/dm/setuptools.svg" class="img-fluid" alt="image"></a> - 894 kB with 0 dependencies</p>
-<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb2-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">[build-system]</span></span>
@@ -351,14 +351,14 @@ font-style: inherit;"> =</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"&lt;package&gt;.__version__"</span><span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">}</span></span></code></pre></div>
+font-style: inherit;">}</span></span></code></pre></div></div>
 <p>The original build tool, and previously the de facto standard. It is no longer commonly included in Python distributions, so they are all on equal footing with respect to needing installation.</p>
 <p>Setuptools may require explicitly specifying the package, depending on what directories are present. It also includes legacy “.egg” and “setup.cfg” files, which a modern user will not be familiar with.</p>
 </section>
 <section id="flit-core" class="level3">
 <h3 class="anchored" data-anchor-id="flit-core"><a href="https://pypi.org/project/flit-core/">flit-core</a></h3>
 <p><a href="https://pepy.tech/project/flit_core"><img src="https://img.shields.io/pypi/dm/flit_core.svg" class="img-fluid" alt="image"></a> - 63 kB with 0 dependencies</p>
-<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb3-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">[build-system]</span></span>
@@ -379,14 +379,14 @@ font-style: inherit;">build-backend</span> <span class="op" style="color: #5E5E5
 background-color: null;
 font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"flit_core.buildapi"</span></span></code></pre></div>
+font-style: inherit;">"flit_core.buildapi"</span></span></code></pre></div></div>
 <p>Part of the <a href="https://flit.pypa.io/en/stable/">Flit</a> tool for publishing packages.</p>
 <p>Flit automatically supports dynamic versions (and descriptions), and includes the source directory with data files in the source distribution.</p>
 </section>
 <section id="pdm-backend" class="level3">
 <h3 class="anchored" data-anchor-id="pdm-backend"><a href="https://pypi.org/project/pdm-backend/">pdm-backend</a></h3>
 <p><a href="https://pepy.tech/project/pdm-backend"><img src="https://img.shields.io/pypi/dm/pdm-backend.svg" class="img-fluid" alt="image"></a> - 101 kB with 0 dependencies</p>
-<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb4-1"><span class="dt" style="color: #AD0000;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb4-1"><span class="dt" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">requires</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -431,7 +431,7 @@ font-style: inherit;"> =</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"&lt;package&gt;/__init__.py"</span><span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">}</span></span></code></pre></div>
+font-style: inherit;">}</span></span></code></pre></div></div>
 <p>Part of - not to be confused with - the project manager <a href="https://pdm-project.org/">PDM</a>.</p>
 <p>PDM automatically includes the source and test directories, with data files, in the source distribution.</p>
 </section>
@@ -485,7 +485,7 @@ font-style: inherit;">}</span></span></code></pre></div>
  ]]></description>
   <category>core</category>
   <guid>https://coady.github.io/posts/packaging-rundown.html</guid>
-  <pubDate>Sun, 12 May 2024 00:00:00 GMT</pubDate>
+  <pubDate>Sun, 12 May 2024 07:00:00 GMT</pubDate>
 </item>
 <item>
   <title>GraphQL root fields</title>
@@ -514,7 +514,7 @@ font-style: inherit;">}</span></span></code></pre></div>
 <section id="mutations" class="level2">
 <h2 class="anchored" data-anchor-id="mutations">Mutations</h2>
 <p>Top-level mutation fields are special in one aspect: they are <a href="https://graphql.org/learn/queries/#multiple-fields-in-mutations">executed in order</a>. This has resulted in even flatter namespaces for mutations,</p>
-<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode graphql code-with-copy"><code class="sourceCode graphql"><span id="cb1-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode graphql code-with-copy"><code class="sourceCode graphql"><span id="cb1-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">mutation</span> {</span>
@@ -522,9 +522,9 @@ font-style: inherit;">mutation</span> {</span>
 background-color: null;
 font-style: inherit;"># executed first</span></span>
 <span id="cb1-3">    deleteUser</span>
-<span id="cb1-4">}</span></code></pre></div>
+<span id="cb1-4">}</span></code></pre></div></div>
 <p>This is not necessary, but seems widely believed that it is. Nested mutations work just fine.</p>
-<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode graphql code-with-copy"><code class="sourceCode graphql"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode graphql code-with-copy"><code class="sourceCode graphql"><span id="cb2-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">mutation</span> {</span>
@@ -534,9 +534,9 @@ background-color: null;
 font-style: inherit;"># executed in arbitrary order</span></span>
 <span id="cb2-4">        delete</span>
 <span id="cb2-5">    }</span>
-<span id="cb2-6">}</span></code></pre></div>
+<span id="cb2-6">}</span></code></pre></div></div>
 <p>If the underlying reason is truly execution order, the client could be explicit instead.</p>
-<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode graphql code-with-copy"><code class="sourceCode graphql"><span id="cb3-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode graphql code-with-copy"><code class="sourceCode graphql"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">mutation</span> {</span>
@@ -548,7 +548,7 @@ font-style: inherit;"># executed first</span></span>
 <span id="cb3-5">    deleted: user {</span>
 <span id="cb3-6">        delete</span>
 <span id="cb3-7">    }</span>
-<span id="cb3-8">}</span></code></pre></div>
+<span id="cb3-8">}</span></code></pre></div></div>
 <p>There is no reason it has to influence API design.</p>
 </section>
 <section id="static-methods" class="level2">
@@ -560,7 +560,7 @@ font-style: inherit;"># executed first</span></span>
 </blockquote>
 <p>Sure, “often not used” by the developer of the API. That does not mean “should be unset” by the GraphQL library, but that is what has happened. Some libraries even <a href="https://gqlgen.com/getting-started/#implement-the-resolvers">exclude the object parameter</a> entirely. In object-oriented libraries like <a href="https://strawberry.rocks">strawberry</a>, the code looks unnatural.</p>
 <div id="cell-2" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> strawberry</span>
 <span id="cb4-2"> </span>
@@ -622,7 +622,7 @@ background-color: null;
 font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'{ instance }'</span></span>
-<span id="cb4-13">schema.execute_sync(query).data</span></code></pre></div>
+<span id="cb4-13">schema.execute_sync(query).data</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
 <pre><code>{'instance': None}</code></pre>
 </div>
@@ -633,35 +633,35 @@ font-style: inherit;">'{ instance }'</span></span>
 <h2 class="anchored" data-anchor-id="root-values">Root values</h2>
 <p>Libraries which follow the <a href="https://graphql.org/graphql-js/#writing-code">reference javascript implementation</a> allow setting the root value explicitly.</p>
 <div id="cell-4" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">schema.execute_sync(query, root_value<span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">schema.execute_sync(query, root_value<span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span>Query()).data</span></code></pre></div>
+font-style: inherit;">=</span>Query()).data</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <pre><code>{'instance': True}</code></pre>
 </div>
 </div>
 <p>Strawberry unofficially supports supplying an instance, but it has no effect.</p>
 <div id="cell-6" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">schema <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">schema <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> strawberry.Schema(Query())</span>
-<span id="cb8-2">schema.execute_sync(query).data</span></code></pre></div>
+<span id="cb8-2">schema.execute_sync(query).data</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>{'instance': None}</code></pre>
 </div>
 </div>
 <p>And of course <code>self</code> can be of any type.</p>
 <div id="cell-8" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">schema.execute_sync(query, root_value<span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">schema.execute_sync(query, root_value<span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span>...).data</span></code></pre></div>
+font-style: inherit;">=</span>...).data</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <pre><code>{'instance': False}</code></pre>
 </div>
 </div>
 <p>Moreover, the <code>execute</code> functions are for internal usage. Each library will vary in how to configure the root in a production application. Strawberry requires subclassing the application type.</p>
 <div id="cell-10" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> strawberry.asgi</span>
 <span id="cb12-2"></span>
@@ -705,14 +705,14 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">return</span> <span class="va" style="color: #111111;
 background-color: null;
-font-style: inherit;">self</span>.root_value</span></code></pre></div>
+font-style: inherit;">self</span>.root_value</span></code></pre></div></div>
 </div>
 </section>
 <section id="example" class="level2">
 <h2 class="anchored" data-anchor-id="example">Example</h2>
 <p>Consider a more practical example where data is loaded, and clearly should not be reloaded on each request.</p>
 <div id="cell-12" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="at" style="color: #657422;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">@strawberry.type</span></span>
 <span id="cb13-2"><span class="kw" style="color: #003B4F;
@@ -768,11 +768,11 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">in</span> <span class="va" style="color: #111111;
 background-color: null;
-font-style: inherit;">self</span>.words</span></code></pre></div>
+font-style: inherit;">self</span>.words</span></code></pre></div></div>
 </div>
 <p>Whether <code>Dictionary</code> is the query root - or attached to the query root - it should be instantiated only once. Of course it can be cached, but again there is a more natural way to write this outside the context of GraphQL.</p>
 <div id="cell-14" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><span class="at" style="color: #657422;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">@strawberry.type</span></span>
 <span id="cb14-2"><span class="kw" style="color: #003B4F;
@@ -793,7 +793,7 @@ font-style: inherit;">self</span>):</span>
 background-color: null;
 font-style: inherit;">self</span>.dictionary <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> Dictionary()</span></code></pre></div>
+font-style: inherit;">=</span> Dictionary()</span></code></pre></div></div>
 </div>
 <p>Caching, context values, and root values are all clunky workarounds compared to the consistency of letting the root be <code>Query()</code> instead of <code>Query</code>. The applications which do not require this feature would never notice the difference.</p>
 <p>The notion of “root fields” behaving as “top-level functions” has resulted in needless confusion, poorer API design, and incorrect implementations.</p>
@@ -805,7 +805,7 @@ font-style: inherit;">=</span> Dictionary()</span></code></pre></div>
  ]]></description>
   <category>graphql</category>
   <guid>https://coady.github.io/posts/graphql-root-fields.html</guid>
-  <pubDate>Fri, 12 Apr 2024 00:00:00 GMT</pubDate>
+  <pubDate>Fri, 12 Apr 2024 07:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Composition vs. inheritance</title>
@@ -826,7 +826,7 @@ font-style: inherit;">=</span> Dictionary()</span></code></pre></div>
 <section id="original-implementation" class="level2">
 <h2 class="anchored" data-anchor-id="original-implementation">Original implementation</h2>
 <div id="cell-2" class="cell">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> jnettool.tools.elements.NetworkElement</span>
 <span id="cb1-2"><span class="im" style="color: #00769E;
@@ -906,13 +906,13 @@ font-style: inherit;">finally</span>:</span>
 <span id="cb1-20">    ne.cleanup(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'commit'</span>)</span>
-<span id="cb1-21">    ne.disconnect()</span></code></pre></div>
+<span id="cb1-21">    ne.disconnect()</span></code></pre></div></div>
 </div>
 </section>
 <section id="proposed-interface" class="level2">
 <h2 class="anchored" data-anchor-id="proposed-interface">Proposed interface</h2>
 <div id="cell-4" class="cell">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> nettools <span class="im" style="color: #00769E;
 background-color: null;
@@ -947,13 +947,13 @@ font-style: inherit;">%s</span><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">%</span> (route.name, route.ipaddr)</span></code></pre></div>
+font-style: inherit;">%</span> (route.name, route.ipaddr)</span></code></pre></div></div>
 </div>
 </section>
 <section id="proposed-solution" class="level2">
 <h2 class="anchored" data-anchor-id="proposed-solution">Proposed solution</h2>
 <div id="cell-6" class="cell">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> jnetool.tools.elements.NetworkElement</span>
 <span id="cb3-2"><span class="im" style="color: #00769E;
@@ -1230,7 +1230,7 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">return</span> <span class="va" style="color: #111111;
 background-color: null;
-font-style: inherit;">self</span>.old_route.getIPAddr()</span></code></pre></div>
+font-style: inherit;">self</span>.old_route.getIPAddr()</span></code></pre></div></div>
 </div>
 <p>No dispute that the interface is superior, but the implementation is using delegation as if it is dogma. The usage pattern has to be extrapolated from one example, but here are the issues:</p>
 <ul>
@@ -1244,7 +1244,7 @@ font-style: inherit;">self</span>.old_route.getIPAddr()</span></code></pre></div
 <section id="simple-solution" class="level2">
 <h2 class="anchored" data-anchor-id="simple-solution">Simple solution</h2>
 <div id="cell-8" class="cell">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> collections</span>
 <span id="cb4-2"><span class="im" style="color: #00769E;
@@ -1347,14 +1347,14 @@ background-color: null;
 font-style: inherit;">'commit'</span>)</span>
 <span id="cb4-22">        <span class="va" style="color: #111111;
 background-color: null;
-font-style: inherit;">self</span>.disconnect()</span></code></pre></div>
+font-style: inherit;">self</span>.disconnect()</span></code></pre></div></div>
 </div>
 <p>Which version is more maintainable? Surely the simpler one.</p>
 <p>Which version is more extensible? Well, by whom? The implementor can extend either just as easily. The caller can use the inherited version without losing any functionality.</p>
 <p>So a better question might be which version is more flexible or reusable? Surely the inherited version, because the delegated version would need to access <code>oldne</code>. Even naming the delegate is a pain point, because one has to decide if it is a part of the public interface or not. Should it have 0, 1, or 2 leading underscores? Delegation is often touted as achieving both encapsulation and extensibility, despite being opposing goals.</p>
 <p>Finally, there is also a simpler interface, again with the caveat that there is only one usage example. An iterable of 2-field objects, one of which is called <code>name</code>, and “points to” the other field. Sounds like a mapping.</p>
 <div id="cell-10" class="cell">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">class</span> NetworkElement(elements.NetworkElement):</span>
@@ -1389,7 +1389,7 @@ font-style: inherit;">for</span> route <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">in</span> routes}</span>
-<span id="cb5-7">    ...</span></code></pre></div>
+<span id="cb5-7">    ...</span></code></pre></div></div>
 </div>
 
 
@@ -1399,7 +1399,7 @@ font-style: inherit;">in</span> routes}</span>
  ]]></description>
   <category>style</category>
   <guid>https://coady.github.io/posts/composition-vs-inheritance.html</guid>
-  <pubDate>Sat, 18 Nov 2023 00:00:00 GMT</pubDate>
+  <pubDate>Sat, 18 Nov 2023 08:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Decorator overuse</title>
@@ -1418,7 +1418,7 @@ font-style: inherit;">in</span> routes}</span>
 <blockquote class="blockquote">
 <p>A function returning another function, usually applied as a function transformation using the <span class="citation" data-cites="wrapper">@wrapper</span> syntax. Common examples for decorators are classmethod() and staticmethod().</p>
 <p>The decorator syntax is merely syntactic sugar, the following two function definitions are semantically equivalent:</p>
-<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> f(arg):</span>
@@ -1436,13 +1436,13 @@ font-style: inherit;">@staticmethod</span></span>
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> f(arg):</span>
-<span id="cb1-7">   ...</span></code></pre></div>
+<span id="cb1-7">   ...</span></code></pre></div></div>
 </blockquote>
 <section id="renamed" class="level2">
 <h2 class="anchored" data-anchor-id="renamed">Renamed</h2>
 <p>So the critical feature of the <code>@</code> syntax is to retain the defined object’s name; otherwise it is just a function call. Which leads to the first example of overuse: defining a new object just to change the name. Consider this example adapted from a <a href="https://github.com/psf/requests">popular project</a>.</p>
 <div id="cell-2" class="cell">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">class</span> Response:</span>
@@ -1470,11 +1470,11 @@ font-weight: bold;
 font-style: inherit;">def</span> ok(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>):</span>
-<span id="cb2-7">        ...</span></code></pre></div>
+<span id="cb2-7">        ...</span></code></pre></div></div>
 </div>
 <p>Since a <code>property</code> wraps a function, it is natural to make the function have the implementation instead. Then it becomes clear that the <code>property</code> does not share the same name, so why bother with <code>@</code>.</p>
 <div id="cell-4" class="cell">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">class</span> Response:</span>
@@ -1494,13 +1494,13 @@ font-style: inherit;">=</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">property</span>(<span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">__bool__</span>)</span></code></pre></div>
+font-style: inherit;">__bool__</span>)</span></code></pre></div></div>
 </div>
 <p>A related scenario is where the local name of the function is irrelevant, which is typical in <a href="https://docs.python.org/3/library/functools.html#functools.wraps">wrapped functions</a>:</p>
 <blockquote class="blockquote">
 <p><span class="citation" data-cites="functools.wraps">@functools.wraps</span>(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES)</p>
 <p>This is a convenience function for invoking update_wrapper() as a function decorator when defining a wrapper function. It is equivalent to partial(update_wrapper, wrapped=wrapped, assigned=assigned, updated=updated). For example:</p>
-<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">&gt;&gt;&gt;</span> <span class="im" style="color: #00769E;
 background-color: null;
@@ -1540,11 +1540,11 @@ font-style: inherit;">**</span>kwds)</span>
 <span id="cb4-7">...     <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">return</span> wrapper</span></code></pre></div>
+font-style: inherit;">return</span> wrapper</span></code></pre></div></div>
 </blockquote>
 <p>The “convenience function” is useless indirection when the wrapper is immediately returned. Even the documentation points out that <code>wraps</code> is just a <code>partial</code> function. The example could be simply:</p>
 <div id="cell-6" class="cell">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> my_decorator(f):</span>
@@ -1572,7 +1572,7 @@ font-style: inherit;">**</span>kwds)</span>
 <span id="cb5-5">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">return</span> update_wrapper(wrapper, f)</span></code></pre></div>
+font-style: inherit;">return</span> update_wrapper(wrapper, f)</span></code></pre></div></div>
 </div>
 <p>Giving <code>partial(update_wrapper, wrapped=f)</code> a short name does not make it any clearer conceptually.</p>
 </section>
@@ -1582,7 +1582,7 @@ font-style: inherit;">return</span> update_wrapper(wrapper, f)</span></code></pr
 <p>Decorators were introduced in <a href="https://nedbatchelder.com/text/which-py.html#h_25_september_19th_2006">version 2.4</a>; context managers in 2.5. All ancient history now, but decorators had a ~2 year head start. For example, transactions are a <a href="https://docs.python.org/3/whatsnew/2.5.html#writing-context-managers">seminal use case for context managers</a>, but <a href="https://www.djangoproject.com">Django</a> pre-dates 2.5, so it had a transaction decorator first. This is how <a href="https://docs.djangoproject.com/en/4.1/topics/db/transactions/">transactions are currently presented</a>:</p>
 <blockquote class="blockquote">
 <p>atomic is usable both as a decorator:</p>
-<div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> django.db <span class="im" style="color: #00769E;
 background-color: null;
@@ -1598,9 +1598,9 @@ font-style: inherit;">def</span> viewfunc(request):</span>
 <span id="cb6-5">    <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># This code executes inside a transaction.</span></span>
-<span id="cb6-6">   do_stuff()</span></code></pre></div>
+<span id="cb6-6">   do_stuff()</span></code></pre></div></div>
 <p>and as a context manager:</p>
-<div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> django.db <span class="im" style="color: #00769E;
 background-color: null;
@@ -1622,7 +1622,7 @@ font-style: inherit;">with</span> transaction.atomic():</span>
 <span id="cb7-8">        <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># This code executes inside a transaction.</span></span>
-<span id="cb7-9">        do_more_stuff()</span></code></pre></div>
+<span id="cb7-9">        do_more_stuff()</span></code></pre></div></div>
 </blockquote>
 <p>So it has both, but the decorator is presented first, and is it a good example? Seems likely that a full request would have setup and teardown work that is unrelated to a database transaction. It is uncontroversial to want <code>try</code> blocks to be as narrow as possible. Surely there is no benefit to a request operation rolling back a vacuous transaction, nor a response operation rolling back a transaction that was committable.</p>
 <p>Any context manager can be trivially transformed into a decorator; the converse is not true. And even if the function block is <em>coincidentally</em> perfect, a <code>with</code> block has negligible impact on readability. It is just indentation.</p>
@@ -1631,7 +1631,7 @@ font-style: inherit;"># This code executes inside a transaction.</span></span>
 <h2 class="anchored" data-anchor-id="partial-functions">Partial functions</h2>
 <p>Next is a lack of appreciation of partially bound functions. Many decorator examples go out of their way to write an unnecessary <code>def</code> statement, in order to make using a decorator look natural. The below example is common in <a href="https://realpython.com/primer-on-python-decorators/#decorators-with-arguments">Python tutorials</a>.</p>
 <div id="cell-8" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> functools</span>
 <span id="cb8-2"></span>
@@ -1708,7 +1708,7 @@ font-style: inherit;">"</span>)</span>
 <span id="cb8-16"></span>
 <span id="cb8-17">greet(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"World"</span>)</span></code></pre></div>
+font-style: inherit;">"World"</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Hello World
 Hello World
@@ -1718,7 +1718,7 @@ Hello World</code></pre>
 </div>
 <p>First the obligatory observation that abstracting a <code>for</code> loop in Python is not necessarily a good idea. But assuming that is the goal, it is still worth questioning why repeating 4 times is coupled to the name <code>greet</code>. Is <code>print</code> supposed to represent the “real” function in this example, or should the wrapped function be named <code>greet_4x</code>? It is much simpler to start with the basic functionality and postpone how to wrap it.</p>
 <div id="cell-10" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> repeat(num_times, func, <span class="op" style="color: #5E5E5E;
@@ -1767,7 +1767,7 @@ font-style: inherit;">"</span>)</span>
 background-color: null;
 font-style: inherit;">4</span>, greet, <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"World"</span>)</span></code></pre></div>
+font-style: inherit;">"World"</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Hello World
 Hello World
@@ -1777,7 +1777,7 @@ Hello World</code></pre>
 </div>
 <p>We can stop there really. But even assuming that the goal is to bind the repetition, using partial functions is still simpler.</p>
 <div id="cell-12" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> functools <span class="im" style="color: #00769E;
 background-color: null;
@@ -1790,7 +1790,7 @@ background-color: null;
 font-style: inherit;">4</span>, greet)</span>
 <span id="cb12-4">greet_4x(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"World"</span>)</span></code></pre></div>
+font-style: inherit;">"World"</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Hello World
 Hello World
@@ -1800,7 +1800,7 @@ Hello World</code></pre>
 </div>
 <p>Not exactly the same without <code>wraps</code>, but that would be trivial to add. Futhermore it is less useful because <code>partial</code> objects can be easily introspected. Now onto the next - and dubious - assumption: that we <em>really</em> want it used as a decorator. This requires assuming the body of <code>greet</code> is not a simple call to an underlying wrapped function, and yet for some reason the repetition is supposed to be coupled to the wrapper function’s name anyway. Still simpler:</p>
 <div id="cell-14" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">repeats <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">repeats <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> partial(partial, repeat, <span class="dv" style="color: #AD0000;
 background-color: null;
@@ -1827,7 +1827,7 @@ font-style: inherit;">"</span>)</span>
 <span id="cb14-6"></span>
 <span id="cb14-7">greet(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"World"</span>)</span></code></pre></div>
+font-style: inherit;">"World"</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Hello World
 Hello World
@@ -1841,7 +1841,7 @@ Hello World</code></pre>
 <h2 class="anchored" data-anchor-id="for-loops">For loops</h2>
 <p>A real-world example of <code>repeat</code> is <a href="https://wiki.python.org/moin/PythonDecoratorLibrary#Retry">retrying functions</a> until success, optionally with delays. A <a href="https://github.com/litl/backoff">popular one</a> uses examples like:</p>
 <div id="cell-16" class="cell">
-<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><span class="at" style="color: #657422;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">@backoff.on_exception</span>(backoff.expo, requests.exceptions.RequestException)</span>
 <span id="cb16-2"><span class="kw" style="color: #003B4F;
@@ -1851,13 +1851,13 @@ font-style: inherit;">def</span> get_url(url):</span>
 <span id="cb16-3">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">return</span> requests.get(url)</span></code></pre></div>
+font-style: inherit;">return</span> requests.get(url)</span></code></pre></div></div>
 </div>
 <p>The same pattern (ahem) repeats. The decorated function is a trivial wrapper around the “real” function. Why not:</p>
 <div id="cell-18" class="cell">
-<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">get_url <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">get_url <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> backoff.on_exception(backoff.expo, requests.exceptions.RequestException)(requests.get)</span></code></pre></div>
+font-style: inherit;">=</span> backoff.on_exception(backoff.expo, requests.exceptions.RequestException)(requests.get)</span></code></pre></div></div>
 </div>
 <p>Furthermore, <code>for</code> loops can be customized via the <code>__iter__</code> protocol, just as <code>with</code> blocks are customizable. The author’s <a href="https://coady.github.io/waiter/examples/">waiter</a> package demonstrates the same functionality with <code>for</code> loops and undecorated functions.</p>
 </section>
@@ -1878,7 +1878,7 @@ font-style: inherit;">=</span> backoff.on_exception(backoff.expo, requests.excep
  ]]></description>
   <category>style</category>
   <guid>https://coady.github.io/posts/decorator-overuse.html</guid>
-  <pubDate>Sat, 04 Mar 2023 00:00:00 GMT</pubDate>
+  <pubDate>Sat, 04 Mar 2023 08:00:00 GMT</pubDate>
 </item>
 <item>
   <title>GraphQL nulls</title>
@@ -2001,7 +2001,7 @@ font-style: inherit;">=</span> backoff.on_exception(backoff.expo, requests.excep
  ]]></description>
   <category>graphql</category>
   <guid>https://coady.github.io/posts/graphql-nulls.html</guid>
-  <pubDate>Fri, 24 Feb 2023 00:00:00 GMT</pubDate>
+  <pubDate>Fri, 24 Feb 2023 08:00:00 GMT</pubDate>
 </item>
 <item>
   <title>GraphQL coroutines</title>
@@ -2038,7 +2038,7 @@ font-style: inherit;">=</span> backoff.on_exception(backoff.expo, requests.excep
 </blockquote>
 <p>…</p>
 <div id="cell-2" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;javascript&quot;}}">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">//</span>Authorization logic lives inside postRepository</span>
 <span id="cb1-2">var postRepository <span class="op" style="color: #5E5E5E;
@@ -2072,7 +2072,7 @@ font-style: inherit;">;</span></span>
 <span id="cb1-13">  }</span>
 <span id="cb1-14">})<span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">;</span></span></code></pre></div>
+font-style: inherit;">;</span></span></code></pre></div></div>
 </div>
 <p>The incomplete example does <em>not</em> implement “only authors can see their drafts”. It implements “only authors can see the <code>body</code> field of a draft”. But the user would still know the post exists and see all metadata which is not protected. “Drafts” being plural and all, a parent field with a list of <code>posts</code> is missing from the example. Surely the preferred solution would be to not return the unauthorized post in the list at all.</p>
 <p>The same problem exists if the post should be hidden for any reason, including deletion. It cannot be overstated how common a problem this is in real world APIs, and GraphQL offers no solution.</p>
@@ -2083,7 +2083,7 @@ font-style: inherit;">;</span></span></code></pre></div>
 <h2 class="anchored" data-anchor-id="solution">Solution</h2>
 <p>A general solution would be to allow resolvers to be coroutines, or equivalently to allow a <code>finalize</code> resolver. Here is an example implemented in <a href="https://github.com/graphql-python/graphql-core">graphql-core</a>:</p>
 <div id="cell-4" class="cell">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">---</span> a<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -2410,11 +2410,11 @@ font-style: inherit;">type</span><span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">!r}</span><span class="ss" style="color: #20794D;
 background-color: null;
-font-style: inherit;">&gt;"</span></span></code></pre></div>
+font-style: inherit;">&gt;"</span></span></code></pre></div></div>
 </div>
 <p>With that minor extension, fields can supply a <code>finalize</code> resolver in addition to the usual one.</p>
 <div id="cell-6" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> dataclasses <span class="im" style="color: #00769E;
 background-color: null;
@@ -2559,7 +2559,7 @@ font-style: inherit;">"posts"</span>: postsField})</span>
 <span id="cb3-41">)</span>
 <span id="cb3-42"><span class="bu" style="color: null;
 background-color: null;
-font-style: inherit;">print</span>(print_schema(schema))</span></code></pre></div>
+font-style: inherit;">print</span>(print_schema(schema))</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>type Query {
   posts: [Post!]!
@@ -2572,12 +2572,12 @@ type Post {
 </div>
 </div>
 <div id="cell-7" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">source <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">source <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"{ posts { id body } }"</span></span>
-<span id="cb5-2">graphql_sync(schema, source)</span></code></pre></div>
+<span id="cb5-2">graphql_sync(schema, source)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <pre><code>ExecutionResult(data={'posts': [{'id': 1, 'body': 'first'}]}, errors=None)</code></pre>
 </div>
@@ -2587,7 +2587,7 @@ font-style: inherit;">"{ posts { id body } }"</span></span>
 <h2 class="anchored" data-anchor-id="addendum">Addendum</h2>
 <p>In Python, this could be implemented as a generator-based coroutine. Similar to <a href="https://docs.python.org/3/library/contextlib.html#contextlib.contextmanager">contextlib.contextmanager</a> or <a href="https://docs.pytest.org/en/7.2.x/how-to/fixtures.html#yield-fixtures-recommended">pytest fixtures</a>, the generator would yield types, receive the result maps, and yield one more final result.</p>
 <div id="cell-9" class="cell">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> resolve(<span class="op" style="color: #5E5E5E;
@@ -2625,12 +2625,12 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">not</span> <span class="va" style="color: #111111;
 background-color: null;
-font-style: inherit;">None</span>]</span></code></pre></div>
+font-style: inherit;">None</span>]</span></code></pre></div></div>
 </div>
 <p>But there are some obstacles to that approach. The result data is in map (<code>dict</code>) form, not the domain types, so the code is not necessarily more readable. Additionally, generators can already be used to implement list types (whether intentional or not); <code>graphql-core</code> simply iterates the result. There would need to be another mechanism to distinguish a true coroutine from a regular generator.</p>
 <p>Speaking of domain types, notice how convenient and readable using a <code>dataclass</code> is, and how redundant the GraphQL type definition is. In <a href="https://strawberry.rocks">strawberry-graphql</a>, the schema is automatically derived from the domain types. The example would be simply:</p>
 <div id="cell-11" class="cell">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="at" style="color: #657422;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">@strawberry.type</span></span>
 <span id="cb8-2"><span class="kw" style="color: #003B4F;
@@ -2663,7 +2663,7 @@ font-style: inherit;">return</span> post_data.get(<span class="va" style="color:
 background-color: null;
 font-style: inherit;">self</span>.<span class="bu" style="color: null;
 background-color: null;
-font-style: inherit;">id</span>)</span></code></pre></div>
+font-style: inherit;">id</span>)</span></code></pre></div></div>
 </div>
 
 
@@ -2673,7 +2673,7 @@ font-style: inherit;">id</span>)</span></code></pre></div>
  ]]></description>
   <category>graphql</category>
   <guid>https://coady.github.io/posts/graphql-coroutines.html</guid>
-  <pubDate>Mon, 20 Feb 2023 00:00:00 GMT</pubDate>
+  <pubDate>Mon, 20 Feb 2023 08:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Random Selection</title>
@@ -2688,7 +2688,7 @@ font-style: inherit;">id</span>)</span></code></pre></div>
 
 <p>Random selection utilities used to be common in interviews. Less so in Python circles because of the builtin <code>random</code> module. Still advanced examples may come up. First is a generalization of <code>shuffle</code> and <code>sample</code>.</p>
 <div id="cell-2" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> itertools</span>
 <span id="cb1-2"><span class="im" style="color: #00769E;
@@ -2754,7 +2754,7 @@ font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">10</span>)), <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">5</span>))</span></code></pre></div>
+font-style: inherit;">5</span>))</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
 <pre><code>[9, 7, 5, 4, 6]</code></pre>
 </div>
@@ -2765,7 +2765,7 @@ font-style: inherit;">5</span>))</span></code></pre></div>
 <li>each previously selected element has a fair chance of being removed</li>
 </ul>
 <div id="cell-4" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> sample(iterable, k):</span>
@@ -2860,7 +2860,7 @@ font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">10</span>)), <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">5</span>)</span></code></pre></div>
+font-style: inherit;">5</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <pre><code>[1, 2, 6, 3, 8]</code></pre>
 </div>
@@ -2871,7 +2871,7 @@ font-style: inherit;">5</span>)</span></code></pre></div>
  ]]></description>
   <category>interviews</category>
   <guid>https://coady.github.io/posts/random-selection.html</guid>
-  <pubDate>Mon, 02 Jan 2023 00:00:00 GMT</pubDate>
+  <pubDate>Mon, 02 Jan 2023 08:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Primes</title>
@@ -2886,7 +2886,7 @@ font-style: inherit;">5</span>)</span></code></pre></div>
 
 <p>An old interview challenge is to generate prime numbers or check if a number is prime. No advanced mathematics needed, just variants on the <a href="https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes">Sieve of Eratosthenes</a>. Starting with a basic prime checker.</p>
 <div id="cell-2" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> isprime(n):</span>
@@ -2926,7 +2926,7 @@ font-style: inherit;">in</span> divs)</span>
 background-color: null;
 font-style: inherit;">%</span>time isprime(<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">1_000_003</span>)</span></code></pre></div>
+font-style: inherit;">1_000_003</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 83 µs, sys: 1e+03 ns, total: 84 µs
 Wall time: 85.1 µs</code></pre>
@@ -2937,7 +2937,7 @@ Wall time: 85.1 µs</code></pre>
 </div>
 <p>A common optimization is to skip even numbers.</p>
 <div id="cell-4" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> isprime(n):</span>
@@ -2986,7 +2986,7 @@ font-style: inherit;">in</span> divs)</span>
 background-color: null;
 font-style: inherit;">%</span>time isprime(<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">1_000_003</span>)</span></code></pre></div>
+font-style: inherit;">1_000_003</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 43 µs, sys: 0 ns, total: 43 µs
 Wall time: 46.3 µs</code></pre>
@@ -2998,7 +2998,7 @@ Wall time: 46.3 µs</code></pre>
 <p>Brief digression on that optimization. There’s nothing special about removing multiples of 2; removing multiples is the whole point. The <code>step</code> scalar could instead be thought of as a cycle: <code>itertools.accumulate(itertools.repeat(2))</code>. So removing multiples of 3 would remove every third step: <code>itertools.accumulate(itertools.cycle([2, 4]))</code>.</p>
 <p>Or the equivalent could be done with slicing.</p>
 <div id="cell-6" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> itertools</span>
 <span id="cb7-2"></span>
@@ -3060,7 +3060,7 @@ font-style: inherit;">3</span>]))</span>
 background-color: null;
 font-style: inherit;">%</span>time isprime(<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">1_000_003</span>)</span></code></pre></div>
+font-style: inherit;">1_000_003</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 42 µs, sys: 1 µs, total: 43 µs
 Wall time: 44.1 µs</code></pre>
@@ -3072,7 +3072,7 @@ Wall time: 44.1 µs</code></pre>
 <p>The catch is the cycles grow exponentially with diminishing returns on each successive number.</p>
 <p>Onto prime generation, while keeping the odds-only optimization. Typically it’s requested to generate the first <code>N</code> primes, or up to some value. But that’s easily generalized with <code>itertools.islice</code> and <code>itertools.takewhile</code>. A more Pythonic approach is an unbounded generator.</p>
 <div id="cell-8" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> primes():</span>
@@ -3123,14 +3123,14 @@ font-style: inherit;">%</span> prime)</span>
 background-color: null;
 font-style: inherit;">list</span>(itertools.islice(primes(), <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">10</span>))</span></code></pre></div>
+font-style: inherit;">10</span>))</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <pre><code>[2, 3, 5, 7, 9, 11, 13, 15, 17, 19]</code></pre>
 </div>
 </div>
 <p>Elegant, but doesn’t work. The problem is the scoping of <code>prime</code>, which is being used in the generator expression but also modified in the loop. Instead it can be replaced with a <code>filter</code> on a partially bound function, but unfortunately <code>functools.partial</code> only binds left arguments and <code>rmod</code> is needed here. One alternative is to use bound methods as a first-class function, even dunder methods.</p>
 <div id="cell-10" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> primes():</span>
@@ -3178,7 +3178,7 @@ font-style: inherit;">next</span>(itertools.islice(primes(), <span class="dv" st
 background-color: null;
 font-style: inherit;">1000</span>, <span class="va" style="color: #111111;
 background-color: null;
-font-style: inherit;">None</span>))</span></code></pre></div>
+font-style: inherit;">None</span>))</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 30.7 ms, sys: 1.82 ms, total: 32.5 ms
 Wall time: 32 ms</code></pre>
@@ -3189,7 +3189,7 @@ Wall time: 32 ms</code></pre>
 </div>
 <p>Elegant, but slow and could overflow the stack. A more traditional approach would use the same checking logic as <code>isprime</code>, but also cache the primes so as to not duplicate divisors.</p>
 <div id="cell-12" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> primes():</span>
@@ -3249,7 +3249,7 @@ font-style: inherit;">next</span>(itertools.islice(primes(), <span class="dv" st
 background-color: null;
 font-style: inherit;">1000</span>, <span class="va" style="color: #111111;
 background-color: null;
-font-style: inherit;">None</span>))</span></code></pre></div>
+font-style: inherit;">None</span>))</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 5.49 ms, sys: 423 µs, total: 5.92 ms
 Wall time: 5.8 ms</code></pre>
@@ -3260,7 +3260,7 @@ Wall time: 5.8 ms</code></pre>
 </div>
 <p>Onto interface design. The primes are being stored anyway, so it would be nice if they were re-iterable. A generator can be written as a class with <code>__iter__</code> and <code>__next__</code>, but an under-appreciated feature is that <code>__iter__</code> itself can be a generator. And now that it’s a class, <code>isprime</code> can be expressed as <code>in</code> while also benefiting from the cache.</p>
 <div id="cell-14" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">class</span> Primes:</span>
@@ -3376,7 +3376,7 @@ font-style: inherit;">next</span>(itertools.islice(primes, <span class="dv" styl
 background-color: null;
 font-style: inherit;">1000</span>, <span class="va" style="color: #111111;
 background-color: null;
-font-style: inherit;">None</span>))</span></code></pre></div>
+font-style: inherit;">None</span>))</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 7.89 ms, sys: 483 µs, total: 8.37 ms
 Wall time: 8 ms</code></pre>
@@ -3386,14 +3386,14 @@ Wall time: 8 ms</code></pre>
 </div>
 </div>
 <div id="cell-15" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%</span>time <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1_000_003</span> <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">in</span> primes</span></code></pre></div>
+font-style: inherit;">in</span> primes</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 34 µs, sys: 0 ns, total: 34 µs
 Wall time: 37 µs</code></pre>
@@ -3404,7 +3404,7 @@ Wall time: 37 µs</code></pre>
 </div>
 <p>There’s a hybrid approach though, that’s faster and nearly as simple as the above sieves. Instead of doing repeated divisions, keep track of each found prime along with the next multiple that it would eliminate. The inner loop is then optimized because it only needs to account for collisions.</p>
 <div id="cell-17" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> primes():</span>
@@ -3466,7 +3466,7 @@ font-style: inherit;">next</span>(itertools.islice(primes(), <span class="dv" st
 background-color: null;
 font-style: inherit;">1000</span>, <span class="va" style="color: #111111;
 background-color: null;
-font-style: inherit;">None</span>))</span></code></pre></div>
+font-style: inherit;">None</span>))</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 2.59 ms, sys: 103 µs, total: 2.69 ms
 Wall time: 2.7 ms</code></pre>
@@ -3477,7 +3477,7 @@ Wall time: 2.7 ms</code></pre>
 </div>
 <p>Now to add back the odds-only optimization, the step scalar needs to be double the prime number. Another way to reduce collisions is to recognize that each new prime is irrelevant until its square value is reached.</p>
 <div id="cell-19" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> primes():</span>
@@ -3560,7 +3560,7 @@ font-style: inherit;">next</span>(itertools.islice(primes(), <span class="dv" st
 background-color: null;
 font-style: inherit;">1000</span>, <span class="va" style="color: #111111;
 background-color: null;
-font-style: inherit;">None</span>))</span></code></pre></div>
+font-style: inherit;">None</span>))</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 1.37 ms, sys: 5 µs, total: 1.38 ms
 Wall time: 1.38 ms</code></pre>
@@ -3571,7 +3571,7 @@ Wall time: 1.38 ms</code></pre>
 </div>
 <p>And finally let’s add back the caching. Yielding a clean interface, an efficient implementation for all use cases, and still relatively simple.</p>
 <div id="cell-21" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb30" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">class</span> Primes:</span>
@@ -3736,7 +3736,7 @@ background-color: null;
 font-style: inherit;">1_000_003</span> <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">in</span> primes</span></code></pre></div>
+font-style: inherit;">in</span> primes</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 242 µs, sys: 0 ns, total: 242 µs
 Wall time: 245 µs</code></pre>
@@ -3746,14 +3746,14 @@ Wall time: 245 µs</code></pre>
 </div>
 </div>
 <div id="cell-22" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb33" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%</span>time <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1_000_003</span> <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">in</span> primes</span></code></pre></div>
+font-style: inherit;">in</span> primes</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 40 µs, sys: 0 ns, total: 40 µs
 Wall time: 43.2 µs</code></pre>
@@ -3768,7 +3768,7 @@ Wall time: 43.2 µs</code></pre>
  ]]></description>
   <category>interviews</category>
   <guid>https://coady.github.io/posts/primes.html</guid>
-  <pubDate>Sat, 10 Jul 2021 00:00:00 GMT</pubDate>
+  <pubDate>Sat, 10 Jul 2021 07:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Hardest Logic Puzzle Ever</title>
@@ -3789,7 +3789,7 @@ Wall time: 43.2 µs</code></pre>
 <p>With 3 binary questions, it’s possible to distinguish <img src="https://latex.codecogs.com/png.latex?2%5E3%20=%208"> scenarios. And there are <img src="https://latex.codecogs.com/png.latex?3!%20=%206"> possibilities. Note that means it’s impossible to additionally identify what <code>da</code> and <code>ja</code> mean, as that would be <img src="https://latex.codecogs.com/png.latex?3!%20*%202%20=%2012"> possibilities.</p>
 <p>As always, start with modeling the data. We need a ternary enumeration for the god identifiers. It’s almost a boolean anyway, so let’s use <code>None</code> to indicate neither, i.e., Random. To represent the identities, a mapping from names to ids would be natural. But the mapping has to be one-to-one and onto, and using an immutable key is convenient, so an implicitly ordered tuple of names is also a valid choice. Here a named tuple represents the “state” of the world .</p>
 <div id="cell-2" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> itertools</span>
 <span id="cb1-2"><span class="im" style="color: #00769E;
@@ -3842,7 +3842,7 @@ background-color: null;
 font-style: inherit;">map</span>(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">''</span>.join, itertools.permutations(NAMES)), WORDS)))</span>
-<span id="cb1-13">STATES</span></code></pre></div>
+<span id="cb1-13">STATES</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
 <pre><code>[State(names='ABC', yes='da'),
  State(names='ABC', yes='ja'),
@@ -3860,7 +3860,7 @@ font-style: inherit;">''</span>.join, itertools.permutations(NAMES)), WORDS)))</
 </div>
 <p>Now to model asking a question. A typical approach would take input parameters relevant to the question, such as asking a god which one they are. And the current reality would be need to be encapsulated to answer the question.</p>
 <div id="cell-4" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> ask(<span class="va" style="color: #111111;
@@ -3876,11 +3876,11 @@ background-color: null;
 font-style: inherit;">str</span>:</span>
 <span id="cb3-2">    <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">"""Ask `name`: are you `id`?"""</span></span></code></pre></div>
+font-style: inherit;">"""Ask `name`: are you `id`?"""</span></span></code></pre></div></div>
 </div>
 <p>The problem with that approach is Random’s answer would have to be modeled as actually random, which would require running many simulations. Since this is a logic puzzle, it’s easier to model Random’s answer as non-deterministic, i.e., could answer either way. The question will take as input the current set of possible states, splitting the states into two groups corresponding to answers da or ja. This function will be used in a search algorithm anyway, so it’s effectively participating in the search.</p>
 <div id="cell-6" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> ask(name: <span class="bu" style="color: null;
@@ -3970,7 +3970,7 @@ font-style: inherit;">return</span> groups</span>
 background-color: null;
 font-style: inherit;">'A'</span>, <span class="va" style="color: #111111;
 background-color: null;
-font-style: inherit;">None</span>, STATES)</span></code></pre></div>
+font-style: inherit;">None</span>, STATES)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>{'da': {State(names='ABC', yes='da'),
   State(names='ACB', yes='da'),
@@ -3992,7 +3992,7 @@ font-style: inherit;">None</span>, STATES)</span></code></pre></div>
 </div>
 <p>To determine if a question is making progress, we need to look at the set of names returned for each answer. A valid solution would need to output sets of at most size <img src="https://latex.codecogs.com/png.latex?2%5E2%20=%204"> on the first question in order to proceed.</p>
 <div id="cell-8" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="cf" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">for</span> <span class="bu" style="color: null;
@@ -4029,7 +4029,7 @@ font-style: inherit;">print</span>(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">id</span>, <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">*</span>identities)</span></code></pre></div>
+font-style: inherit;">*</span>identities)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>False {'BAC', 'CBA', 'CAB', 'ABC', 'ACB', 'BCA'} {'CAB', 'CBA', 'BAC', 'ABC', 'ACB', 'BCA'}
 True {'CAB', 'CBA', 'BAC', 'ABC', 'ACB', 'BCA'} {'BAC', 'CBA', 'CAB', 'ABC', 'ACB', 'BCA'}
@@ -4039,7 +4039,7 @@ None {'BAC', 'CBA', 'CAB', 'ABC', 'ACB', 'BCA'} {'CAB', 'CBA', 'BAC', 'ABC', 'AC
 <p>So that question made no progress. Unsurprising given that we don’t know which god is “Random”. Here one could resort to heuristics and increasingly convoluted questions.</p>
 <p>Let’s do the opposite: write the most general question possible and automate the search. Any question can be modeled by asking whether any of a given set of states is accurate.</p>
 <div id="cell-10" class="cell" data-tags="[]" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> ask(name: <span class="bu" style="color: null;
@@ -4147,7 +4147,7 @@ font-style: inherit;">'A'</span>, include, <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">set</span>(STATES) <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">-</span> include)        </span></code></pre></div>
+font-style: inherit;">-</span> include)        </span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>{'da': {State(names='ABC', yes='ja'),
   State(names='ACB', yes='ja'),
@@ -4169,7 +4169,7 @@ font-style: inherit;">-</span> include)        </span></code></pre></div>
 </div>
 <p>With that, the <a href="https://en.wikipedia.org/wiki/Power_set">power set</a> of all possible combinations can be searched.</p>
 <div id="cell-12" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> powerset(states: <span class="bu" style="color: null;
@@ -4254,14 +4254,14 @@ background-color: null;
 font-style: inherit;">&lt;=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">4</span></span>
-<span id="cb10-11">count</span></code></pre></div>
+<span id="cb10-11">count</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <pre><code>96</code></pre>
 </div>
 </div>
 <p>So there are many potential solutions. Onto automating the search.</p>
 <div id="cell-14" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> search(states: <span class="bu" style="color: null;
@@ -4369,19 +4369,19 @@ font-style: inherit;">set</span>(STATES[:<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span>]), <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">0</span>)</span></code></pre></div>
+font-style: inherit;">0</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <pre><code>'ABC'</code></pre>
 </div>
 </div>
 <div id="cell-15" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">search(<span class="bu" style="color: null;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">search(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">set</span>(STATES[:<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">4</span>]), <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">1</span>)</span></code></pre></div>
+font-style: inherit;">1</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
 <pre><code>('A',
  {State(names='ABC', yes='da'), State(names='ACB', yes='ja')},
@@ -4389,13 +4389,13 @@ font-style: inherit;">1</span>)</span></code></pre></div>
 </div>
 </div>
 <div id="cell-16" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1">search(<span class="bu" style="color: null;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1">search(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">set</span>(STATES[:<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">6</span>]), <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">2</span>)</span></code></pre></div>
+font-style: inherit;">2</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
 <pre><code>('A',
  {State(names='ABC', yes='da'), State(names='ACB', yes='ja')},
@@ -4406,11 +4406,11 @@ font-style: inherit;">2</span>)</span></code></pre></div>
 <p>So far, so good. The output is binary tree specifying the addressed god and the states asked about at each node.</p>
 <p>The sub-problems are solving a sufficient number of cases. It’s no surpise that there should be solutions asking “A” first since it can’t matter who gets the first question. Now for the real solution.</p>
 <div id="cell-18" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%</span>time search(<span class="bu" style="color: null;
 background-color: null;
-font-style: inherit;">set</span>(STATES))</span></code></pre></div>
+font-style: inherit;">set</span>(STATES))</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 1.29 s, sys: 10.8 ms, total: 1.3 s
 Wall time: 1.3 s</code></pre>
@@ -4460,7 +4460,7 @@ Wall time: 1.3 s</code></pre>
  ]]></description>
   <category>puzzles</category>
   <guid>https://coady.github.io/posts/hardest-logic-puzzle-ever.html</guid>
-  <pubDate>Fri, 01 Jan 2021 00:00:00 GMT</pubDate>
+  <pubDate>Fri, 01 Jan 2021 08:00:00 GMT</pubDate>
 </item>
 <item>
   <title>GraphQL - ORM</title>
@@ -4486,7 +4486,7 @@ Wall time: 1.3 s</code></pre>
 <section id="example" class="level2">
 <h2 class="anchored" data-anchor-id="example">Example</h2>
 <p>The problems can be seen immediately in GraphQL’s own introductory <a href="https://graphql.org/learn/execution/#root-fields-resolvers">resolver example</a>.</p>
-<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb1-1">Query<span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb1-1">Query<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">:</span> {</span>
 <span id="cb1-2">  <span class="fu" style="color: #4758AB;
@@ -4552,7 +4552,7 @@ font-style: inherit;">.</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">name</span></span>
 <span id="cb1-12">  }</span>
-<span id="cb1-13">}</span></code></pre></div>
+<span id="cb1-13">}</span></code></pre></div></div>
 <p>What makes the <code>name</code> resolver trivial? It’s pre-fetched by <code>loadHumanByID</code>, whose only parameter is <code>id</code>, so it’s clearly unaware of whether <code>name</code> has been requested. What if the requested field was a nested object, or a json field, or just a large text blob? Then one would clearly be directed towards using a non-trivial resolver which fetches the field on demand. Of course, but then whatever work is common in the human <code>id</code> lookup is duplicated.</p>
 <p>This is by no means specific to SQL or relational databases, but SQL is a convenient lingua franca of databases to demonstrate the inefficiency. The choices are:</p>
 <ul>
@@ -4564,7 +4564,7 @@ font-style: inherit;">name</span></span>
 <li><code>SELECT f1, f2, ... FROM human WHERE id = ?</code> for requested fields</li>
 </ul>
 <p>In other words, exactly what happens with ORMs, except even ORMs typically offer an option of requesting a subset of fields. Naturally the problem gets worse with list fields.</p>
-<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb2-1">Human<span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb2-1">Human<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">:</span> {</span>
 <span id="cb2-2">  <span class="fu" style="color: #4758AB;
@@ -4635,7 +4635,7 @@ font-style: inherit;">Starship</span>(shipData)</span>
 <span id="cb2-12">      )</span>
 <span id="cb2-13">    )</span>
 <span id="cb2-14">  }</span>
-<span id="cb2-15">}</span></code></pre></div>
+<span id="cb2-15">}</span></code></pre></div></div>
 <p>Now there are two sets of associate keys (<code>.appearsIn</code> and <code>.starshipIDs</code>) that have been over-fetched. Nonetheless <code>starships</code> is under-fetched as well. The <code>starships</code> resolver is neither the most efficient nor the simplest way of resolving this field:</p>
 <ul>
 <li>fetch all the data by human <code>id</code> in the <code>starships</code> resolver</li>
@@ -4683,7 +4683,7 @@ font-style: inherit;">Starship</span>(shipData)</span>
 <p>The inescapable conclusion is that in some cases parent resolvers need to know which of their children are being requested. There’s no need to throw away GraphQL’s server-side resolver hierarchy. No one is advocating a thousand line root resolver named <code>RunIt</code> that processes the entire query.</p>
 <p>All that’s needed is a conceptual shift which encourages introspecting the <code>GraphQLResolveInfo</code> object. The requested fields are right there waiting to be useful, but good luck finding documentation and examples to that effect. In every non-trivial GraphQL project, this author has used a utility like:</p>
 <div id="cell-7" class="cell">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> selections(node):</span>
@@ -4706,7 +4706,7 @@ font-weight: bold;
 font-style: inherit;">for</span> node <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">in</span> nodes}</span></code></pre></div>
+font-style: inherit;">in</span> nodes}</span></code></pre></div></div>
 </div>
 <p>Those fields would be checked or passed to a data layer as needed. For example, in <a href="https://www.djangoproject.com">Django’s</a> ORM, it could be as simple as appending a query set with <code>.values(*selections(*info.nodes))</code>.</p>
 <p>Well, almost. The next issue is that typical GraphQL model validators raise an error if required fields are missing. Thanks validator; the field is missing because the client didn’t request it.</p>
@@ -4721,7 +4721,7 @@ font-style: inherit;">in</span> nodes}</span></code></pre></div>
  ]]></description>
   <category>graphql</category>
   <guid>https://coady.github.io/posts/graphql-orm.html</guid>
-  <pubDate>Mon, 06 Jul 2020 00:00:00 GMT</pubDate>
+  <pubDate>Mon, 06 Jul 2020 07:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Closing files</title>
@@ -4757,7 +4757,7 @@ font-style: inherit;">in</span> nodes}</span></code></pre></div>
 <p>Good points, and why limit this advice to file descriptors? Any resource may be limited or require exclusivity; that’s why they’re called resources. Similarly one should always explicitly call <code>dict.clear</code> when finished with a <code>dict</code>. After all, “there are no guarantees as to when the runtime will actually run the &lt;object’s&gt; destructor. And”code that deals with many such objects may exhaust those resources unnecessarily”, such as memory, or whatever else is in the <code>dict</code>.</p>
 <p>But in all seriousness, this advice is applying a notably higher standard of premature optimization to file descriptors than to any other kind of resource. There are plenty of Python projects that are guaranteed to run on CPython for a variety of reasons, where destructors are immediately called. And there are plenty of Python projects where file descriptor usage is just a non-issue. It’s now depressingly commonplace to see this in <code>setup.py</code> files:</p>
 <div id="cell-2" class="cell">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="cf" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">with</span> <span class="bu" style="color: null;
@@ -4769,11 +4769,11 @@ background-color: null;
 font-style: inherit;">as</span> readme:</span>
 <span id="cb2-2">    long_description <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> readme.read()</span></code></pre></div>
+font-style: inherit;">=</span> readme.read()</span></code></pre></div></div>
 </div>
 <p>Let’s consider a practical example: a <code>load</code> function which is supposed to read and parse data given a file path.</p>
 <div id="cell-4" class="cell">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> csv</span>
 <span id="cb3-2"><span class="im" style="color: #00769E;
@@ -4840,14 +4840,14 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">return</span> csv.reader(<span class="bu" style="color: null;
 background-color: null;
-font-style: inherit;">file</span>)</span></code></pre></div>
+font-style: inherit;">file</span>)</span></code></pre></div></div>
 </div>
 <p>Which versions work correctly? Are you sure? If it’s not immediately obvious why one of these is broken, that’s the point. In fact, it’s worth trying out before reading on.</p>
 <p>…</p>
 <p>The <code>csv</code> version returns an iterator over a closed file. It’s a violation of procedural abstraction to know whether the result of <code>load</code> is lazily evaluated or not; it’s just supposed to implement an interface. Moreover, according to this best practice, it’s <em>impossible</em> to write the <code>csv</code> version correctly. As absurd as it sounds, it’s just an abstraction that can’t exist.</p>
 <p>Defiantly clever readers are probably already trying to fix it. Maybe like this:</p>
 <div id="cell-6" class="cell">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> load(filepath):</span>
@@ -4869,7 +4869,7 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">from</span> csv.reader(<span class="bu" style="color: null;
 background-color: null;
-font-style: inherit;">file</span>)</span></code></pre></div>
+font-style: inherit;">file</span>)</span></code></pre></div></div>
 </div>
 <p>No, it will not be fixed. This version only appears to work by <em>not</em> closing the file until the generator is exhausted or collected.</p>
 <p>This trivial example has deeper implications. If one accepts this practice, then one must also accept that storing a file handle anywhere, such as on an instance, is also disallowed. Unless of course that object then virally implements it owns context manager, ad infinitum.</p>
@@ -4877,7 +4877,7 @@ font-style: inherit;">file</span>)</span></code></pre></div>
 <p>So in reality there are scenarios where the supposedly good way could keep the file open <em>longer</em> than the supposedly bad way. The original inline version does exactly what it’s supposed to do: close the file when all interested parties are done with it. Python uses garbage collection to manage shared resources. Any attempt to pretend otherwise will result in code that is broken, inefficient, or reinventing reference counting.</p>
 <p>A true believer now has to accept that <code>json.load</code> is a useless and dangerous wrapper, and that the only correct implementation is:</p>
 <div id="cell-8" class="cell">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> load(filepath):</span>
@@ -4899,7 +4899,7 @@ font-style: inherit;">file</span>.read()</span>
 <span id="cb5-4">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">return</span> json.loads(contents)</span></code></pre></div>
+font-style: inherit;">return</span> json.loads(contents)</span></code></pre></div></div>
 </div>
 <p>This line of reasoning reduces to the absurd: a file should never be passed or stored anywhere. Next an example where the practice has caused real-world damage.</p>
 </section>
@@ -4907,7 +4907,7 @@ font-style: inherit;">return</span> json.loads(contents)</span></code></pre></di
 <h2 class="anchored" data-anchor-id="in-practice">In practice</h2>
 <p><a href="https://requests.readthedocs.io/en/master/">Requests</a> is one of the most popular python packages, and <a href="https://docs.python.org/3/library/http.client.html#module-http.client">officially recommended</a>. It includes a <a href="http://requests.readthedocs.org/en/latest/user/advanced/#session-objects">Session</a> object which supports closing via a context manager. The vast majority of real-world code uses the the top-level functions or single-use sessions.</p>
 <div id="cell-10" class="cell">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">response <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">response <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> requests.get(...)</span>
 <span id="cb6-2"></span>
@@ -4919,7 +4919,7 @@ background-color: null;
 font-style: inherit;">as</span> session:</span>
 <span id="cb6-4">    response <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> session.get(...)</span></code></pre></div>
+font-style: inherit;">=</span> session.get(...)</span></code></pre></div></div>
 </div>
 <p>Sessions manage the connection pool, so this pattern of usage is establishing a new connection every time. There are popular standard API clients which seriously do this, for every single request to the same endpoint.</p>
 <p>Requests’ documentation prominently states that “Keep-alive and HTTP connection pooling are 100% automatic”. So part of the blame may lay with that phrasing, since it’s only “automatic” if sessions are reused. But surely a large part of the blame is the dogma of closing sockets, and therefore sessions, explicitly. The whole point of a connection pool is that it may leave connections open, so users who genuinely need this granularity are working at the wrong abstraction layer. <code>http.client</code> is already builtin for that level of control.</p>
@@ -4938,7 +4938,7 @@ font-style: inherit;">=</span> session.get(...)</span></code></pre></div>
  ]]></description>
   <category>style</category>
   <guid>https://coady.github.io/posts/closing-files.html</guid>
-  <pubDate>Sun, 05 Jul 2020 00:00:00 GMT</pubDate>
+  <pubDate>Sun, 05 Jul 2020 07:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Mutable defaults</title>
@@ -4955,7 +4955,7 @@ font-style: inherit;">=</span> session.get(...)</span></code></pre></div>
 <h1>Contrarian view on mutable default arguments.</h1>
 <p>The use of <a href="https://docs.python-guide.org/writing/gotchas/#mutable-default-arguments">mutable defaults</a> is probably the most infamous Python gotcha. Default values are evaluated at definition time, which means mutating them will be persistent across multiple calls. Many articles on this topic even use the same <code>append</code> example.</p>
 <div id="cell-2" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> append_to(element, to<span class="op" style="color: #5E5E5E;
@@ -4969,22 +4969,22 @@ font-style: inherit;">return</span> to</span>
 <span id="cb1-4"></span>
 <span id="cb1-5">append_to(<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">0</span>)</span></code></pre></div>
+font-style: inherit;">0</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
 <pre><code>[0]</code></pre>
 </div>
 </div>
 <div id="cell-3" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">append_to(<span class="dv" style="color: #AD0000;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">append_to(<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">1</span>)</span></code></pre></div>
+font-style: inherit;">1</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <pre><code>[0, 1]</code></pre>
 </div>
 </div>
 <p>And the solution is invariably to use <code>None</code> instead, and convert as needed.</p>
 <div id="cell-5" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> append_to(element, to<span class="op" style="color: #5E5E5E;
@@ -5008,13 +5008,13 @@ font-style: inherit;">=</span> []</span>
 <span id="cb5-5">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">return</span> to</span></code></pre></div>
+font-style: inherit;">return</span> to</span></code></pre></div></div>
 </div>
 <p>There is another solution to the problem of mutating a default value: don’t do that. More specifically, the problem isn’t using mutables as defaults; the problem is actually mutating them.</p>
 <p>If the input from the caller is being mutated, then the caller doesn’t need it returned because the caller already has a reference. This distinction is explicitly encouraged in Python, e.g., <code>list.sort</code> vs.&nbsp;<code>sorted</code>. But it follows that if the input doesn’t need to be returned, then there’s no point in the input being optional. How would the caller know the difference?</p>
 <p>The reason why examples like the fluent <code>append</code> seem so contrived is because they are. No one actually wants a function named <code>append</code> to take one argument. The realistic fix would be:</p>
 <div id="cell-7" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> append_to(element, to):</span>
@@ -5022,7 +5022,7 @@ font-style: inherit;">def</span> append_to(element, to):</span>
 <span id="cb6-3">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">return</span> to</span></code></pre></div>
+font-style: inherit;">return</span> to</span></code></pre></div></div>
 </div>
 <p>Sure, there are rare occassions where a parameter is mutable but optional, such as a recursive algorithm that’s implicitly passing around its own cache. But this author would wager that given any real-world code that’s been bitten by this gotcha there is:</p>
 <ul>
@@ -5032,7 +5032,7 @@ font-style: inherit;">return</span> to</span></code></pre></div>
 <p>What harm does this advice do? Well, it’s caused an over-reaction resulting in using <code>None</code> as the only default, even for immutables. It’s so prevalent that it appears many beginners believe using <code>None</code> is the one and only way of making an argument optional.</p>
 <p>Besides immutable types, there are also cases where mutation is irrelevant. Consider the following example adapted from a popular project.</p>
 <div id="cell-9" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> typing <span class="im" style="color: #00769E;
 background-color: null;
@@ -5067,11 +5067,11 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">else</span> <span class="bu" style="color: null;
 background-color: null;
-font-style: inherit;">list</span>(alist)</span></code></pre></div>
+font-style: inherit;">list</span>(alist)</span></code></pre></div></div>
 </div>
 <p>Notice that the correctness of this code relies on the member list being newly created in either case. What could possibly go wrong with:</p>
 <div id="cell-11" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
@@ -5087,11 +5087,11 @@ font-style: inherit;">self</span>.alist <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="bu" style="color: null;
 background-color: null;
-font-style: inherit;">list</span>(alist)</span></code></pre></div>
+font-style: inherit;">list</span>(alist)</span></code></pre></div></div>
 </div>
 <p>Or better yet, why not support the more liberal interface.</p>
 <div id="cell-13" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> typing <span class="im" style="color: #00769E;
 background-color: null;
@@ -5113,7 +5113,7 @@ font-style: inherit;">self</span>.alist <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="bu" style="color: null;
 background-color: null;
-font-style: inherit;">list</span>(alist)</span></code></pre></div>
+font-style: inherit;">list</span>(alist)</span></code></pre></div></div>
 </div>
 <p>The point is that there are at least 4 solutions to this problem:</p>
 <ol type="1">
@@ -5132,7 +5132,7 @@ font-style: inherit;">list</span>(alist)</span></code></pre></div>
  ]]></description>
   <category>style</category>
   <guid>https://coady.github.io/posts/mutable-defaults.html</guid>
-  <pubDate>Sun, 28 Jun 2020 00:00:00 GMT</pubDate>
+  <pubDate>Sun, 28 Jun 2020 07:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Water pouring</title>
@@ -5155,7 +5155,7 @@ font-style: inherit;">list</span>(alist)</span></code></pre></div>
 <li>pouring from a source jug to a destination jug, until either the source is emptied or the destination is full</li>
 </ul>
 <div id="cell-2" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">class</span> Jugs(<span class="bu" style="color: null;
@@ -5219,11 +5219,11 @@ font-style: inherit;">self</span>[dest] <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="bu" style="color: null;
 background-color: null;
-font-style: inherit;">min</span>(total, dest)</span></code></pre></div>
+font-style: inherit;">min</span>(total, dest)</span></code></pre></div></div>
 </div>
 <p>That’s sufficient to solve the puzzle through sheer brute force: scanning every possible combination breadth-first. Note the below implementations don’t terminate unless a solution is found.</p>
 <div id="cell-4" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> itertools</span>
 <span id="cb2-2"><span class="im" style="color: #00769E;
@@ -5343,7 +5343,7 @@ font-style: inherit;">return</span> states</span>
 background-color: null;
 font-style: inherit;">%</span>time search(<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">4</span>)</span></code></pre></div>
+font-style: inherit;">4</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 138 ms, sys: 2.28 ms, total: 140 ms
 Wall time: 144 ms</code></pre>
@@ -5354,7 +5354,7 @@ Wall time: 144 ms</code></pre>
 </div>
 <p>Now to relentlessly simplify the code. The first observation is that an empty source is useless, as is a full destination. So the <code>fill</code> and <code>empty</code> primitives are actually unneeded, and can be integrated into the <code>pour</code> method.</p>
 <div id="cell-6" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> pour(jugs, src, dest):</span>
@@ -5420,7 +5420,7 @@ font-style: inherit;">2</span>)]</span>
 background-color: null;
 font-style: inherit;">%</span>time search(<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">4</span>)</span></code></pre></div>
+font-style: inherit;">4</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 87 µs, sys: 0 ns, total: 87 µs
 Wall time: 88.7 µs</code></pre>
@@ -5432,7 +5432,7 @@ Wall time: 88.7 µs</code></pre>
 <p>That reduced the search space considerably, but moreover has revealed another simplification: it’s pointless to “undo” a pour. Whether the source was emptied or the destination was filled, whatever reversing the previous pour direction would accomplish could have been done in the first place.</p>
 <p>If there were more than 2 jugs, then there could be complex workflows. But with only 2, the first choice in pour directions determines the rest. There are only 2 <em>potential</em> solutions to the puzzle.</p>
 <div id="cell-8" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> search(target, src, dest):</span>
@@ -5476,13 +5476,13 @@ font-style: inherit;">4</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">5</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">3</span>))</span></code></pre></div>
+font-style: inherit;">3</span>))</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <pre><code>[(2, 3), (0, 2), (4, 3)]</code></pre>
 </div>
 </div>
 <div id="cell-9" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="bu" style="color: null;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">list</span>(search(<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -5490,7 +5490,7 @@ font-style: inherit;">4</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">3</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">5</span>))</span></code></pre></div>
+font-style: inherit;">5</span>))</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>[(0, 3), (1, 5), (0, 1), (0, 4)]</code></pre>
 </div>
@@ -5498,7 +5498,7 @@ font-style: inherit;">5</span>))</span></code></pre></div>
 <p>And both of them are valid solutions. The solution to the puzzle is quite simply: keep pouring. It doesn’t even matter which to start with.</p>
 <p>But it can be further simplified. Now it’s clear that the <code>jug</code> data structure is only providing modular arithmetic.</p>
 <div id="cell-11" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> search(target, src, dest):</span>
@@ -5540,25 +5540,25 @@ font-style: inherit;">4</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">5</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">3</span>)</span></code></pre></div>
+font-style: inherit;">3</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <pre><code>(2, -2)</code></pre>
 </div>
 </div>
 <div id="cell-12" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">search(<span class="dv" style="color: #AD0000;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">search(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">4</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">3</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">5</span>)</span></code></pre></div>
+font-style: inherit;">5</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <pre><code>(3, -1)</code></pre>
 </div>
 </div>
 <div id="cell-13" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;jupyter&quot;,&quot;value&quot;:{&quot;outputs_hidden&quot;:true}}" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><span class="cf" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">assert</span> (<span class="dv" style="color: #AD0000;
@@ -5595,7 +5595,7 @@ font-style: inherit;">1</span>) <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">4</span></span></code></pre></div>
+font-style: inherit;">4</span></span></code></pre></div></div>
 </div>
 <p>The puzzle is looking for integer solutions to <img src="https://latex.codecogs.com/png.latex?%0A%5C%203x%20+%205y%20=%204%0A"> Which is known as a linear <a href="https://en.wikipedia.org/wiki/Diophantine_equation">Diophantine equation</a>, and must have a solution because <img src="https://latex.codecogs.com/png.latex?4"> is a multiple of <img src="https://latex.codecogs.com/png.latex?gcd(3,%205)">.</p>
 
@@ -5605,7 +5605,7 @@ font-style: inherit;">4</span></span></code></pre></div>
  ]]></description>
   <category>puzzles</category>
   <guid>https://coady.github.io/posts/water-pouring.html</guid>
-  <pubDate>Sun, 14 Jun 2020 00:00:00 GMT</pubDate>
+  <pubDate>Sun, 14 Jun 2020 07:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Coin balance</title>
@@ -5634,7 +5634,7 @@ font-style: inherit;">4</span></span></code></pre></div>
 <li>An object to represent a coin and its state. A <code>class</code> is tempting, but the most useful data structure would keep the coins grouped by their known (or unknown) state anyway. So any hashable unique identifier is sufficient.</li>
 </ul>
 <div id="cell-2" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> enum</span>
 <span id="cb1-2"></span>
@@ -5792,7 +5792,7 @@ font-style: inherit;">'b'</span>, <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'a'</span>) <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">==</span> Weight.HEAVY</span></code></pre></div>
+font-style: inherit;">==</span> Weight.HEAVY</span></code></pre></div></div>
 </div>
 <p>As is typical with <a href="https://en.wikipedia.org/wiki/Induction_puzzles">induction puzzles</a>, the constants chosen are just large enough to thwart an iterative approach. The 2 weighing variation would be trivial enough for most people to brute force the solution. Whereas 4 weighings would already be such a large decision tree, it would be tedious to even output. The easier approach is solve the puzzle recursively and more generally, for any number of coins and weighings.</p>
 <p>So what can be done in a single weighing? Clearly all weighings must have an equal number of coins on each side, else nothing is learned. If it balances, then the different coin is in the unweighed group. If it doesn’t balance, then the different coin is in the weighed group, but additionally it is known whether each coin would be heavy or light based on which side it was on. This is the crucial insight: there’s a variant recursive puzzle embedded inside this puzzle.</p>
@@ -5800,7 +5800,7 @@ font-style: inherit;">==</span> Weight.HEAVY</span></code></pre></div>
 <p>So what can be done with known coins in a single weighing? If it balances, then as before the different coin is in the unweighed group. But if it doesn’t balance, then which way can be used to further narrow the coins. Consider the heavier side; the different coin must be one of the heavy ones on that side, or one of the light ones on the other side. Therefore the coins can be split into 2 equal sized groups by putting equal numbers of heavy coins on each side, and equal numbers of light coins on each side. One obstacle is that if there aren’t an even number, there will need to be filler coins just to balance. But that won’t be a problem after the first weighing.</p>
 <p>Now we can implement a solution to the sub-problem, and build the need for filler coins into the balance implementation. A generator is used so that the output of each weighing can be displayed.</p>
 <div id="cell-4" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> itertools</span>
 <span id="cb2-2"></span>
@@ -6062,7 +6062,7 @@ font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">''</span>.join(light), <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">''</span>.join(heavy))</span></code></pre></div>
+font-style: inherit;">''</span>.join(heavy))</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>cba dfe
 a e
@@ -6071,7 +6071,7 @@ a </code></pre>
 </div>
 <p>Now with the sub-problem solved, there’s just one thing missing for the main puzzle. In the known case, splitting into 3 equal sized groups is cleary optimal. But in the unknown case, we need to know how many coins to exclude from the weighing. This requires computing how many coins can be handled in the subsolution. Luckily it’s a trivial <a href="https://en.wikipedia.org/wiki/Recurrence_relation">recurrence relation</a>: <code>n</code> weighings can solve 3 times the number of <code>n - 1</code> weighings. <img src="https://latex.codecogs.com/png.latex?%0A%5Cprod_%7B%7D%5En%203%20=%203%5En%0A"></p>
 <div id="cell-6" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">class</span> Balance(Balance):</span>
@@ -6284,7 +6284,7 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">and</span> heavy <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">==</span> {coin}</span></code></pre></div>
+font-style: inherit;">==</span> {coin}</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>dbah fceg
 a e
@@ -6294,7 +6294,7 @@ a </code></pre>
 <p>The puzzle is solved. There’s one last simplifcation that can be made, but requires a bit more math background. Ideally we wouldn’t need to know the objective number of weighings; the algorithm would just solve any set of coins as efficiently as possible. To do that, the number of coins that can be solved has to be computed. As was done above, but this recurrence relation is more advanced: each weighing can solve <code>3 ^ n</code> more coins. <img src="https://latex.codecogs.com/png.latex?%0A%5Csum_%7Bk=0%7D%5E%7Bn-1%7D%203%5Ek%20=%20(3%5En%20-%201)%20/%202%0A"></p>
 <p>With that calculation inverted, the <code>count</code> can be removed from the interface</p>
 <div id="cell-8" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> math</span>
 <span id="cb6-2"></span>
@@ -6460,7 +6460,7 @@ font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">''</span>.join(light), <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">''</span>.join(heavy))</span></code></pre></div>
+font-style: inherit;">''</span>.join(heavy))</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>dbah fceg
 a e
@@ -6475,7 +6475,7 @@ a </code></pre>
  ]]></description>
   <category>puzzles</category>
   <guid>https://coady.github.io/posts/coin-balance.html</guid>
-  <pubDate>Sun, 07 Jun 2020 00:00:00 GMT</pubDate>
+  <pubDate>Sun, 07 Jun 2020 07:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Hat puzzle</title>
@@ -6504,7 +6504,7 @@ a </code></pre>
 </ul>
 <p>Theory of mind comes into play because each prisoner has differing knowledge, but assumes everyone else will think similarly. Functional fixedness occurs more subtly; each prisoner may state a color only to convey information. But because the information is encoded as a color, it tends to focus thinking on the colors themselves. So to combat that cognitive bias, first create a different enumeration to represent statements. Any binary <code>enum</code> can be mapped back to colors, so why not <code>bool</code>.</p>
 <div id="cell-2" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1">colors <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1">colors <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
@@ -6515,7 +6515,7 @@ font-style: inherit;">'blue'</span></span>
 background-color: null;
 font-style: inherit;">False</span>], colors[<span class="va" style="color: #111111;
 background-color: null;
-font-style: inherit;">True</span>]</span></code></pre></div>
+font-style: inherit;">True</span>]</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
 <pre><code>('red', 'blue')</code></pre>
 </div>
@@ -6523,7 +6523,7 @@ font-style: inherit;">True</span>]</span></code></pre></div>
 <p>Which leaves induction: solve the puzzle for the base case (smallest size) first, and then methodically build on that solution. In the case of 1 prisoner, they have no information a priori, and therefore have a 50/50 chance of survival regardless of strategy. This variant of the puzzle already gives the optimal goal, so we know that everyone but the 1st can say their color and be saved, while the 1st can devote their answer to the common cause.</p>
 <p>In the case of 2 prisoners, obviously the 1st can say the color of the 2nd. That approach does not scale; it is the path to functional fixedness. Instead, methodically enumerate all possible statements and colors to determine if there is an unambiguous solution.</p>
 <div id="cell-4" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">table <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">table <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="bu" style="color: null;
 background-color: null;
@@ -6534,7 +6534,7 @@ background-color: null;
 font-style: inherit;">False</span>, <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">True</span>], colors))</span>
-<span id="cb3-2">table</span></code></pre></div>
+<span id="cb3-2">table</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <pre><code>[(False, 'red'), (True, 'blue')]</code></pre>
 </div>
@@ -6543,7 +6543,7 @@ font-style: inherit;">True</span>], colors))</span>
 <p>In the case of the 3rd prisoner, clearly they can not just repeat the above rule set, because the 3rd would receive no information. But there are only 2 choices, so the only option is to follow the <em>opposite</em> rule set, depending on the 3rd color.</p>
 <p>The crucial step is to build off of the existing <code>table</code>.</p>
 <div id="cell-6" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">table <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">table <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> [row <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -6577,7 +6577,7 @@ font-style: inherit;">for</span> row <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">in</span> table]</span>
-<span id="cb5-2">table</span></code></pre></div>
+<span id="cb5-2">table</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>[(False, 'red', 'red'),
  (True, 'blue', 'red'),
@@ -6587,7 +6587,7 @@ font-style: inherit;">in</span> table]</span>
 </div>
 <p>The solution is valid if each prisoner is able to narrow the possibilities to a unique row based on the colors they hear and see.</p>
 <div id="cell-8" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> collections</span>
 <span id="cb7-2"></span>
@@ -6642,11 +6642,11 @@ font-style: inherit;">==</span> {<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>}</span>
 <span id="cb7-9"></span>
-<span id="cb7-10">test(table)</span></code></pre></div>
+<span id="cb7-10">test(table)</span></code></pre></div></div>
 </div>
 <p>The general solution is simply the above logic in recursive form, with a parametrized size.</p>
 <div id="cell-10" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> solve(count: <span class="bu" style="color: null;
@@ -6714,7 +6714,7 @@ font-style: inherit;">1</span>:]</span>
 background-color: null;
 font-style: inherit;">list</span>(solve(<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">3</span>))</span></code></pre></div>
+font-style: inherit;">3</span>))</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>[(False, 'red', 'red'),
  (True, 'red', 'blue'),
@@ -6724,7 +6724,7 @@ font-style: inherit;">3</span>))</span></code></pre></div>
 </div>
 <p>The complicated puzzle is actually a trivial recurrence relation: <img src="https://latex.codecogs.com/png.latex?%0A2%5En%20=%202%5E%7Bn-1%7D%20*%202%0A"> There are <img src="https://latex.codecogs.com/png.latex?2%5En"> states of the prisoners, and each prisoner has <img src="https://latex.codecogs.com/png.latex?n-1"> bits of data. So an additional bit of data from the first is sufficient to solve the puzzle.</p>
 <div id="cell-12" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">table <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">table <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="bu" style="color: null;
 background-color: null;
@@ -6734,15 +6734,15 @@ font-style: inherit;">10</span>))</span>
 <span id="cb10-2">test(table)</span>
 <span id="cb10-3"><span class="bu" style="color: null;
 background-color: null;
-font-style: inherit;">len</span>(table)</span></code></pre></div>
+font-style: inherit;">len</span>(table)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <pre><code>512</code></pre>
 </div>
 </div>
 <div id="cell-13" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1">table[:<span class="dv" style="color: #AD0000;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1">table[:<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">3</span>]</span></code></pre></div>
+font-style: inherit;">3</span>]</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <pre><code>[(False, 'red', 'red', 'red', 'red', 'red', 'red', 'red', 'red', 'red'),
  (True, 'red', 'red', 'red', 'red', 'red', 'red', 'red', 'red', 'blue'),
@@ -6752,7 +6752,7 @@ font-style: inherit;">3</span>]</span></code></pre></div>
 <p>The puzzle is solved, but the output is of exponential size, certainly not the succinct solution which makes the puzzle famous. But instead of relying on a flash of insight, this approach produces not just <em>a</em> solution, but <em>the</em> solution. The only arbitrary decision made was the enumeration. Therefore it must be the case that the solution can be summarized.</p>
 <p>First, it would be helpful to group the solution by the 1st statement. Any summary function would have to ensure that there is no collision in the grouped possibilities.</p>
 <div id="cell-15" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">groups <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">groups <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> collections.defaultdict(<span class="bu" style="color: null;
 background-color: null;
@@ -6827,21 +6827,21 @@ font-style: inherit;">tuple</span>(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">map</span>(<span class="bu" style="color: null;
 background-color: null;
-font-style: inherit;">len</span>, groups))</span></code></pre></div>
+font-style: inherit;">len</span>, groups))</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
 <pre><code>(256, 256)</code></pre>
 </div>
 </div>
 <p>Now what summaries to attempt? Well there are few properties of sequences to work with: size and order. They are all the same size, so that won’t help. That leaves ordering, which can be easily tested by sorting.</p>
 <div id="cell-17" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1">summarize(<span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1">summarize(<span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">lambda</span> g: <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">tuple</span>(<span class="bu" style="color: null;
 background-color: null;
-font-style: inherit;">sorted</span>(g)), groups)</span></code></pre></div>
+font-style: inherit;">sorted</span>(g)), groups)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
 <pre><code>({('blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'red'),
   ('blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'red', 'red', 'red'),
@@ -6857,12 +6857,12 @@ font-style: inherit;">sorted</span>(g)), groups)</span></code></pre></div>
 </div>
 <p>Success. Now that order does not matter, the appropriate data structure is a multiset (a.k.a. bag). Each prisoner can keep track of only how many of each color they hear and see.</p>
 <div id="cell-19" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1">summarize(<span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1">summarize(<span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">lambda</span> g: <span class="bu" style="color: null;
 background-color: null;
-font-style: inherit;">frozenset</span>(collections.Counter(g).items()), groups)</span></code></pre></div>
+font-style: inherit;">frozenset</span>(collections.Counter(g).items()), groups)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
 <pre><code>({frozenset({('blue', 8), ('red', 1)}),
   frozenset({('blue', 2), ('red', 7)}),
@@ -6878,12 +6878,12 @@ font-style: inherit;">frozenset</span>(collections.Counter(g).items()), groups)<
 </div>
 <p>Since there are only 2 colors which sum to a constant, keeping track of just one is sufficient.</p>
 <div id="cell-21" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1">summarize(<span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1">summarize(<span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">lambda</span> g: g.count(colors[<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">0</span>]), groups)</span></code></pre></div>
+font-style: inherit;">0</span>]), groups)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
 <pre><code>({1, 3, 5, 7, 9}, {0, 2, 4, 6, 8})</code></pre>
 </div>
@@ -6896,7 +6896,7 @@ font-style: inherit;">0</span>]), groups)</span></code></pre></div>
  ]]></description>
   <category>puzzles</category>
   <guid>https://coady.github.io/posts/hat-puzzle.html</guid>
-  <pubDate>Sat, 11 Jan 2020 00:00:00 GMT</pubDate>
+  <pubDate>Sat, 11 Jan 2020 08:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Split an Iterable</title>
@@ -6919,7 +6919,7 @@ font-style: inherit;">0</span>]), groups)</span></code></pre></div>
 <section id="window" class="level2">
 <h2 class="anchored" data-anchor-id="window">Window</h2>
 <div id="cell-2" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> itertools</span>
 <span id="cb1-2"></span>
@@ -6960,14 +6960,14 @@ font-style: inherit;">enumerate</span>(its)))</span>
 background-color: null;
 font-style: inherit;">list</span>(window(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'abcde'</span>))</span></code></pre></div>
+font-style: inherit;">'abcde'</span>))</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
 <pre><code>[('a', 'b'), ('b', 'c'), ('c', 'd'), ('d', 'e')]</code></pre>
 </div>
 </div>
 <p>That’s simple, and close to optimal. There is slight overhead in iterating an <code>islice</code> object, so a minor variant would be to force the step-wise iteration in advance.</p>
 <div id="cell-4" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> collections</span>
 <span id="cb3-2"></span>
@@ -7012,7 +7012,7 @@ font-style: inherit;">*</span>its)</span>
 background-color: null;
 font-style: inherit;">list</span>(window(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'abcde'</span>))</span></code></pre></div>
+font-style: inherit;">'abcde'</span>))</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <pre><code>[('a', 'b'), ('b', 'c'), ('c', 'd'), ('d', 'e')]</code></pre>
 </div>
@@ -7022,7 +7022,7 @@ font-style: inherit;">'abcde'</span>))</span></code></pre></div>
 <h2 class="anchored" data-anchor-id="chunks">Chunks</h2>
 <p>A lesser-known and under-utilized feature of <code>iter</code> is that in can take a callable (of no arguments) and a sentinel to create an iterator. A perfect use case of the “loop and a half” idiom.</p>
 <div id="cell-6" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> chunks(iterable, size):</span>
@@ -7052,7 +7052,7 @@ font-style: inherit;">list</span>(chunks(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'abcde'</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">3</span>))</span></code></pre></div>
+font-style: inherit;">3</span>))</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>[('a', 'b', 'c'), ('d', 'e')]</code></pre>
 </div>
@@ -7063,7 +7063,7 @@ font-style: inherit;">3</span>))</span></code></pre></div>
 <h2 class="anchored" data-anchor-id="sequences-with-dispatch">Sequences with dispatch</h2>
 <p>Rather than explicitly check <code>isinstance</code>, this is a perfect use case for <code>functools.singledispatch</code>.</p>
 <div id="cell-8" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> functools</span>
 <span id="cb7-2"><span class="im" style="color: #00769E;
@@ -7115,25 +7115,25 @@ font-style: inherit;">+</span> size]</span>
 background-color: null;
 font-style: inherit;">list</span>(window(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'abcde'</span>))</span></code></pre></div>
+font-style: inherit;">'abcde'</span>))</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <pre><code>['ab', 'bc', 'cd', 'de']</code></pre>
 </div>
 </div>
 <div id="cell-9" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="bu" style="color: null;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">list</span>(window(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">iter</span>(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'abcde'</span>)))</span></code></pre></div>
+font-style: inherit;">'abcde'</span>)))</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>[('a', 'b'), ('b', 'c'), ('c', 'd'), ('d', 'e')]</code></pre>
 </div>
 </div>
 <div id="cell-10" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">chunks <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">chunks <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> functools.singledispatch(chunks)</span>
 <span id="cb11-2"></span>
@@ -7170,13 +7170,13 @@ font-style: inherit;">list</span>(chunks(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'abcde'</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">3</span>))</span></code></pre></div>
+font-style: inherit;">3</span>))</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <pre><code>['abc', 'de']</code></pre>
 </div>
 </div>
 <div id="cell-11" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="bu" style="color: null;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">list</span>(chunks(<span class="bu" style="color: null;
 background-color: null;
@@ -7184,7 +7184,7 @@ font-style: inherit;">iter</span>(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'abcde'</span>), <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">3</span>))</span></code></pre></div>
+font-style: inherit;">3</span>))</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <pre><code>[('a', 'b', 'c'), ('d', 'e')]</code></pre>
 </div>
@@ -7197,7 +7197,7 @@ font-style: inherit;">3</span>))</span></code></pre></div>
  ]]></description>
   <category>interviews</category>
   <guid>https://coady.github.io/posts/split-an-iterable.html</guid>
-  <pubDate>Sat, 28 Dec 2019 00:00:00 GMT</pubDate>
+  <pubDate>Sat, 28 Dec 2019 08:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Accumulator</title>
@@ -7250,7 +7250,7 @@ font-style: inherit;">3</span>))</span></code></pre></div>
 </blockquote>
 <p>There are <a href="https://en.wikipedia.org/wiki/Function_object#In_Python">other solutions</a>, using function attributes or instances with a <code>__call__</code> method, but none are substantially more elegant. The challenge predates Python 3, which introduced the <code>nonlocal</code> keyword, making this the presumably preferred solution:</p>
 <div id="cell-2" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> foo(n):</span>
@@ -7284,14 +7284,14 @@ background-color: null;
 font-style: inherit;">1</span>)</span>
 <span id="cb1-10">acc(<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">2</span>)</span></code></pre></div>
+font-style: inherit;">2</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
 <pre><code>3</code></pre>
 </div>
 </div>
 <p>There was also yet another alternative as of Python 2.6: using a generator as a coroutine.</p>
 <div id="cell-4" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> foo(n):</span>
@@ -7321,14 +7321,14 @@ background-color: null;
 font-style: inherit;">1</span>)</span>
 <span id="cb3-8">acc.send(<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">2</span>)</span></code></pre></div>
+font-style: inherit;">2</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <pre><code>3</code></pre>
 </div>
 </div>
 <p>To satisfy the challenge, that would need to be wrapped with a decorator. The triple <code>partial</code> expression below may seem a little obtuse, but it’s not as bad as it looks. Just unwind it one step at a time.</p>
 <div id="cell-6" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> functools <span class="im" style="color: #00769E;
 background-color: null;
@@ -7360,13 +7360,13 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">return</span> gen.send</span>
 <span id="cb5-8"></span>
-<span id="cb5-9">coroutine</span></code></pre></div>
+<span id="cb5-9">coroutine</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>functools.partial(&lt;class 'functools.partial'&gt;, &lt;function coroutine at 0x10bf970e0&gt;)</code></pre>
 </div>
 </div>
 <div id="cell-7" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="at" style="color: #657422;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">@coroutine</span></span>
 <span id="cb7-2"><span class="kw" style="color: #003B4F;
@@ -7386,29 +7386,29 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">yield</span> n</span>
 <span id="cb7-5"></span>
-<span id="cb7-6">foo</span></code></pre></div>
+<span id="cb7-6">foo</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <pre><code>functools.partial(&lt;function coroutine at 0x10bf970e0&gt;, &lt;function foo at 0x10bf7eb90&gt;)</code></pre>
 </div>
 </div>
 <div id="cell-8" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">acc <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">acc <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> foo(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>)</span>
-<span id="cb9-2">acc</span></code></pre></div>
+<span id="cb9-2">acc</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>&lt;function generator.send&gt;</code></pre>
 </div>
 </div>
 <div id="cell-9" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">acc(<span class="dv" style="color: #AD0000;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">acc(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>)</span>
 <span id="cb11-2">acc(<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">2</span>)</span></code></pre></div>
+font-style: inherit;">2</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <pre><code>3</code></pre>
 </div>
@@ -7417,7 +7417,7 @@ font-style: inherit;">2</span>)</span></code></pre></div>
 <p>A typical tell of these kinds of code challenges are that they focus on the interface or implementation exclusively, never both in context. Python numbers are immutable, and have syntactic support for incrementing, so there’s nothing more readable about <code>acc(...)</code> instead of <code>n += ...</code>.</p>
 <p>Futhermore, the accumulator object is intended to be used repeatedly, such as in a loop. In a language with such strong iteration support as Python, it’s extremely likely that accumulation will occur in a iterative loop. Indeed, the <em>real</em> accumulator has since been added to the standard library.</p>
 <div id="cell-11" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> itertools</span>
 <span id="cb13-2"></span>
@@ -7427,7 +7427,7 @@ font-style: inherit;">list</span>(itertools.accumulate(<span class="bu" style="c
 background-color: null;
 font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">10</span>)))</span></code></pre></div>
+font-style: inherit;">10</span>)))</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <pre><code>[0, 1, 3, 6, 10, 15, 21, 28, 36, 45]</code></pre>
 </div>
@@ -7439,7 +7439,7 @@ font-style: inherit;">10</span>)))</span></code></pre></div>
  ]]></description>
   <category>style</category>
   <guid>https://coady.github.io/posts/accumulator.html</guid>
-  <pubDate>Mon, 28 May 2018 00:00:00 GMT</pubDate>
+  <pubDate>Mon, 28 May 2018 07:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Map and Filter</title>
@@ -7464,7 +7464,7 @@ font-style: inherit;">10</span>)))</span></code></pre></div>
 <h2 class="anchored" data-anchor-id="python-1">Python 1</h2>
 <p>Prior to version 2.0, Python had neither list comprehensions nor nested scopes. Therefore simple <code>map</code> and <code>filter</code> operations had to use a <code>for... append</code> loop, or <code>lambda</code>. But the lacked of nested scopes was inherently crippling to the latter approach.</p>
 <div id="cell-2" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1">x <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1">x <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
@@ -7480,14 +7480,14 @@ font-style: inherit;">*</span> x, <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">5</span>))</span></code></pre></div>
+font-style: inherit;">5</span>))</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
 <pre><code>&lt;map at 0x108e57250&gt;</code></pre>
 </div>
 </div>
 <p>A <code>NameError</code> would have been raised on <code>x</code>, because it’s not defined in the inner scope. One clever work-around was to shadow default arguments.</p>
 <div id="cell-4" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">x <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">x <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
@@ -7507,7 +7507,7 @@ font-style: inherit;">*</span> x, <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">5</span>)))</span></code></pre></div>
+font-style: inherit;">5</span>)))</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <pre><code>[0, 2, 4, 6, 8]</code></pre>
 </div>
@@ -7518,7 +7518,7 @@ font-style: inherit;">5</span>)))</span></code></pre></div>
 <h2 class="anchored" data-anchor-id="python-2">Python 2</h2>
 <p>Then Python added list comprehensions in 2.0, and that became the <a href="https://en.wikipedia.org/wiki/Zen_of_Python">one obvious way</a> to do it.</p>
 <div id="cell-6" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">x <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">x <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
@@ -7535,7 +7535,7 @@ font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">5</span>)]</span></code></pre></div>
+font-style: inherit;">5</span>)]</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>[0, 2, 4, 6, 8]</code></pre>
 </div>
@@ -7548,7 +7548,7 @@ font-style: inherit;">5</span>)]</span></code></pre></div>
 <p>So it’s already dubious to claim that using a built-in is unapproved. But the real point is that <code>map</code> and <code>filter</code> remain a higher level abstraction. Sure, with <code>lambda</code> there are the same number of logical components, and it’s just a matter of syntactic sugar. But there is some abstraction value when the functions already have a name.</p>
 <p>It’s also commonly pointed out that generator expressions are superior because they can do a <code>map</code> and <code>filter</code> simultaneously, but crucially only if the <code>filter</code> comes first. Consider this task: normalizing an iterable of strings.</p>
 <div id="cell-8" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">values <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">values <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
@@ -7565,7 +7565,7 @@ font-style: inherit;">None</span>, <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">map</span>(<span class="bu" style="color: null;
 background-color: null;
-font-style: inherit;">str</span>.strip, values)))</span></code></pre></div>
+font-style: inherit;">str</span>.strip, values)))</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <pre><code>['sample']</code></pre>
 </div>
@@ -7573,7 +7573,7 @@ font-style: inherit;">str</span>.strip, values)))</span></code></pre></div>
 <p>Note <code>list</code> is only being used for printing, and should be ignored for the sake of comparisons.</p>
 <p>As for the alternative, surely calling <code>strip</code> twice to use a single expression is just plain cheating. So really the only option is:</p>
 <div id="cell-10" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">[value <span class="cf" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">[value <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">for</span> value <span class="kw" style="color: #003B4F;
@@ -7588,7 +7588,7 @@ font-weight: bold;
 font-style: inherit;">in</span> values) <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">if</span> value]</span></code></pre></div>
+font-style: inherit;">if</span> value]</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>['sample']</code></pre>
 </div>
@@ -7600,7 +7600,7 @@ font-style: inherit;">if</span> value]</span></code></pre></div>
 <h2 class="anchored" data-anchor-id="epilogue">Epilogue</h2>
 <p>And now a shameless plug of the author’s <a href="https://pypi.org/project/placeholder/">placeholder</a> package for readers who appreciate function-style programming. It provides syntactic sugar for <code>lambda</code>.</p>
 <div id="cell-12" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> placeholder <span class="im" style="color: #00769E;
 background-color: null;
@@ -7618,14 +7618,14 @@ font-style: inherit;">2</span>, <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">5</span>)))</span></code></pre></div>
+font-style: inherit;">5</span>)))</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <pre><code>[0, 2, 4, 6, 8]</code></pre>
 </div>
 </div>
 <p>But even speaking as the author, <code>map</code> isn’t the best use case. Sort keys are a much better example, since there is no competing syntax.</p>
 <div id="cell-14" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="bu" style="color: null;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">min</span>([<span class="st" style="color: #20794D;
 background-color: null;
@@ -7637,7 +7637,7 @@ font-style: inherit;">=</span>_[<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">1</span>])</span></code></pre></div>
+font-style: inherit;">1</span>])</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <pre><code>'ba'</code></pre>
 </div>
@@ -7651,7 +7651,7 @@ font-style: inherit;">1</span>])</span></code></pre></div>
  ]]></description>
   <category>style</category>
   <guid>https://coady.github.io/posts/map-and-filter.html</guid>
-  <pubDate>Sat, 31 Mar 2018 00:00:00 GMT</pubDate>
+  <pubDate>Sat, 31 Mar 2018 07:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>
