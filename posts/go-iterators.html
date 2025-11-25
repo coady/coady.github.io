@@ -79,9 +79,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-934c60d7e3dd3893e85c941673a26128.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-982a86aa5a09e231d69aa4aae9ff35ca.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-934c60d7e3dd3893e85c941673a26128.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-f60cc6225c225a698a16e805fde6d1f1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-18b494473ddbd2be5a1c870d7a4ee838.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-f60cc6225c225a698a16e805fde6d1f1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -358,7 +358,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="pythonic-go-code." class="level1">
 <h1>Pythonic Go code.</h1>
 <p>The long arc of language convergence continues. With generics and iterators, Go is significantly closer to Python’s reusability and expressiveness.</p>
-<p>Take the built-in function <code>sum</code>. Prior to generics, a Go version would have needed a separate implementations for <code>int</code> and <code>float64</code>. But that was the least of the problems. Even with a <code>Number</code> interface, it also would have been restricted to a <code>slice</code> of numbers. Realistically, one never has a slice of numbers. One has a slice of objects with a numeric field, or perhaps a <code>map</code> with numeric values.</p>
+<p>Take the built-in function <code>sum</code>. Prior to generics, a Go version would have needed separate implementations for <code>int</code> and <code>float64</code>. But that was the least of the problems. Even with a <code>Number</code> interface, it also would have been restricted to a <code>slice</code> of numbers. Realistically, one never has a slice of numbers. One has a slice of objects with a numeric field, or perhaps a <code>map</code> with numeric values.</p>
 <p>Enter <a href="https://go.dev/doc/go1.23#iterators">iterators</a>. The <a href="https://go.dev/blog/range-functions">range over function</a> types are clunkier than Python generators, but to the caller the <code>range</code> interface is the same.</p>
 <div id="cell-2" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;shellscript&quot;}}">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span> Number interface {</span>
