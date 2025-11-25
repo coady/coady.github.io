@@ -1,4 +1,5 @@
 [![image](https://github.com/coady/coady.github.io/workflows/build/badge.svg)](https://github.com/coady/coady.github.io/actions)
+[![CodeQL](https://github.com/coady/coady.github.io/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/coady/coady.github.io/actions/workflows/github-code-scanning/codeql)
 
 # Pythonicity
 
