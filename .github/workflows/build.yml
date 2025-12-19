@@ -1,5 +1,10 @@
 name: build
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 on:
   workflow_dispatch:
   push:
@@ -7,12 +12,14 @@ on:
 
 jobs:
   publish:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
     - uses: actions/checkout@v6
     - uses: quarto-dev/quarto-actions/setup@v2
-    - uses: quarto-dev/quarto-actions/publish@v2
-      with:
-        target: gh-pages
+    - uses: quarto-dev/quarto-actions/render@v2
+    - uses: actions/upload-pages-artifact@v4
+    - uses: actions/deploy-pages@v4
+      id: deployment
