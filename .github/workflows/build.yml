@@ -1,9 +1,8 @@
 name: build
 
 permissions:
-  contents: read
-  pages: write
   id-token: write
+  pages: write
 
 on:
   workflow_dispatch:
@@ -11,10 +10,7 @@ on:
     branches: [main]
 
 jobs:
-  publish:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  pages:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
@@ -22,4 +18,3 @@ jobs:
     - uses: quarto-dev/quarto-actions/render@v2
     - uses: actions/upload-pages-artifact@v4
     - uses: actions/deploy-pages@v4
-      id: deployment
